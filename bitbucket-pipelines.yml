@@ -1,15 +1,9 @@
+ image: atlassian/default-image:latest
  pipelines:
    default:
      - step:
         name: Deploy to Firebase
         deployment: production
-        caches:
-            - node
         script:
-          - pipe: atlassian/ssh-run:0.2.2
-            variables:
-              SSH_USER: 'centos'
-              SERVER: '52.79.251.52'
-              SSH_KEY: './build/jh_test_ec2.pem'
-              MODE: 'script'
-              COMMAND: './build/deploy.sh' # path to a script in your repository
+            - ssh centos@52.79.251.52 'bash -s' < ./build/deploy.sh
+            - echo "Deploy step finished"
