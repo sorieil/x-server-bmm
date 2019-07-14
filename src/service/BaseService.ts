@@ -77,7 +77,7 @@ export class BaseService {
             '.';
         await repository.metadata.columns
             .filter(column => {
-                console.log(`${column.propertyName} == ${modelName + column.propertyName}`);
+                // console.log(`${column.propertyName} == ${modelName + column.propertyName}`);
                 if (
                     object.hasOwnProperty(column.propertyName) ||
                     object.hasOwnProperty(modelName + column.propertyName)

@@ -1,0 +1,163 @@
+{
+    time_lists: [
+        {
+            "date": "2019-01-01",
+            "time": [
+                {
+                    "time": "02:00",
+                    "status": false
+                },
+                {
+                    "time": "04:00",
+                    "status": false
+                },
+                {
+                    "time": "06:00",
+                    "status": false
+                },
+                {
+                    "time": "08:00",
+                    "status": false
+                },
+                {
+                    "time": "10:00",
+                    "status": false
+                },
+                {
+                    "time": "12:00",
+                    "status": false
+                },
+                {
+                    "time": "14:00",
+                    "status": false
+                },
+                {
+                    "time": "16:00",
+                    "status": false
+                },
+                {
+                    "time": "18:00",
+                    "status": false
+                },
+                {
+                    "time": "20:00",
+                    "status": false
+                },
+                {
+                    "time": "22:00",
+                    "status": false
+                },
+                {
+                    "time": "00:00",
+                    "status": false
+                }
+            ]
+        },
+        {
+            "date": "2019-01-02",
+            "time": [
+                {
+                    "time": "02:00",
+                    "status": false
+                },
+                {
+                    "time": "04:00",
+                    "status": false
+                },
+                {
+                    "time": "06:00",
+                    "status": false
+                },
+                {
+                    "time": "08:00",
+                    "status": false
+                },
+                {
+                    "time": "10:00",
+                    "status": false
+                },
+                {
+                    "time": "12:00",
+                    "status": false
+                },
+                {
+                    "time": "14:00",
+                    "status": false
+                },
+                {
+                    "time": "16:00",
+                    "status": false
+                },
+                {
+                    "time": "18:00",
+                    "status": false
+                },
+                {
+                    "time": "20:00",
+                    "status": false
+                },
+                {
+                    "time": "22:00",
+                    "status": false
+                },
+                {
+                    "time": "00:00",
+                    "status": false
+                }
+            ]
+        },
+        {
+            "date": "2019-01-03",
+            "time": [
+                {
+                    "time": "02:00",
+                    "status": false
+                },
+                {
+                    "time": "04:00",
+                    "status": false
+                },
+                {
+                    "time": "06:00",
+                    "status": false
+                },
+                {
+                    "time": "08:00",
+                    "status": false
+                },
+                {
+                    "time": "10:00",
+                    "status": false
+                },
+                {
+                    "time": "12:00",
+                    "status": false
+                },
+                {
+                    "time": "14:00",
+                    "status": false
+                },
+                {
+                    "time": "16:00",
+                    "status": false
+                },
+                {
+                    "time": "18:00",
+                    "status": false
+                },
+                {
+                    "time": "20:00",
+                    "status": false
+                },
+                {
+                    "time": "22:00",
+                    "status": false
+                },
+                {
+                    "time": "00:00",
+                    "status": false
+                }
+            ]
+        }
+    ]
+}

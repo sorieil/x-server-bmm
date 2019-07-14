@@ -17,16 +17,16 @@ export class ServiceBusiness extends BaseService {
      * 비즈니스의 기본 정보를 가져온다.
      * @param entity AdminLogin
      */
-    public async get(entity: AdminLogin) {
-        const query = await this.mysqlManager(Business).find({ where: { admin: entity.admin[0] } });
+    public async get(admin: Admin) {
+        const query = await this.mysqlManager(Business).find({ where: { admin: admin } });
         return query;
     }
     /**
      * 비즈니스 정보를 입력/수정 한다. ID 값이 있으면 수정 없으면 입력이다.
      * @param entity Business
      */
-    public async post(entity: Business) {
-        const query = await this.mysqlManager(Business).save(entity);
+    public async post(business: Business) {
+        const query = await this.mysqlManager(Business).save(business);
         delete query.admin;
         return query;
     }
@@ -56,6 +56,11 @@ export class ServiceBusiness extends BaseService {
             },
             relations: ['admin'],
         });
+        return query;
+    }
+
+    public async delete(business: Business) {
+        const query = await this.mysqlManager(Business).delete(business);
         return query;
     }
 }

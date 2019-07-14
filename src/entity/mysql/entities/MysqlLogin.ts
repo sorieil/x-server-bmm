@@ -9,10 +9,10 @@ export class Login extends Base {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('varchar', { nullable: false })
+    @Column('varchar', { nullable: true })
     email: string;
 
-    @Column({ type: 'enum', enum: [false, true], default: false })
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     emailVerified: StatusTypeRole;
 
     @Column('varchar', { nullable: true })
@@ -27,9 +27,9 @@ export class Login extends Base {
     @Column('varchar', { nullable: true })
     password: string;
 
-    @OneToOne(type => User, user => user.login, {
-        cascade: true,
-    })
-    @JoinColumn()
-    user: User;
+    @OneToMany(type => User, user => user.login)
+    users: User[];
+
+    @OneToOne(type => MongoBridge, mongoBridge => mongoBridge.login)
+    mongoBridge: MongoBridge;
 }

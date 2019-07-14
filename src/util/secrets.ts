@@ -2,9 +2,13 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import logger from './logger';
 
-if (fs.existsSync('.env')) {
+if (fs.existsSync('.env') || fs.existsSync('.env.production')) {
+    if (process.env.ENVIRONMENT === 'production') {
+        dotenv.config({ path: '.env.production' });
+    } else {
+        dotenv.config({ path: '.env' });
+    }
     logger.debug('Using .env file to supply config environment variables');
-    dotenv.config({ path: '.env' });
 } else if (Object.entries(process.env).length > 1) {
     logger.debug('Using environment variable.!!!');
 } else {

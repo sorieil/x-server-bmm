@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+import { BusinessCategory } from './MysqlBusinessCategory';
+import { CodeTable } from './MysqlCodeTable';
+import { BusinessFavorite } from './MysqlBusinessFavorite';
 import { Business } from './MysqlBusiness';
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
-import { Entity, Column, ManyToOne, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToOne, JoinColumn, OneToMany, ManyToMany } from 'typeorm';
 import { BusinessVenderManager } from './MysqlBusinessVenderManager';
+import { BusinessCode } from './MysqlBusinessCode';
 
 @Entity()
 export class BusinessVender extends Base {
@@ -12,19 +14,47 @@ export class BusinessVender extends Base {
     name: string;
 
     @Column('varchar', { nullable: true })
-    code: string;
+    logoImage: string;
 
     @Column('varchar', { nullable: true })
     ceoName: string;
 
-    @Column('date')
+    @Column('date', { nullable: true })
     establishmentDate: Date;
 
-    @Column('varchar')
-    contactName: string;
+    @Column('text', { nullable: true })
+    serviceDescription: string;
+
+    /**
+     * 업체구분
+     * @type {CodeTable}
+     * @memberof BusinessVender
+     */
+    @ManyToOne(type => CodeTable, codeTable => codeTable.businessVender)
+    businessCategory: CodeTable;
+
+    /**
+     *
+     * 제품/서비스
+     * @type {CodeTable}
+     * @memberof BusinessVender
+     */
+    @ManyToOne(type => CodeTable, codeTable => codeTable.businessVender)
+    serviceCategory: CodeTable;
+
+    @Column('varchar', { nullable: true })
+    serviceTarget: string;
+
     @OneToMany(type => BusinessVenderManager, businessVenderManager => businessVenderManager.businessVender)
+    businessVenderManagers: BusinessVenderManager[];
+
+    @ManyToOne(type => Business, business => business.businessVenders, { onDelete: 'CASCADE' })
     @JoinColumn()
-    businessVenderManager: BusinessVenderManager[];
-    @ManyToOne(type => Business, business => business.businessVender)
     business: Business;
+
+    @ManyToMany(type => BusinessFavorite, businessFavorite => businessFavorite.businessVender)
+    businessFavorite: BusinessFavorite;
+
+    @OneToOne(type => BusinessCode, businessCode => businessCode.businessVender)
+    businessCode: BusinessCode;
 }

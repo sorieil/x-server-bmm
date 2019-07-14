@@ -17,17 +17,35 @@ export const auth = (secretName: secretNameType) => {
         new Strategy(opts, async (jwt_payload, done) => {
             try {
                 const serviceAccount = new ServiceAccount();
-                const result = serviceAccount.getAdminId(jwt_payload.id);
-                return result.then(user => {
-                    if (user) {
-                        return done(undefined, user);
-                    } else {
-                        return done(undefined, null);
-                    }
-                });
+                const level = jwt_payload.level;
+
+                if (level === 'user') {
+                    const user = serviceAccount.getUserId(jwt_payload.id);
+                    return user
+                        .then(user => {
+                            if (user) {
+                                return done(undefined, user);
+                            } else {
+                                return done(undefined, null);
+                            }
+                        })
+                        .catch(error => {
+                            // console.log('passport error:', error);
+                            return done('dbError', null);
+                        });
+                } else {
+                    const admin = serviceAccount.getAdminId(jwt_payload.id);
+                    return admin.then(user => {
+                        if (user) {
+                            return done(undefined, user);
+                        } else {
+                            return done(undefined, null);
+                        }
+                    });
+                }
             } catch (error) {
                 console.log(error);
-                // tryCatch(res, error);
+                return done(undefined, undefined);
             }
         }),
     );
@@ -45,11 +63,20 @@ export const auth = (secretName: secretNameType) => {
 
     const isAuthenticate = (req: Request, res: Response, next: NextFunction) => {
         passport.authenticate(secretName, { session: false }, (err, user, info) => {
+            // console.log('eeeee:', err);
+            // console.log('\n info:', info);
+            if (err === 'dbError') {
+                res.status(500).json({
+                    resCode: 500,
+                    message: '관리자에게 문의해주세요.',
+                    result: [],
+                });
+            }
             if (user === null || !user || typeof info !== 'undefined') {
                 res.status(401).json({
-                    error: {
-                        message: 'No auth token',
-                    },
+                    resCode: 401,
+                    message: 'No auth token',
+                    result: [],
                 });
             } else {
                 req.user = user;

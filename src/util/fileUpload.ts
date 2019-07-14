@@ -4,6 +4,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import { ParsingOptions, WorkBook, read, WorkSheet, utils } from 'xlsx/types';
 import { any } from 'bluebird';
+import { generateFileNameWithTime } from './mixin';
 
 aws.config.update({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -20,28 +21,23 @@ const fileFilter: any = (req: Request, file: any, cb: any): void => {
     }
 };
 
-// 필터가 왜 에러가 날까????
-const upload = multer({
-    fileFilter,
-    storage: multerS3({
-        acl: 'public-read',
-        s3,
-        bucket: 'bmm',
-        metadata: function(req, file, cb) {
-            // cb(null, { fieldName: 'TESTING_METADATA' });
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function(req, file, cb) {
-            cb(null, Date.now().toString());
-        },
-    }),
-}).array('upload', 1);
-
-export const fileUpload = (file: any) => {
-    // upload(req: Request, res: Response, next: NextFunction)
-    return file;
-};
-
+export const upload = (subBucket: string) =>
+    multer({
+        fileFilter,
+        storage: multerS3({
+            acl: 'public-read',
+            s3,
+            bucket: `bmm/${subBucket}`,
+            metadata: function(req, file, cb) {
+                // cb(null, { fieldName: 'TESTING_METADATA' });
+                const convertFileName = generateFileNameWithTime(file.fieldname);
+                cb(null, { fieldName: convertFileName, origin: file.fieldname });
+            },
+            key: function(req, file, cb) {
+                cb(null, Date.now().toString());
+            },
+        }),
+    });
 export const readFirstSheet = (data: any, options: ParsingOptions): any[][] => {
     const wb: WorkBook = read(data, options);
     const ws: WorkSheet = wb.Sheets[wb.SheetNames[0]];

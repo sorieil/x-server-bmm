@@ -19,10 +19,10 @@ export class UserEvent extends Base {
     @Column('varchar')
     mobileType: string;
 
-    @Column({ type: 'enum', enum: [false, true], default: false })
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     isPushOn: StatusTypeRole;
     @Column('smallint', { default: 0 })
     point: number;
-    @ManyToOne(type => User, user => user.event)
+    @ManyToOne(type => User, user => user.events, { onDelete: 'CASCADE' })
     user: User;
 }

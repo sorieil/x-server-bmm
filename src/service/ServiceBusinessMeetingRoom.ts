@@ -14,7 +14,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
         super();
     }
 
-    public async saveMeetingRoom(entity: BusinessMeetingRoom) {
+    public async post(entity: BusinessMeetingRoom) {
         const query = await this.mysqlManager(BusinessMeetingRoom).save(entity);
         delete query.business;
         return query;
@@ -24,7 +24,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * Business.id로 미팅방을 가져온다.
      * @param id Business.id
      */
-    public async getMeetingRoom(business: Business) {
+    public async get(business: Business) {
         const query = await this.mysqlManager(BusinessMeetingRoom).find({
             where: {
                 business: business,
@@ -63,14 +63,8 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * @param id BusinessMeetingRoom.id
      * @param adminId Admin.id
      */
-    public async deleteMeetingRoom(id: number, adminId: number) {
-        const query = await this.mysqlManager(Business).find({
-            relations: ['business_meeting_room'],
-            where: {
-                admin: adminId,
-            },
-        });
-
+    public async delete(businessMeetingRoom: BusinessMeetingRoom) {
+        const query = await this.mysqlManager(BusinessMeetingRoom).remove(businessMeetingRoom);
         return query;
     }
 }

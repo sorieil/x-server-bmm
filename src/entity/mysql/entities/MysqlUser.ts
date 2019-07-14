@@ -1,8 +1,10 @@
+import { BusinessFavorite } from './MysqlBusinessFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
 import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
+import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
 @Entity()
 export class User extends Base {
     @Column('varchar', { nullable: true })
@@ -14,24 +16,28 @@ export class User extends Base {
     @Column('varchar', { nullable: true })
     profileImg: string;
 
-    @Column({ type: 'enum', enum: [false, true], default: false })
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     isInactive: StatusTypeRole;
 
-    @Column({ type: 'enum', enum: [false, true], default: false })
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     isWithdrawal: StatusTypeRole;
 
     @OneToMany(type => UserEvent, userEvent => userEvent.user, {
         cascade: true,
     })
-    @JoinColumn()
-    event: UserEvent[];
+    events: UserEvent[];
 
     @OneToMany(type => UserPermission, userPermission => userPermission.user, {
         cascade: true,
     })
-    @JoinColumn()
-    permission: UserPermission[];
+    permissions: UserPermission[];
 
-    @OneToOne(type => Login, login => login.user)
+    @ManyToOne(type => Login, login => login.users, { onDelete: 'CASCADE' })
     login: Login;
+
+    @OneToMany(type => BusinessMeetingTimeList, businessMeetingTimeList => businessMeetingTimeList.user)
+    businessMeetingTimeLists: BusinessMeetingTimeList[];
+
+    @OneToMany(type => BusinessFavorite, businessFavorite => businessFavorite.user)
+    businessFavorites: BusinessFavorite[];
 }

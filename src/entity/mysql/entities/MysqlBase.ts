@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { IoTJobsDataPlane } from 'aws-sdk';
-export type StatusTypeRole = false | true;
+export type StatusTypeRole = 'no' | 'yes';
 export class Base {
     @PrimaryGeneratedColumn()
     id: number;

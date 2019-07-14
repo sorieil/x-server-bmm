@@ -13,6 +13,6 @@ export class UserPermission extends Base {
     isChecked: boolean;
     @Column('int', { default: 0 })
     point: number;
-    @ManyToOne(type => User, user => user.permission)
+    @ManyToOne(type => User, user => user.permissions, { onDelete: 'CASCADE' })
     user: User;
 }

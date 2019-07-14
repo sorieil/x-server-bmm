@@ -11,7 +11,7 @@ export class AdminLogin extends Base {
     @Column('varchar', { nullable: false })
     email: string;
 
-    @Column({ type: 'enum', enum: [false, true], default: false })
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     emailVerified: StatusTypeRole;
 
     @Column('varchar', { nullable: true })
@@ -21,10 +21,8 @@ export class AdminLogin extends Base {
     password: string;
 
     @OneToMany(type => Admin, admin => admin.adminLogin)
-    admin: Admin[];
+    admins: Admin[];
 
-    @OneToOne(type => MongoBridge, mongoBridge => mongoBridge.adminLogin, {
-        cascade: true,
-    })
+    @OneToOne(type => MongoBridge, mongoBridge => mongoBridge.adminLogin)
     mongoBridge: MongoBridge;
 }

@@ -2,7 +2,7 @@ import { RequestRole } from './common';
 import { Response } from 'express';
 import logger from './logger';
 export type RequestRole = 'POST' | 'GET' | 'PATCH' | 'DELETE';
-type ResponseRole = 'success' | 'invalid';
+type ResponseRole = 'success' | 'invalid' | 'delete';
 export const responseRole = {
     POST: {
         success: 201,
@@ -11,23 +11,22 @@ export const responseRole = {
     },
     GET: {
         success: 200,
-        error: 200,
+        error: 204,
         errorMessage: 'No Content',
     },
     PATCH: {
         success: 201,
-        error: 304,
+        error: 204,
         errorMessage: 'Failed to update the request.',
     },
     DELETE: {
         success: 200,
-        error: 304,
+        error: 204,
         errorMessage: 'Failed to delete the request.',
     },
 };
 export const responseJson = (res: Response, data: Array<any>, requestType: RequestRole, responseType: ResponseRole) => {
     if (responseType === 'success') {
-        console.log('data:', data);
         if (data.length > 0) {
             const code = responseRole[requestType].success;
             res.status(code).json({
@@ -42,6 +41,23 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
                 resCode: code,
                 message: message,
                 result: data,
+            });
+        }
+    } else if (responseType === 'delete') {
+        if (data.length > 0) {
+            const code = responseRole[requestType].success;
+            res.status(code).json({
+                resCode: code,
+                message: `${data[0].raw.affectedRows} is deleted.`,
+                result: [],
+            });
+        } else {
+            const code = responseRole[requestType].error;
+            const message = responseRole[requestType].errorMessage;
+            res.status(code).json({
+                resCode: code,
+                message: message,
+                result: [],
             });
         }
     } else {

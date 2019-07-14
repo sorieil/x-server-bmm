@@ -1,0 +1,6 @@
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (1, '2019-07-15 00:05:00.057923000', '2019-07-15 00:05:00.057923000', '주관식(단문)', 'information', 0);
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (2, '2019-07-15 00:05:39.585130000', '2019-07-15 00:05:39.585130000', '주관식(장문)', 'information', 0);
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (3, '2019-07-15 00:06:02.858559000', '2019-07-15 00:06:02.858559000', '체크박스', 'information', 0);
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (4, '2019-07-15 00:31:24.525602000', '2019-07-15 00:31:24.525602000', '기업정보', 'company_info_type', 0);
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (5, '2019-07-15 00:31:24.531991000', '2019-07-15 00:31:24.531991000', '참가정보', 'company_info_type', 0);
+INSERT INTO `xsync-main`.code_table (id, createdAt, updatedAt, name, category, sort) VALUES (6, '2019-07-15 00:31:24.538588000', '2019-07-15 00:31:24.538588000', '담당자정보', 'company_info_type', 0);

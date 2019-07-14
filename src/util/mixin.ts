@@ -5,7 +5,7 @@ import path from 'path';
 /*
     시간 기준으로 파일명을 생성해준다.
 */
-const generateFileNameWithTime = (fileName: string): string => {
+export const generateFileNameWithTime = (fileName: string): string => {
     const time = moment()
         .format('YYYYMMDDHHmmssSSSZZ')
         .replace(/(\+|-)/gi, '_');

@@ -1,7 +1,10 @@
+import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { Request, Response } from 'express';
-import { ServiceBusiness } from '../service/ServiceBusiness';
-import { responseJson, RequestRole, tryCatch } from '../util/common';
-import { Business } from '../entity/mysql/entities/MysqlBusiness';
+import { ServiceBusiness } from '../../service/ServiceBusiness';
+import { responseJson, RequestRole, tryCatch } from '../../util/common';
+import { Business } from '../../entity/mysql/entities/MysqlBusiness';
+import { businessPermission } from '../../util/permission';
+import { validationResult } from 'express-validator';
 
 /**
  * 비즈니스의 상태 값을 가져온다. Header, status
@@ -10,7 +13,7 @@ const apiGet = [
     async (req: Request, res: Response) => {
         try {
             // admin 으로 비지니스 정보를 조회 하기 때문에 권한 검증은 필요 없음.
-            const query = await new ServiceBusiness().get(req.user);
+            const query = await new ServiceBusiness().get(req.user.admins[0]);
             const method: RequestRole = req.method.toString() as any;
             responseJson(res, query, method, 'success');
         } catch (error) {
@@ -29,7 +32,7 @@ const apiPost = [
             const business = new Business();
             const body = req.body;
 
-            const queryBusiness = await new ServiceBusiness().get(req.user);
+            const queryBusiness = await new ServiceBusiness().get(req.user.admins[0]);
             if (queryBusiness.length > 0) {
                 business.id = queryBusiness[0].id;
                 // 비즈니스는 계정한 한번만 입력을 할 수 있기때문에, 널 표시, 수정은 Patch 메서드로~
@@ -42,7 +45,7 @@ const apiPost = [
             business.title = body.title;
             business.subTitle = body.subTitle;
             business.status = body.status === 'true' ? true : false;
-            business.admin = req.user.admin[0];
+            business.admin = req.user.admins[0];
 
             const query = await new ServiceBusiness().post(business);
             responseJson(res, [query], method, 'success');
@@ -52,9 +55,30 @@ const apiPost = [
     },
 ];
 
+const apiDelete = [
+    [businessPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        const method: RequestRole = req.method.toString() as any;
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            responseJson(res, errors.array(), method, 'invalid');
+            return;
+        }
+
+        const service = new ServiceBusiness();
+        const business = new Business();
+        business.id = req.user.business.id;
+        const query = await service.delete(business);
+
+        responseJson(res, [query], method, 'delete');
+    },
+];
+
 export default {
     apiGet,
     apiPost,
+    apiDelete,
 };
 
 /*
