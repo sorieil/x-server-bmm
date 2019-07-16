@@ -15,7 +15,7 @@ export class ServiceBusinessPermission extends BaseService {
      * @param admin admin.id
      * @param business business.id
      */
-    public async _ByAdminBusinessId(admin: Admin, business: Business) {
+    public async _ByAdminWidthBusinessId(admin: Admin, business: Business) {
         const query = await this.mysqlManager(Admin).findOne({
             where: { id: admin.id },
             relations: ['business'],

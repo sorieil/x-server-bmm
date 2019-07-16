@@ -22,6 +22,7 @@ import clientVender from './controllers/client/clientVender';
 import codeTable from './controllers/codeTable';
 import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
+import businessVenderManager from './controllers/admin/businessVenderManager';
 Sentry.init({ dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535' });
 Sentry.configureScope(scope => {
     scope.setUser({ email: 'jhkim@xsync.co' });
@@ -113,6 +114,25 @@ connections(process.env)
         app.delete('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiDelete);
         app.get('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiGet);
         app.get('/api/v1/business_vender', adminCheck, ...businessVender.apiGets);
+
+        // Business vender manager
+        app.get('/api/v1/business_vender/:venderId/manager', adminCheck, ...businessVenderManager.apiGets);
+        app.get(
+            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
+            adminCheck,
+            ...businessVenderManager.apiGet,
+        );
+        app.post('/api/v1/business_vender/:venderId/manager', adminCheck, ...businessVenderManager.apiPost);
+        app.patch(
+            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
+            adminCheck,
+            ...businessVenderManager.apiPatch,
+        );
+        app.delete(
+            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
+            adminCheck,
+            ...businessVenderManager.apiDelete,
+        );
 
         // Business code generate
         app.get('/api/v1/business_code', adminCheck, ...businessCode.apiGet);

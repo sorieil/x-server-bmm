@@ -10,11 +10,13 @@ import ServiceBusinessVender from '../../service/ServiceBusinessVender';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
+import ServiceBusinessVenderManager from '../../service/ServiceBusinessVenderManager';
+import { BusinessVenderManager } from '../../entity/mysql/entities/MysqlBusinessVenderManager';
 
 const businessVenderPermission = () =>
     param('venderId').custom((value, { req }) => {
         const businessVender = new BusinessVender();
-        const service = new ServiceBusinessVender();
+        const service = new ServiceBusinessVenderManager();
         const business = new Business();
 
         if (!value) {
@@ -26,19 +28,23 @@ const businessVenderPermission = () =>
 
         businessVender.id = value;
         return new Promise(async resolve => {
+            // 비즈니스 조회
             const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
 
             if (!businessQuery) {
-                return Promise.reject('You don`t have permission or first insert business information..');
+                resolve(null);
             }
 
             business.id = businessQuery.id;
 
-            const query = await service.getWithBusiness(businessVender, business);
-
-            console.log('vender:', query);
+            // 비즈니스 벤더로 조회
+            const query = await service.getWithBusinessVender(businessVender, business);
             resolve(query);
-        }).then(r => {
+        }).then((r: BusinessVender) => {
+            if (r === null) {
+                return Promise.reject('You don`t have permission or first insert business information..');
+            }
+
             if (r) {
                 Object.assign(req.user, { vender: r });
             } else {
@@ -51,61 +57,9 @@ const businessVenderPermission = () =>
  * 비즈니스의 상태 값을 가져온다. Header, status
  */
 const apiGet = [
-    [businessVenderPermission.apply(this)],
-    async (req: Request, res: Response) => {
-        try {
-            const method: RequestRole = req.method.toString() as any;
-            const errors = validationResult(req);
-
-            if (!errors.isEmpty()) {
-                responseJson(res, errors.array(), method, 'invalid');
-                return;
-            }
-
-            responseJson(res, [req.user.vender], method, 'success');
-        } catch (error) {
-            tryCatch(res, error);
-        }
-    },
-];
-
-const apiGets = [
-    [businessPermission.apply(this)],
-    async (req: Request, res: Response) => {
-        try {
-            const method: RequestRole = req.method.toString() as any;
-            const errors = validationResult(req);
-
-            if (!errors.isEmpty()) {
-                responseJson(res, errors.array(), method, 'invalid');
-                return;
-            }
-
-            const service = new ServiceBusinessVender();
-            const business = new Business();
-            business.id = req.user.business.id;
-            const query = await service.getByBusiness(business);
-
-            responseJson(res, query, method, 'success');
-        } catch (error) {
-            tryCatch(res, error);
-        }
-    },
-];
-
-/**
- * 비즈니스의 상태값을 저장/ 수정 한다.
- */
-const apiPost = [
     [
-        businessPermission.apply(this),
-        check('name')
-            .not()
-            .isEmpty(),
-        check('ceoName')
-            .not()
-            .isEmpty(),
-        check('establishmentDate')
+        businessVenderPermission.apply(this),
+        param('venderManagerId')
             .not()
             .isEmpty(),
     ],
@@ -118,35 +72,81 @@ const apiPost = [
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
+            const service = new ServiceBusinessVenderManager();
+            const businessVenderManager = new BusinessVenderManager();
 
-            const businessVender = new BusinessVender();
-            const service = new ServiceBusinessVender();
-            const business = new Business();
-            const body = req.body;
+            businessVenderManager.id = req.params.venderManagerId;
+            const query = await service.get(businessVenderManager);
+            console.log('api get:', query);
+            responseJson(res, query, method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
 
-            business.id = req.user.business.id;
+const apiPost = [
+    [
+        businessVenderPermission.apply(this),
+        check('name')
+            .not()
+            .isEmpty(),
+        check('phone')
+            .not()
+            .isEmpty(),
+        check('email')
+            .not()
+            .isEmpty()
+            .isEmail(),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const method: RequestRole = req.method.toString() as any;
+            const errors = validationResult(req);
 
-            businessVender.name = body.name;
-            businessVender.ceoName = body.ceoName;
-            businessVender.establishmentDate = body.establishmentDate;
-            businessVender.business = business;
-
-            // 사용하지 않는 코드를 가져온다.
-            const businessCodeQuery = await new ServiceBusinessCode().getNotUseOneCode();
-            if (!businessCodeQuery) {
-                responseJson(res, [{ message: '사용가능한 코드가 없습니다.' }], method, 'invalid');
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
 
-            businessVender.businessCode = businessCodeQuery;
+            const service = new ServiceBusinessVenderManager();
+            const businessVenderManager = new BusinessVenderManager();
+            const body = req.body;
 
-            const query = await service.post(businessVender);
-            const businessCode = new BusinessCode();
-            businessCode.id = businessCodeQuery.id;
-            businessCode.use = 'yes';
-            businessCode.businessVender = businessVender;
-            await new ServiceBusinessCode().post(businessCode);
+            businessVenderManager.name = body.name;
+            businessVenderManager.phone = body.phone;
+            businessVenderManager.email = body.email;
+            businessVenderManager.businessVender = req.user.vender;
+
+            const query = await service.post(businessVenderManager);
+
             responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
+// 벤더 아이디로 매니저를 조회 한다.
+const apiGets = [
+    [businessVenderPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const method: RequestRole = req.method.toString() as any;
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const service = new ServiceBusinessVenderManager();
+            const businessVender = new BusinessVender();
+            businessVender.id = req.user.vender.id;
+            console.log('vender:', businessVender);
+            const query = await service.gets(businessVender);
+
+            responseJson(res, query, method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -156,18 +156,45 @@ const apiPost = [
 const apiPatch = [
     [
         businessVenderPermission.apply(this),
-        check('businessCategory')
-            .not()
-            .isEmpty()
-            .isNumeric(),
-        check('serviceCategory')
-            .not()
-            .isEmpty()
-            .isNumeric(),
-        check('serviceTarget')
+        param('venderManagerId')
             .not()
             .isEmpty(),
-        check('serviceDescription')
+        check('email')
+            .optional()
+            .isEmail(),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const method: RequestRole = req.method.toString() as any;
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const service = new ServiceBusinessVenderManager();
+            const businessVenderManager = new BusinessVenderManager();
+            const body = req.body;
+
+            businessVenderManager.id = Number(req.params.venderManagerId);
+            businessVenderManager.name = body.name;
+            businessVenderManager.phone = body.phone;
+            businessVenderManager.email = body.email;
+
+            const query = await service.post(businessVenderManager);
+
+            responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
+const apiDelete = [
+    [
+        businessVenderPermission.apply(this),
+        param('venderManagerId')
             .not()
             .isEmpty(),
     ],
@@ -180,36 +207,12 @@ const apiPatch = [
             return;
         }
 
-        const service = new ServiceBusinessVender();
-        const businessVender = new BusinessVender();
-        const body = req.body;
-        const vender = req.user.vender;
-        await Object.assign(businessVender, vender, body);
-        delete businessVender.createdAt;
-        delete businessVender.updatedAt;
+        const service = new ServiceBusinessVenderManager();
+        const businessVenderManager = new BusinessVenderManager();
+        businessVenderManager.id = req.params.venderManagerId;
+        const query = await service.delete(businessVenderManager);
 
-        const query = await service.post(businessVender);
-        responseJson(res, [query], method, 'success');
-    },
-];
-
-const apiDelete = [
-    [businessVenderPermission.apply(this)],
-    async (req: Request, res: Response) => {
-        const method: RequestRole = req.method.toString() as any;
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            responseJson(res, errors.array(), method, 'invalid');
-            return;
-        }
-
-        const service = new ServiceBusinessVender();
-        const businessVender = new BusinessVender();
-        businessVender.id = req.user.vender.id;
-        const query = await service.delete(businessVender);
-
-        responseJson(res, [{ message: `${query.raw.affectedRows} is deleted.` }], method, 'success');
+        responseJson(res, [query], method, 'delete');
     },
 ];
 
