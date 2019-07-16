@@ -17,17 +17,34 @@ export default class ServiceBusinessVenderInformationField extends BaseService {
             where: {
                 business: business,
             },
-            relations: ['businessVenderInformationFieldChildNode'],
+            relations: ['businessVenderInformationFieldChildNodes'],
         });
 
         return query;
     }
 
-    public async delete(business: Business) {
+    public async getWithBusiness(venderInformation: BusinessVenderInformationField, business: Business) {
+        const query = this.mysqlManager(BusinessVenderInformationField).findOne({
+            where: {
+                business: business,
+                id: venderInformation.id,
+            },
+            relations: ['businessVenderInformationFieldChildNodes'],
+        });
+
+        return query;
+    }
+
+    public async deleteAll(business: Business) {
         const query = this.mysqlManager(BusinessVenderInformationField).delete({
             business: business,
         });
 
+        return query;
+    }
+
+    public async delete(venderInformation: BusinessVenderInformationField) {
+        const query = this.mysqlManager(BusinessVenderInformationField).delete(venderInformation);
         return query;
     }
 }

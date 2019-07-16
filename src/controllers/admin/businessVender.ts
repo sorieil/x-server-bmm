@@ -29,15 +29,19 @@ const businessVenderPermission = () =>
             const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
 
             if (!businessQuery) {
-                return Promise.reject('You don`t have permission or first insert business information..');
+                resolve(null);
             }
+
             business.id = businessQuery.id;
 
             const query = await service.getWithBusiness(businessVender, business);
 
-            console.log('vender:', query);
             resolve(query);
         }).then(r => {
+            if (r === null) {
+                return Promise.reject('You don`t have permission or first insert business information..');
+            }
+
             if (r) {
                 Object.assign(req.user, { vender: r });
             } else {

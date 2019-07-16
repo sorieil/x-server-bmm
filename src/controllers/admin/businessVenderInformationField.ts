@@ -8,15 +8,47 @@ import { BusinessVenderInformationField } from '../../entity/mysql/entities/Mysq
 import { Server } from 'tls';
 import ServiceBusinessVenderInformationChildNode from '../../service/ServiceBusinessVenderInformationFieldChildNode';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-const schemaRequire: ValidationSchema = {
-    require: {
-        in: 'body',
-        matches: {
-            options: ['yes', 'no'],
-            errorMessage: 'Invalid role',
-        },
-    },
-};
+import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
+import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
+
+const businessVenderInformationPermission = () =>
+    param('informationId').custom((value, { req }) => {
+        if (!value) {
+            return Promise.reject('Invalid insert data.');
+        }
+
+        const service = new ServiceBusinessVenderInformationField();
+        const business = new Business();
+        const admin = new Admin();
+        const venderInformation = new BusinessVenderInformationField();
+        admin.id = req.user.admins[0];
+
+        venderInformation.id = value;
+        return new Promise(async resolve => {
+            const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
+
+            if (!businessQuery) {
+                resolve(null);
+            }
+
+            business.id = businessQuery.id;
+
+            const query = await service.getWithBusiness(venderInformation, business);
+
+            resolve(query);
+        }).then((r: any) => {
+            if (r === null) {
+                return Promise.reject('You don`t have permission or first insert business information..');
+            }
+
+            if (r) {
+                Object.assign(req.user, { venderInformation: r });
+            } else {
+                return Promise.reject('You don`t have permission or first insert vender information..');
+            }
+        });
+    });
+
 const apiPost = [
     [
         businessPermission.apply(this),
@@ -32,7 +64,7 @@ const apiPost = [
         check('mainType')
             .not()
             .isEmpty(),
-        check('businessVenderInformationFieldChildNode').isArray(),
+        check('businessVenderInformationFieldChildNodes').isArray(),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -48,10 +80,12 @@ const apiPost = [
             const serviceChild = new ServiceBusinessVenderInformationChildNode();
             const businessVenderInformationField = new BusinessVenderInformationField();
             const body = req.body;
-            const paramChildNode = body.businessVenderInformationFieldChildNode.map((v: { text: string }) => {
-                const schema = new BusinessVenderInformationFieldChildNode();
-                return Object.assign(schema, v);
-            });
+            const paramChildNode = body.businessVenderInformationFieldChildNodes.map(
+                (v: BusinessVenderInformationFieldChildNode) => {
+                    const schema = new BusinessVenderInformationFieldChildNode();
+                    return Object.assign(schema, v);
+                },
+            );
 
             let paramChildNodeQuery: BusinessVenderInformationFieldChildNode;
 
@@ -78,7 +112,51 @@ const apiPost = [
     },
 ];
 
-const apiGet = [
+const apiPatch = [
+    [businessVenderInformationPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            const method: RequestRole = req.method.toString() as any;
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const service = new ServiceBusinessVenderInformationField();
+            const serviceChild = new ServiceBusinessVenderInformationChildNode();
+            const businessVenderInformationField = new BusinessVenderInformationField();
+            const body = req.body;
+            const paramChildNode = await body.businessVenderInformationFieldChildNodes.map(
+                (v: BusinessVenderInformationFieldChildNode) => {
+                    const schema = new BusinessVenderInformationFieldChildNode();
+                    delete v.createdAt;
+                    delete v.updatedAt;
+                    return Object.assign(schema, v);
+                },
+            );
+
+            if (paramChildNode.length > 0) {
+                await serviceChild.post(paramChildNode);
+            }
+            console.log('child node:', req.user.venderInformation);
+            await Object.assign(businessVenderInformationField, body, req.user.venderInformation);
+            delete businessVenderInformationField.business;
+            delete businessVenderInformationField.createdAt;
+            delete businessVenderInformationField.updatedAt;
+
+            businessVenderInformationField.businessVenderInformationFieldChildNodes = paramChildNode;
+
+            const query = await service.post(businessVenderInformationField);
+            responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
+const apiGets = [
     [businessPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
@@ -102,7 +180,26 @@ const apiGet = [
     },
 ];
 
-const apiDelete = [
+const apiGet = [
+    [businessVenderInformationPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            const method: RequestRole = req.method.toString() as any;
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            responseJson(res, req.user.venderInformation, method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
+const apiDeleteAll = [
     [businessPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
@@ -119,7 +216,7 @@ const apiDelete = [
 
             const informationQuery = await service.get(business);
             if (informationQuery) {
-                const query = await service.delete(business);
+                const query = await service.deleteAll(business);
                 // console.log('query:', query);
                 responseJson(res, [{ message: `${query.raw.affectedRows} is deleted.` }], method, 'success');
             } else {
@@ -131,8 +228,33 @@ const apiDelete = [
     },
 ];
 
+const apiDelete = [
+    [businessVenderInformationPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            const method: RequestRole = req.method.toString() as any;
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+            const service = new ServiceBusinessVenderInformationField();
+            const venderInformation = new BusinessVenderInformationField();
+            venderInformation.id = req.user;
+            const query = await service.delete(venderInformation);
+            responseJson(res, [{ message: `${query.raw.affectedRows} is deleted.` }], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
 export default {
     apiPost,
     apiDelete,
     apiGet,
+    apiGets,
+    apiDeleteAll,
+    apiPatch,
 };

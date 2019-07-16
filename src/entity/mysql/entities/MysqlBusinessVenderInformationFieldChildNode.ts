@@ -13,7 +13,7 @@ export class BusinessVenderInformationFieldChildNode extends Base {
     sort: number;
     @ManyToOne(
         type => BusinessVenderInformationField,
-        businessVenderInformationField => BusinessVenderInformationFieldChildNode,
+        businessVenderInformationField => businessVenderInformationField.businessVenderInformationFieldChildNodes,
         { onDelete: 'CASCADE' },
     )
     @JoinColumn()

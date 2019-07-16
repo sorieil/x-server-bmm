@@ -85,10 +85,19 @@ connections(process.env)
 
         // information
         app.post('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiPost);
-        app.get('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiGet);
-        app.patch('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiPost);
+        app.get(
+            '/api/v1/business_vender_information_field/:informationId',
+            adminCheck,
+            ...businessVenderInformationField.apiGet,
+        );
+        app.get('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiGets);
+        app.patch(
+            '/api/v1/business_vender_information_field/:informationId',
+            adminCheck,
+            ...businessVenderInformationField.apiPatch,
+        );
         app.delete(
-            '/api/v1/business_vender_information_field',
+            '/api/v1/business_vender_information_field/:informationId',
             adminCheck,
             ...businessVenderInformationField.apiDelete,
         );

@@ -11,17 +11,17 @@ export const responseRole = {
     },
     GET: {
         success: 200,
-        error: 204,
+        error: 200,
         errorMessage: 'No Content',
     },
     PATCH: {
         success: 201,
-        error: 204,
+        error: 200,
         errorMessage: 'Failed to update the request.',
     },
     DELETE: {
         success: 200,
-        error: 204,
+        error: 200,
         errorMessage: 'Failed to delete the request.',
     },
 };
