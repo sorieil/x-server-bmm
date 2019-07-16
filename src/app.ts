@@ -81,7 +81,7 @@ connections(process.env)
         app.post('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
         app.patch('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
         app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
-        app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
+        app.patch('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
 
         // information
         app.post('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiPost);
@@ -100,6 +100,11 @@ connections(process.env)
             '/api/v1/business_vender_information_field/:informationId',
             adminCheck,
             ...businessVenderInformationField.apiDelete,
+        );
+        app.delete(
+            '/api/v1/business_vender_information_field_all',
+            adminCheck,
+            ...businessVenderInformationField.apiDeleteAll,
         );
 
         // Business vender

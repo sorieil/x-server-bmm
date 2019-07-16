@@ -91,7 +91,7 @@ const apiPost = [
                             .toString();
                         childBucket.push({
                             time: dividedTime,
-                            status: false,
+                            status: 'no',
                         });
                     }
                     if (i === 0) {

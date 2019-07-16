@@ -25,11 +25,9 @@ export class BusinessMeetingTimeList extends Base {
     @ManyToOne(type => BusinessMeetingRoom, businessMeetingRoom => businessMeetingRoom.businessMeetingTimeLists, {
         onDelete: 'CASCADE',
     })
-    @JoinColumn()
     businessMeetingRoom: BusinessMeetingRoom;
     @ManyToOne(type => User, user => user.businessMeetingTimeLists, { nullable: true })
     user: number;
-    @OneToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.businessMeetingTimeList)
-    @JoinColumn()
+    @ManyToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.businessMeetingTimeLists)
     businessMeetingTime: BusinessMeetingTime;
 }

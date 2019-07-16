@@ -27,7 +27,7 @@ export class ServiceBusinessTimeList extends BaseService {
             where: {
                 Business: Business,
             },
-            relations: ['businessMeetingTimeList'],
+            relations: ['businessMeetingTimeLists'],
         });
 
         return query;

@@ -20,6 +20,6 @@ export class BusinessMeetingTime extends Base {
     @JoinColumn()
     business: Business;
 
-    @OneToOne(type => BusinessMeetingTimeList, businessMeetingTimeList => businessMeetingTimeList.businessMeetingTime)
-    businessMeetingTimeList: BusinessMeetingTimeList[];
+    @OneToMany(type => BusinessMeetingTimeList, businessMeetingTimeList => businessMeetingTimeList.businessMeetingTime)
+    businessMeetingTimeLists: BusinessMeetingTimeList[];
 }

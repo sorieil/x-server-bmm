@@ -44,7 +44,7 @@ const apiPost = [
 
             business.title = body.title;
             business.subTitle = body.subTitle;
-            business.status = body.status === 'true' ? true : false;
+            business.status = body.status;
             business.admin = req.user.admins[0];
 
             const query = await new ServiceBusiness().post(business);

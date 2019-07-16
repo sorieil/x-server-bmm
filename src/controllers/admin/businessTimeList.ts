@@ -32,18 +32,18 @@ const apiPost = [
 
             if (method === 'POST') {
                 // 있는 데이터 삭제
-                if (businessMeetingTimeQuery.businessMeetingTimeList.length > 0) {
+                if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
                     businessMeetingTime.id = businessMeetingTimeQuery.id;
-                    await service.deleteAll(businessMeetingTimeQuery);
+                    await service.deleteAll(businessMeetingTime);
                 }
             }
 
             let timeLists: Array<BusinessMeetingTimeList>;
             console.log(
                 'businessMeetingTimeQuery.businessMeetingTimeList.length:',
-                businessMeetingTimeQuery.businessMeetingTimeList.length,
+                businessMeetingTimeQuery.businessMeetingTimeLists.length,
             );
-            if (businessMeetingTimeQuery.businessMeetingTimeList.length > 0) {
+            if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
                 // Patch
                 console.log('여기야?');
                 timeLists = await new Promise(resolve => {

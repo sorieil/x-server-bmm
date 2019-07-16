@@ -3,7 +3,7 @@ import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { BusinessDetail } from './MysqlBusinessDetail';
 import { BusinessVender } from './MysqlBusinessVender';
-import { Base } from './MysqlBase';
+import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 import { Admin } from './MysqlAdmin';
 import { BusinessVenderInformationField } from './MysqlBusinessVenderInformationField';
@@ -16,8 +16,8 @@ export class Business extends Base {
     @Column('varchar', { nullable: false })
     subTitle: string;
 
-    @Column('boolean', { default: false })
-    status: boolean;
+    @Column({ type: 'enum', enum: ['yes', 'no'] })
+    status: StatusTypeRole;
 
     @OneToMany(type => BusinessDetail, businessDetail => businessDetail.business, {
         cascade: true,
