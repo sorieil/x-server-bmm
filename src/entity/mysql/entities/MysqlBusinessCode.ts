@@ -14,7 +14,6 @@ export class BusinessCode extends Base {
     @Column({ type: 'enum', enum: ['no', 'yes'], default: 'no' })
     use: StatusTypeRole;
 
-    @OneToOne(type => BusinessVender, businessVender => businessVender.businessCode, { onDelete: 'CASCADE' })
-    @JoinColumn()
+    @OneToOne(type => BusinessVender, businessVender => businessVender.businessCode)
     businessVender: BusinessVender;
 }

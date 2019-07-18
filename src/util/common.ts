@@ -46,6 +46,7 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
     } else if (responseType === 'delete') {
         if (data.length > 0) {
             const code = responseRole[requestType].success;
+            console.log(data);
             res.status(code).json({
                 resCode: code,
                 message: `${data[0].raw.affectedRows} is deleted.`,

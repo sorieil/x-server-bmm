@@ -24,7 +24,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * Business.id로 미팅방을 가져온다.
      * @param id Business.id
      */
-    public async get(business: Business) {
+    public async gets(business: Business) {
         const query = await this.mysqlManager(BusinessMeetingRoom).find({
             where: {
                 business: business,
@@ -34,27 +34,22 @@ export class ServiceBusinessMeetingRoom extends BaseService {
         return query;
     }
 
-    /**
-     * Admin 으로 비즈니스와 비즈니스 미팅룸이 존재 하는지 체크를 한다.
-     * @param admin Admin 아이디를 받는다.
-     * this.getRepository(Booking).createQueryBuilder("booking")
-            .innerJoinAndSelect("booking.user", "user")
-            // .innerJoinAndSelect("booking.photographerService", "service")
-            .innerJoinAndSelect("booking.photographer", "photographer")
-            .innerJoinAndSelect("photographer.user", "p_user")
-            .where("booking.user = :userID").setParameter("userID", userID);
-     */
-    public async permissionBusinessMeetingRoom(admin: Admin, businessMeetingRoom: BusinessMeetingRoom) {
-        const query1 = this.mysqlConnection.createQueryBuilder();
-        const query = this.mysqlManager(Admin)
-            .createQueryBuilder('admin')
-            .leftJoin('admin.business', 'business')
-            .leftJoin('business.businessMeetingRoom', 'businessMeetingRoom')
-            .where('admin.id = :adminId', { adminId: admin.id })
-            .andWhere('businessMeetingRoom.id = :businessMeetingRoomId', {
-                businessMeetingRoomId: businessMeetingRoom.id,
-            });
-        return query.getMany();
+    public async get(businessMeetingRoom: BusinessMeetingRoom) {
+        const query = await this.mysqlManager(BusinessMeetingRoom).find({
+            where: {
+                id: businessMeetingRoom.id,
+            },
+        });
+
+        return query;
+    }
+
+    public async getWidthBusiness(businessMeetingRoom: BusinessMeetingRoom, business: Business) {
+        const query = this.mysqlManager(BusinessMeetingRoom).findOne({
+            where: { id: businessMeetingRoom.id, business: business },
+        });
+
+        return query;
     }
 
     /**
@@ -64,7 +59,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * @param adminId Admin.id
      */
     public async delete(businessMeetingRoom: BusinessMeetingRoom) {
-        const query = await this.mysqlManager(BusinessMeetingRoom).remove(businessMeetingRoom);
+        const query = await this.mysqlManager(BusinessMeetingRoom).delete(businessMeetingRoom);
         return query;
     }
 }

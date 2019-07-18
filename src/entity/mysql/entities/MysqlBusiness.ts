@@ -6,7 +6,7 @@ import { BusinessVender } from './MysqlBusinessVender';
 import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 import { Admin } from './MysqlAdmin';
-import { BusinessVenderInformationField } from './MysqlBusinessVenderInformationField';
+import { BusinessVenderField } from './MysqlBusinessVenderField';
 
 @Entity()
 export class Business extends Base {
@@ -38,9 +38,6 @@ export class Business extends Base {
     @OneToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.business)
     businessMeetingTime: BusinessMeetingTime;
 
-    @OneToMany(
-        type => BusinessVenderInformationField,
-        businessVenderInformationField => businessVenderInformationField.business,
-    )
-    businessVenderInformationFields: BusinessVenderInformationField[];
+    @OneToMany(type => BusinessVenderField, businessVenderField => businessVenderField.business)
+    businessVenderFields: BusinessVenderField[];
 }

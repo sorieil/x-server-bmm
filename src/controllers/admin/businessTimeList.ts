@@ -39,13 +39,8 @@ const apiPost = [
             }
 
             let timeLists: Array<BusinessMeetingTimeList>;
-            console.log(
-                'businessMeetingTimeQuery.businessMeetingTimeList.length:',
-                businessMeetingTimeQuery.businessMeetingTimeLists.length,
-            );
             if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
                 // Patch
-                console.log('여기야?');
                 timeLists = await new Promise(resolve => {
                     const timeBucket: Array<BusinessMeetingTimeList> = [];
                     const items = req.body.time_lists;
@@ -63,7 +58,6 @@ const apiPost = [
                 });
             } else {
                 // Post
-                console.log('아님 여기야?');
                 timeLists = await new Promise(resolve => {
                     const timeBucket: Array<BusinessMeetingTimeList> = [];
                     const items = req.body.time_lists;

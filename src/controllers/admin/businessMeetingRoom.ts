@@ -1,20 +1,48 @@
+import { ServiceBusinessPermission } from './../../service/ServiceBusinessPermission';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
-import { getManager, Repository, Entity, AdvancedConsoleLogger } from 'typeorm';
-import { Request, Response, arguments, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { BusinessMeetingRoom } from '../../entity/mysql/entities/MysqlBusinessMeetingRoom';
-import { ServiceBusiness } from '../../service/ServiceBusiness';
 import { check, validationResult, param } from 'express-validator';
 import { ServiceBusinessMeetingRoom } from '../../service/ServiceBusinessMeetingRoom';
 import { businessPermission } from '../../util/permission';
 
+const businessMeetingRoomPermissionById = () =>
+    param('meetingRoomId').custom((value, { req }) => {
+        const meetingRoom = new BusinessMeetingRoom();
+        const business = new Business();
+        const admin = new Admin();
+        admin.id = req.user.admins[0].id;
+
+        const businessQuery = new ServiceBusinessPermission()._ByAdmin(admin);
+        return businessQuery.then((r: Business) => {
+            Object.assign(req.user, { Business: r });
+            if (r) {
+                meetingRoom.id = Number(value);
+                business.id = r.id;
+                const meetingRoomQuery = new ServiceBusinessMeetingRoom().getWidthBusiness(meetingRoom, business);
+                return meetingRoomQuery.then((r1: BusinessMeetingRoom) => {
+                    if (r1) {
+                        return Object.assign(req.user, { meetingRoom: r1 });
+                    } else {
+                        return Promise.reject('You are not authorized or already deleted');
+                    }
+                });
+            } else {
+                return Promise.reject('You are not authorized or have no data.');
+            }
+        });
+    });
 /**
  * Post/update Business meeting room
  */
 const apiPost = [
     [
         businessPermission.apply(this),
+        param('meetingRoomId')
+            .optional()
+            .isNumeric(),
         check('name')
             .not()
             .isEmpty(),
@@ -26,7 +54,8 @@ const apiPost = [
         try {
             // common
             const method: RequestRole = req.method.toString() as any;
-            const businessId = req.params.businessId;
+            const business: Business = (new Business().id = req.user.business.id);
+
             const service = new ServiceBusinessMeetingRoom();
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -40,20 +69,27 @@ const apiPost = [
 
             // 수정
             if (meetingRoomId && method === 'PATCH') {
-                // 여기에서 수정이 가능한지 체크 한다. 권한이 있으면. 입력된 MeetingRoomId 를 설정해준다.
                 meetingRoom.id = Number(meetingRoomId);
-                const permissionBusinessMeetingRoomQuery = await service.permissionBusinessMeetingRoom(
-                    req.user.admins[0],
-                    meetingRoom,
-                );
-
-                if (permissionBusinessMeetingRoomQuery.length === 0) {
-                    responseJson(res, [{ message: '권한이 없습니다.' }], method, 'invalid');
+                const meetingRoomQuery = await service.get(meetingRoom);
+                if (meetingRoomQuery.length === 0) {
+                    responseJson(
+                        res,
+                        [
+                            {
+                                value: meetingRoomId,
+                                msg: 'You don`t have permission or first insert meeting room.',
+                                param: 'meetingRoomId',
+                                location: 'params',
+                            },
+                        ],
+                        method,
+                        'invalid',
+                    );
                     return;
                 }
             }
 
-            meetingRoom.business = businessId;
+            meetingRoom.business = business;
             meetingRoom.name = req.body.name;
             meetingRoom.location = req.body.location;
             meetingRoom.sort = req.body.sort;
@@ -65,16 +101,16 @@ const apiPost = [
         }
     },
 ];
+
 /**
  * Get business meeting room lists
  */
-const apiGet = [
+const apiGets = [
     [businessPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
             const method: RequestRole = req.method.toString() as any;
-            const business: Business = (new Business().id = req.params.businessId);
             const service = new ServiceBusinessMeetingRoom();
 
             if (!errors.isEmpty()) {
@@ -82,71 +118,59 @@ const apiGet = [
                 return;
             }
 
-            const queryMeetingRoom = await service.get(business);
+            const queryMeetingRoom = await service.gets(req.user.business);
             responseJson(res, queryMeetingRoom, method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
     },
 ];
+
+/**
+ * Get business meeting room lists
+ */
+const apiGet = [
+    [businessMeetingRoomPermissionById.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            const method: RequestRole = req.method.toString() as any;
+            const business: Business = (new Business().id = req.user.business.id);
+            const service = new ServiceBusinessMeetingRoom();
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const queryMeetingRoom = await service.get(req.user.meetingRoom);
+            responseJson(res, queryMeetingRoom, method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
 /**
  * Delete business meeting room
  */
 const apiDelete = [
-    [
-        // Check permission by meeting room id, admin id.
-        param('meetingRoomId').custom(async (value, { req }) => {
-            const meetingRoom = new BusinessMeetingRoom();
-
-            meetingRoom.id = Number(value);
-            const permissionBusinessMeetingRoomQuery = await new ServiceBusinessMeetingRoom().permissionBusinessMeetingRoom(
-                req.user.admins[0],
-                meetingRoom,
-            );
-
-            if (permissionBusinessMeetingRoomQuery.length === 0) {
-                return Promise.reject('First insert business information.');
-            } else {
-                if (permissionBusinessMeetingRoomQuery.length === 0) {
-                    return Promise.reject('You don`t have permission.');
-                    return;
-                }
-            }
-        }),
-        // Check business permission.
-        param('businessId').custom(async (value, { req }) => {
-            const businessQuery = await new ServiceBusiness().permissionBusiness(value);
-            if (businessQuery.length === 0) {
-                return Promise.reject('First insert business information.');
-            } else {
-                if (businessQuery[0].admin.id !== req.user.admins[0].id) {
-                    return Promise.reject('You don`t have permission.');
-                }
-            }
-        }),
-    ],
+    [businessMeetingRoomPermissionById.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;
-            const businessId = req.params.businessId;
-            const meetingRoomId = req.params.meetingRoomId;
             const service = new ServiceBusinessMeetingRoom();
-            const meetingRoom = new BusinessMeetingRoom();
-
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
 
-            meetingRoom.id = meetingRoomId;
-
-            const query = await service.delete(meetingRoom);
-            if (typeof query.id === 'undefined') {
-                responseJson(res, [{ message: `${meetingRoomId} is deleted.` }], method, 'success');
-            } else {
-                responseJson(res, [new Array(1)], method, 'success');
-            }
+            console.log('business:', req.user.business);
+            console.log('meetingRoom:', req.user.meetingRoom);
+            const businessMeetingRoom = (new BusinessMeetingRoom().id = req.user.meetingRoom.id);
+            const query = await service.delete(businessMeetingRoom);
+            responseJson(res, [query], method, 'delete');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -155,6 +179,7 @@ const apiDelete = [
 
 export default {
     apiGet,
+    apiGets,
     apiPost,
     apiDelete,
 };

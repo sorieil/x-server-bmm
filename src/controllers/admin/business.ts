@@ -1,4 +1,3 @@
-import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { Request, Response } from 'express';
 import { ServiceBusiness } from '../../service/ServiceBusiness';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';

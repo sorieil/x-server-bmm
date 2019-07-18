@@ -1,7 +1,7 @@
+import { BusinessVenderFieldValue } from './../../entity/mysql/entities/MysqlBusinessVenderFieldValue';
 import { BusinessCode } from './../../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVender } from './../../entity/mysql/entities/MysqlBusinessVender';
 import { Request, Response } from 'express';
-import { ServiceBusiness } from '../../service/ServiceBusiness';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { check, validationResult, query, param } from 'express-validator';
@@ -10,6 +10,8 @@ import ServiceBusinessVender from '../../service/ServiceBusinessVender';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
+import { Code } from '../../entity/mysql/entities/MysqlCode';
+import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
 
 const businessVenderPermission = () =>
     param('venderId').custom((value, { req }) => {
@@ -39,13 +41,13 @@ const businessVenderPermission = () =>
             resolve(query);
         }).then(r => {
             if (r === null) {
-                return Promise.reject('You don`t have permission or first insert business information..');
+                return Promise.reject('You are not authorized or have no data.');
             }
 
             if (r) {
                 Object.assign(req.user, { vender: r });
             } else {
-                return Promise.reject('You don`t have permission or first insert vender information..');
+                return Promise.reject('You are not authorized or have no data.');
             }
         });
     });
@@ -64,8 +66,79 @@ const apiGet = [
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
+            const query = req.user.vender;
 
-            responseJson(res, [req.user.vender], method, 'success');
+            delete query.createdAt;
+            delete query.updatedAt;
+            query.businessCode = query.businessCode.code;
+            query.businessVenderFieldValues.map((j: any) => {
+                delete j.createdAt;
+                delete j.updatedAt;
+                j.value = j.text || j.textarea;
+                delete j.text;
+                delete j.textarea;
+                j.businessVenderField = j.businessVenderField.id;
+                return j;
+            });
+
+            responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
+const apiGetField = [
+    [
+        businessPermission.apply(this),
+        param('informationTypeId')
+            .not()
+            .isEmpty(),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const method: RequestRole = req.method.toString() as any;
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const service = new ServiceBusinessVender();
+            const business = new Business();
+            const informationType = new Code();
+            business.id = req.user.business.id;
+            informationType.id = req.params.informationTypeId;
+            const query = await service.getField(business, informationType);
+
+            console.log('query:', query);
+
+            const companyInformation = query.filter((v: any) => {
+                return v.informationType.id === 4;
+            });
+
+            const venderInformation = query.filter((v: any) => {
+                return v.informationType.id === 5;
+            });
+
+            const manager = query.filter((v: any) => {
+                return v.informationType.id === 6;
+            });
+
+            console.log('companyInformation:', companyInformation);
+            responseJson(
+                res,
+                [
+                    {
+                        defaultInformation: companyInformation,
+                        venderInformation: venderInformation,
+                        manager: manager,
+                    },
+                ],
+                method,
+                'success',
+            );
         } catch (error) {
             tryCatch(res, error);
         }
@@ -88,6 +161,21 @@ const apiGets = [
             const business = new Business();
             business.id = req.user.business.id;
             const query = await service.getByBusiness(business);
+            query.map((v: any) => {
+                delete v.createdAt;
+                delete v.updatedAt;
+                v.businessCode = v.businessCode.code;
+                v.businessVenderFieldValues.map((j: any) => {
+                    delete j.createdAt;
+                    delete j.updatedAt;
+                    j.value = j.text || j.textarea;
+                    delete j.text;
+                    delete j.textarea;
+                    j.businessVenderField = j.businessVenderField.id;
+                    return j;
+                });
+                return v;
+            });
 
             responseJson(res, query, method, 'success');
         } catch (error) {
@@ -100,18 +188,7 @@ const apiGets = [
  * 비즈니스의 상태값을 저장/ 수정 한다.
  */
 const apiPost = [
-    [
-        businessPermission.apply(this),
-        check('name')
-            .not()
-            .isEmpty(),
-        check('ceoName')
-            .not()
-            .isEmpty(),
-        check('establishmentDate')
-            .not()
-            .isEmpty(),
-    ],
+    [businessPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;
@@ -125,13 +202,11 @@ const apiPost = [
             const businessVender = new BusinessVender();
             const service = new ServiceBusinessVender();
             const business = new Business();
+
             const body = req.body;
 
             business.id = req.user.business.id;
 
-            businessVender.name = body.name;
-            businessVender.ceoName = body.ceoName;
-            businessVender.establishmentDate = body.establishmentDate;
             businessVender.business = business;
 
             // 사용하지 않는 코드를 가져온다.
@@ -140,16 +215,53 @@ const apiPost = [
                 responseJson(res, [{ message: '사용가능한 코드가 없습니다.' }], method, 'invalid');
                 return;
             }
+            const query: BusinessVenderFieldValue[] = [];
 
-            businessVender.businessCode = businessCodeQuery;
+            for (let field in body) {
+                const businessVenderFieldValue = new BusinessVenderFieldValue();
+                const businessVenderField = new BusinessVenderField();
+                businessVenderField.id = parseInt(field, 10); // field 아이디
+                if (field.toString() !== 'informationType') {
+                    // await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
+                    const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
+                    console.log('field type:', fieldTypeQuery);
+                    // text textarea 로 조회 해서 구분해줘야 한다.
+                    if (fieldTypeQuery.fieldType.columnType === 'text') {
+                        businessVenderFieldValue.text = body[field];
+                    } else {
+                        businessVenderFieldValue.textarea = body[field];
+                    }
+                    businessVenderFieldValue.businessVenderField = businessVenderField; // 필드의 아아디 값 지정
+                    query.push(businessVenderFieldValue);
+                }
+            }
 
-            const query = await service.post(businessVender);
+            const venderQuery = await service.postVenderFieldValue(query);
+            // console.log('venderQuery:', venderQuery);
+
+            businessVender.businessCode = businessCodeQuery; // 밴더 코드 지정
+
+            if (venderQuery.length > 0) {
+                businessVender.businessVenderFieldValues = venderQuery;
+            }
+            await service.post(businessVender); // businessVenderFieldValue의 값을 저장
+            delete businessVender.business;
+            businessVender.businessCode = businessVender.businessCode.code as any;
+            businessVender.businessVenderFieldValues.map((v: any) => {
+                v.businessVenderField = v.businessVenderField.id;
+                v.value = v.text || v.textarea;
+                delete v.text;
+                delete v.textarea;
+                return v;
+            });
+
+            // 코드 상태 변경
             const businessCode = new BusinessCode();
             businessCode.id = businessCodeQuery.id;
             businessCode.use = 'yes';
             businessCode.businessVender = businessVender;
             await new ServiceBusinessCode().post(businessCode);
-            responseJson(res, [query], method, 'success');
+            responseJson(res, [businessVender], method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -159,20 +271,10 @@ const apiPost = [
 const apiPatch = [
     [
         businessVenderPermission.apply(this),
-        check('businessCategory')
+        check('data')
             .not()
             .isEmpty()
-            .isNumeric(),
-        check('serviceCategory')
-            .not()
-            .isEmpty()
-            .isNumeric(),
-        check('serviceTarget')
-            .not()
-            .isEmpty(),
-        check('serviceDescription')
-            .not()
-            .isEmpty(),
+            .isArray(),
     ],
     async (req: Request, res: Response) => {
         const method: RequestRole = req.method.toString() as any;
@@ -185,14 +287,45 @@ const apiPatch = [
 
         const service = new ServiceBusinessVender();
         const businessVender = new BusinessVender();
-        const body = req.body;
+        const body: Array<{ id: number; businessVenderField: number; value: string }> = req.body.data;
         const vender = req.user.vender;
-        await Object.assign(businessVender, vender, body);
-        delete businessVender.createdAt;
+        businessVender.id = vender.id;
+        const businessVenderValeQuery: Array<BusinessVenderFieldValue> = [];
+        for (let i = 0; body.length > i; i++) {
+            const businessVenderValue = new BusinessVenderFieldValue();
+            const businessVenderField = new BusinessVenderField();
+            businessVenderValue.id = body[i].id;
+            businessVenderValue.businessVender = businessVender;
+
+            businessVenderField.id = body[i].businessVenderField; // field 아이디
+            businessVenderValue.businessVenderField = businessVenderField;
+            const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
+            if (fieldTypeQuery) {
+                if (fieldTypeQuery.fieldType.columnType === 'text') {
+                    businessVenderValue.text = body[i].value;
+                } else {
+                    businessVenderValue.textarea = body[i].value;
+                }
+            } else {
+                responseJson(res, [{ message: `${body[i].businessVenderField} dose net exist.` }], method, 'invalid');
+                return;
+            }
+
+            businessVenderValeQuery.push(businessVenderValue);
+        }
+
         delete businessVender.updatedAt;
 
-        const query = await service.post(businessVender);
-        responseJson(res, [query], method, 'success');
+        const query = await service.postVenderFieldValue(businessVenderValeQuery);
+        query.map((v: any) => {
+            v.businessVenderField = v.businessVenderField.id;
+            delete v.businessVender;
+            v.value = v.text || v.textarea;
+            delete v.text;
+            delete v.textarea;
+            return v;
+        });
+        responseJson(res, query, method, 'success');
     },
 ];
 
@@ -212,7 +345,7 @@ const apiDelete = [
         businessVender.id = req.user.vender.id;
         const query = await service.delete(businessVender);
 
-        responseJson(res, [{ message: `${query.raw.affectedRows} is deleted.` }], method, 'success');
+        responseJson(res, [query], method, 'delete');
     },
 ];
 
@@ -222,6 +355,7 @@ export default {
     apiPost,
     apiPatch,
     apiDelete,
+    apiGetField,
 };
 
 /*

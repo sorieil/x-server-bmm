@@ -19,6 +19,5 @@ export class BusinessVenderManager extends Base {
     email: string;
 
     @ManyToOne(type => BusinessVender, businessVender => businessVender.businessVenderManagers, { onDelete: 'CASCADE' })
-    @JoinColumn()
     businessVender: BusinessVender;
 }

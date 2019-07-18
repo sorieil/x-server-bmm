@@ -1,13 +1,8 @@
-import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
 import { Request, Response } from 'express';
-import { ServiceBusiness } from '../../service/ServiceBusiness';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { check, validationResult, query, param } from 'express-validator';
-import { businessPermission } from '../../util/permission';
-import ServiceBusinessVender from '../../service/ServiceBusinessVender';
-import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import ServiceBusinessVenderManager from '../../service/ServiceBusinessVenderManager';
@@ -208,8 +203,7 @@ const apiDelete = [
         }
 
         const service = new ServiceBusinessVenderManager();
-        const businessVenderManager = new BusinessVenderManager();
-        businessVenderManager.id = req.params.venderManagerId;
+        const businessVenderManager = (new BusinessVenderManager().id = req.params.venderManagerId);
         const query = await service.delete(businessVenderManager);
 
         responseJson(res, [query], method, 'delete');

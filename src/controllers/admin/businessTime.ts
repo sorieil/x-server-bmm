@@ -5,7 +5,6 @@ import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult } from 'express-validator';
 import { businessPermission } from '../../util/permission';
 import { ServiceBusinessTime } from '../../service/ServiceBusinessTime';
-import { resolve } from 'bluebird';
 import moment from 'moment';
 
 const apiPost = [

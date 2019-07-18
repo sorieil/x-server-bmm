@@ -5,8 +5,8 @@ import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../util/common';
 import { check, validationResult, param } from 'express-validator';
 import { ServiceBusinessTimeList } from '../service/ServiceBusinessTimeList';
-import ServiceCodeTable from '../service/ServiceCodeTable';
-import { CodeTable } from '../entity/mysql/entities/MysqlCodeTable';
+import ServiceCode from '../service/ServiceCode';
+import { Code } from '../entity/mysql/entities/MysqlCode';
 
 const apiGet = [
     async (req: Request, res: Response) => {
@@ -19,14 +19,14 @@ const apiGet = [
                 return;
             }
 
-            const service = new ServiceCodeTable();
-            const codeTable = new CodeTable();
-            codeTable.category = req.params.category;
+            const service = new ServiceCode();
+            const code = new Code();
+            code.category = req.params.category;
             let query;
 
             // 지정 카테고리가 있는 경우
             if (req.params.category) {
-                query = await service.get(codeTable);
+                query = await service.get(code);
             } else {
                 // 지정 카테고리가 없는 경우
                 query = await service.gets();

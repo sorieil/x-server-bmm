@@ -1,7 +1,7 @@
 import { BusinessVender } from './MysqlBusinessVender';
 import { Base } from './MysqlBase';
 import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, ManyToMany } from 'typeorm';
-import { CodeTable } from './MysqlCodeTable';
+import { Code } from './MysqlCode';
 import { User } from './MysqlUser';
 
 @Entity()

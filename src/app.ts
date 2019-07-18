@@ -17,12 +17,13 @@ import Sentry = require('@sentry/node');
 import { API_VERSION } from '@sentry/hub/dist/hub';
 import businessTime from './controllers/admin/businessTime';
 import businessTimeList from './controllers/admin/businessTimeList';
-import businessVenderInformationField from './controllers/admin/businessVenderInformationField';
+import businessVenderField from './controllers/admin/businessVenderField';
 import clientVender from './controllers/client/clientVender';
-import codeTable from './controllers/codeTable';
+import code from './controllers/code';
 import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
 import businessVenderManager from './controllers/admin/businessVenderManager';
+import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
 Sentry.init({ dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535' });
 Sentry.configureScope(scope => {
     scope.setUser({ email: 'jhkim@xsync.co' });
@@ -65,18 +66,12 @@ connections(process.env)
         app.patch('/api/v1/business', adminCheck, ...business.apiPost);
         app.delete('/api/v1/business', adminCheck, ...business.apiDelete);
 
-        app.post('/api/v1/business/:businessId/meetingroom', adminCheck, ...businessMeetingRoom.apiPost);
-        app.get('/api/v1/business/:businessId/meetingroom', adminCheck, ...businessMeetingRoom.apiGet);
-        app.patch(
-            '/api/v1/business/:businessId/meetingroom/:meetingRoomId',
-            adminCheck,
-            ...businessMeetingRoom.apiPost,
-        );
-        app.delete(
-            '/api/v1/business/:businessId/meetingroom/:meetingRoomId',
-            adminCheck,
-            ...businessMeetingRoom.apiDelete,
-        );
+        // meeting room
+        app.post('/api/v1/business_meeting_room', adminCheck, ...businessMeetingRoom.apiPost);
+        app.get('/api/v1/business_meeting_room', adminCheck, ...businessMeetingRoom.apiGets);
+        app.get('/api/v1/business_meeting_room/meetingRoomId', adminCheck, ...businessMeetingRoom.apiGet);
+        app.patch('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiPost);
+        app.delete('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiDelete);
 
         app.post('/api/v1/token', ...api.generateToken);
         app.post('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
@@ -84,28 +79,26 @@ connections(process.env)
         app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
         app.patch('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
 
-        // information
-        app.post('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiPost);
-        app.get(
-            '/api/v1/business_vender_information_field/:informationId',
-            adminCheck,
-            ...businessVenderInformationField.apiGet,
-        );
-        app.get('/api/v1/business_vender_information_field', adminCheck, ...businessVenderInformationField.apiGets);
-        app.patch(
-            '/api/v1/business_vender_information_field/:informationId',
-            adminCheck,
-            ...businessVenderInformationField.apiPatch,
-        );
+        // vender field init
+        app.post('/api/v1/business_vender_field_init', adminCheck, ...businessVenderField.apiInit);
+        // vender field
+        app.post('/api/v1/business_vender_field', adminCheck, ...businessVenderField.apiPost);
+        app.get('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiGet);
+        app.get('/api/v1/business_vender_field', adminCheck, ...businessVenderField.apiGets);
+        app.patch('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiPatch);
+        app.delete('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiDelete);
         app.delete(
-            '/api/v1/business_vender_information_field/:informationId',
+            '/api/v1/business_vender_field/:fieldId/child/:fieldChildNodeId',
             adminCheck,
-            ...businessVenderInformationField.apiDelete,
+            ...businessVenderField.apiDeleteChildNode,
         );
+        app.delete('/api/v1/business_vender_field_all', adminCheck, ...businessVenderField.apiDeleteAll);
+
+        // vender field child node
         app.delete(
-            '/api/v1/business_vender_information_field_all',
+            '/api/v1/business_vender_field_child/:fieldChildNodeId',
             adminCheck,
-            ...businessVenderInformationField.apiDeleteAll,
+            ...businessVenderFieldChildNode.apiDelete,
         );
 
         // Business vender
@@ -114,6 +107,7 @@ connections(process.env)
         app.delete('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiDelete);
         app.get('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiGet);
         app.get('/api/v1/business_vender', adminCheck, ...businessVender.apiGets);
+        app.get('/api/v1/business_vender_field_list/:informationTypeId', adminCheck, ...businessVender.apiGetField);
 
         // Business vender manager
         app.get('/api/v1/business_vender/:venderId/manager', adminCheck, ...businessVenderManager.apiGets);
@@ -138,8 +132,8 @@ connections(process.env)
         app.get('/api/v1/business_code', adminCheck, ...businessCode.apiGet);
 
         // code table
-        app.get('/api/v1/code_table/:category', ...codeTable.apiGet);
-        app.get('/api/v1/code_table', ...codeTable.apiGet);
+        app.get('/api/v1/code/:category', ...code.apiGet);
+        app.get('/api/v1/code', ...code.apiGet);
 
         // == user
         const clientCheck = auth('xsync-user').isAuthenticate;
@@ -156,14 +150,14 @@ connections(process.env)
         /**
          * Start Express server.
          */
-        app.use(Sentry.Handlers.errorHandler());
+        // app.use(Sentry.Handlers.errorHandler());
 
-        app.use((err: any, req: Request, res: Response | any, next: NextFunction) => {
-            // The error id is attached to `res.sentry` to be returned
-            // and optionally displayed to the user for support.
-            res.statusCode = 500;
-            res.end(res.sentry + '\n');
-        });
+        // app.use((err: any, req: Request, res: Response | any, next: NextFunction) => {
+        // The error id is attached to `res.sentry` to be returned
+        // and optionally displayed to the user for support.
+        // res.statusCode = 500;
+        // res.end(res.sentry + '\n');
+        // });
 
         app.listen(app.get('port'), () => {
             console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.ENVIRONMENT);

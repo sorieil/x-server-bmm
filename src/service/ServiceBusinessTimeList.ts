@@ -17,7 +17,11 @@ export class ServiceBusinessTimeList extends BaseService {
     public async post(businessMeetingTimeList: BusinessMeetingTimeList[]) {
         const query = await this.mysqlManager(BusinessMeetingTimeList).save(businessMeetingTimeList);
         await query.map(v => {
-            return delete v.businessMeetingTime;
+            delete v.businessMeetingTime;
+            delete v.createdAt;
+            delete v.updatedAt;
+            delete v.memo;
+            return v;
         });
         return query;
     }
