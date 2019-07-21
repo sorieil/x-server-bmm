@@ -1,0 +1,1 @@
+ENVIRONMENT=production npx nodemon ./dist/app.js

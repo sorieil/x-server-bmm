@@ -54,7 +54,8 @@ const apiPost = [
         try {
             // common
             const method: RequestRole = req.method.toString() as any;
-            const business: Business = (new Business().id = req.user.business.id);
+            const business: Business = new Business();
+            business.id = req.user.business.id;
 
             const service = new ServiceBusinessMeetingRoom();
             const errors = validationResult(req);
@@ -71,7 +72,7 @@ const apiPost = [
             if (meetingRoomId && method === 'PATCH') {
                 meetingRoom.id = Number(meetingRoomId);
                 const meetingRoomQuery = await service.get(meetingRoom);
-                if (meetingRoomQuery.length === 0) {
+                if (!meetingRoomQuery) {
                     responseJson(
                         res,
                         [
@@ -144,7 +145,7 @@ const apiGet = [
             }
 
             const queryMeetingRoom = await service.get(req.user.meetingRoom);
-            responseJson(res, queryMeetingRoom, method, 'success');
+            responseJson(res, [queryMeetingRoom], method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }

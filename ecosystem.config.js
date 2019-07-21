@@ -1,15 +1,18 @@
 module.exports = {
     apps: [
         {
-            name: 'app',
+            name: 'API',
             script: './src/app.ts',
             instances: 0,
-            exec_mode: 'cluster',
+            autorestart: true,
+            watch: false,
+            // max_memory_restart: '1.8G',
             env: {
+                ENVIRONMENT: 'development',
+            },
+            env_production: {
                 ENVIRONMENT: 'production',
             },
-            // wait_ready: true,
-            // listen_timeout: 50000,
         },
     ],
 };

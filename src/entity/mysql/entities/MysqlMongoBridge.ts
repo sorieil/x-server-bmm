@@ -1,6 +1,6 @@
 import { AdminLogin } from './MysqlAdminLogin';
 import { Base } from './MysqlBase';
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn, BeforeUpdate } from 'typeorm';
 import { Login } from './MysqlLogin';
 
 @Entity()
@@ -15,4 +15,9 @@ export class MongoBridge extends Base {
     @OneToOne(type => Login, login => login.mongoBridge, { onDelete: 'CASCADE' })
     @JoinColumn()
     login: Login;
+
+    @BeforeUpdate()
+    updateDateUpdate() {
+        this.updatedAt = new Date();
+    }
 }

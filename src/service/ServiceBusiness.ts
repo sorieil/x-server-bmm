@@ -18,7 +18,7 @@ export class ServiceBusiness extends BaseService {
      * @param entity AdminLogin
      */
     public async get(admin: Admin) {
-        const query = await this.mysqlManager(Business).find({ where: { admin: admin } });
+        const query = await this.mysqlManager(Business).findOne({ where: { admin: admin } });
         return query;
     }
     /**

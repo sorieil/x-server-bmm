@@ -1,4 +1,3 @@
-import { BusinessVenderFieldChildNode } from './../../entity/mysql/entities/MysqlBusinessVenderFieldChildnode';
 import { Request, Response } from 'express';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { param, validationResult } from 'express-validator';
@@ -8,6 +7,7 @@ import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
 import ServiceBusinessVenderFieldChildNode from '../../service/ServiceBusinessVenderFieldChildNode';
 import { responseJson, RequestRole } from '../../util/common';
+import { BusinessVenderFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVenderFieldChildNode';
 const businessVenderInformationPermission = () =>
     param('fieldChildNodeId').custom((value, { req }) => {
         if (!value) {

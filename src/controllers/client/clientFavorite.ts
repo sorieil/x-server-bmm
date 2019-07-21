@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import ServiceBusinessVender from '../../service/ServiceBusinessVender';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import ServiceBusinessVenderFavorite from '../../service/ServiceBusinessVenderFavorite';
+import { User } from '../../entity/mysql/entities/MysqlUser';
 
 const apiGet = [
     [
@@ -22,9 +23,9 @@ const apiGet = [
             }
 
             const service = new ServiceBusinessVenderFavorite();
-            const business = new Business();
-            business.id = req.params.businessId;
-            const query = await service.getByUser(business);
+            const user = new User();
+            user.id = req.params.businessId;
+            const query = await service.getByUser(user);
             responseJson(res, query, method, 'success');
         } catch (error) {
             tryCatch(res, error);

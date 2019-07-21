@@ -29,7 +29,7 @@ export class ServiceBusinessTimeList extends BaseService {
     public async get(business: Business) {
         const query = await this.mysqlManager(BusinessMeetingTime).findOne({
             where: {
-                Business: Business,
+                business: business,
             },
             relations: ['businessMeetingTimeLists'],
         });

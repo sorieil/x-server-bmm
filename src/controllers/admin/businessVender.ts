@@ -226,6 +226,15 @@ const apiPost = [
                     const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
                     console.log('field type:', fieldTypeQuery);
                     // text textarea 로 조회 해서 구분해줘야 한다.
+                    if (!fieldTypeQuery) {
+                        responseJson(
+                            res,
+                            [{ message: `The parameter field id ${parseInt(field, 10)} of  does not exist.` }],
+                            method,
+                            'invalid',
+                        );
+                        return;
+                    }
                     if (fieldTypeQuery.fieldType.columnType === 'text') {
                         businessVenderFieldValue.text = body[field];
                     } else {

@@ -1,10 +1,6 @@
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
-import { BusinessDetail } from './MysqlBusinessDetail';
-import { BusinessVender } from './MysqlBusinessVender';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
-import { Admin } from './MysqlAdmin';
-import { Business } from './MysqlBusiness';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
 import { User } from './MysqlUser';
 
@@ -22,12 +18,12 @@ export class BusinessMeetingTimeList extends Base {
     @Column('text', { nullable: true })
     memo: string;
 
-    @ManyToOne(type => BusinessMeetingRoom, businessMeetingRoom => businessMeetingRoom.businessMeetingTimeLists, {
-        onDelete: 'CASCADE',
-    })
+    @ManyToOne(type => BusinessMeetingRoom, businessMeetingRoom => businessMeetingRoom.businessMeetingTimeLists)
     businessMeetingRoom: BusinessMeetingRoom;
     @ManyToOne(type => User, user => user.businessMeetingTimeLists, { nullable: true })
     user: number;
-    @ManyToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.businessMeetingTimeLists)
+    @ManyToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.businessMeetingTimeLists, {
+        onDelete: 'CASCADE',
+    })
     businessMeetingTime: BusinessMeetingTime;
 }

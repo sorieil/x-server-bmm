@@ -1,3 +1,4 @@
+import { responseJson, RequestRole } from './util/common';
 import 'reflect-metadata';
 import bodyParser from 'body-parser';
 import compression from 'compression'; // compresses requests
@@ -24,14 +25,15 @@ import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
 import businessVenderManager from './controllers/admin/businessVenderManager';
 import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
-Sentry.init({ dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535' });
-Sentry.configureScope(scope => {
-    scope.setUser({ email: 'jhkim@xsync.co' });
-});
+
 // Load environment variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
 
 if (process.env.ENVIRONMENT === 'production') {
+    Sentry.init({ dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535' });
+    Sentry.configureScope(scope => {
+        scope.setUser({ email: 'jhkim@xsync.co' });
+    });
     dotenv.config({ path: '.env.production' });
 } else {
     dotenv.config({ path: '.env' });
@@ -43,13 +45,16 @@ connections(process.env)
         const app = express();
         // Express configuration
         app.set('port', process.env.PORT || 3003);
-        app.use(Sentry.Handlers.requestHandler());
-        app.use(
-            cors({
-                origin: '*',
-                optionsSuccessStatus: 200,
-            }),
-        );
+        if (process.env.ENVIRONMENT === 'production') {
+            app.use(Sentry.Handlers.requestHandler());
+            app.use(
+                cors({
+                    origin: '*',
+                    optionsSuccessStatus: 200,
+                }),
+            );
+        }
+
         app.use(compression());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
@@ -73,14 +78,19 @@ connections(process.env)
         app.patch('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiPost);
         app.delete('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiDelete);
 
-        app.post('/api/v1/token', ...api.generateToken);
+        // meeting time
+        app.get('/api/v1/business_time', adminCheck, ...businessTime.apiGet);
         app.post('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
         app.patch('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
+
+        // Meeting time list
+        app.get('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiGets);
         app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
         app.patch('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
 
         // vender field init
         app.post('/api/v1/business_vender_field_init', adminCheck, ...businessVenderField.apiInit);
+
         // vender field
         app.post('/api/v1/business_vender_field', adminCheck, ...businessVenderField.apiPost);
         app.get('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiGet);
@@ -128,12 +138,15 @@ connections(process.env)
             ...businessVenderManager.apiDelete,
         );
 
-        // Business code generate
+        // Business code get
         app.get('/api/v1/business_code', adminCheck, ...businessCode.apiGet);
 
         // code table
         app.get('/api/v1/code/:category', ...code.apiGet);
         app.get('/api/v1/code', ...code.apiGet);
+
+        // Temperature token
+        app.post('/api/v1/token', ...api.generateToken);
 
         // == user
         const clientCheck = auth('xsync-user').isAuthenticate;
@@ -150,14 +163,17 @@ connections(process.env)
         /**
          * Start Express server.
          */
-        // app.use(Sentry.Handlers.errorHandler());
 
-        // app.use((err: any, req: Request, res: Response | any, next: NextFunction) => {
-        // The error id is attached to `res.sentry` to be returned
-        // and optionally displayed to the user for support.
-        // res.statusCode = 500;
-        // res.end(res.sentry + '\n');
-        // });
+        if (process.env.ENVIRONMENT === 'production') {
+            app.use(Sentry.Handlers.errorHandler());
+        }
+
+        app.use((err: any, req: Request, res: Response | any, next: NextFunction) => {
+            // The error id is attached to `res.sentry` to be returned
+            // and optionally displayed to the user for support.
+            const method: RequestRole = req.method.toString() as any;
+            responseJson(res, [res.sentry], method, 'invalid');
+        });
 
         app.listen(app.get('port'), () => {
             console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.ENVIRONMENT);

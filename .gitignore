@@ -8,3 +8,5 @@ ormlogs.log
 debug.log
 dist/
 yarn-error.log
+
+mysql

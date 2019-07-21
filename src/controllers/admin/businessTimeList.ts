@@ -25,8 +25,9 @@ const apiPost = [
                 return;
             }
             // 업데이트가 아니라면, 기존에 있는 데이터는 삭제 한다.
-            const service = await new ServiceBusinessTimeList();
-            const business = (new Business().id = req.user.business.id);
+            const service = new ServiceBusinessTimeList();
+            const business = new Business();
+            business.id = req.user.business.id;
             const businessMeetingTime = new BusinessMeetingTime();
             const businessMeetingTimeQuery: BusinessMeetingTime = await service.get(business);
 
@@ -89,6 +90,28 @@ const apiPost = [
     },
 ];
 
+const apiGets = [
+    [businessPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        const method: RequestRole = req.method.toString() as any;
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            responseJson(res, errors.array(), method, 'invalid');
+            return;
+        }
+
+        const service = new ServiceBusinessTimeList();
+        const business = new Business();
+        business.id = req.user.business.id;
+
+        const query = await service.get(business);
+
+        responseJson(res, [query], method, 'success');
+    },
+];
+
 export default {
     apiPost,
+    apiGets,
 };

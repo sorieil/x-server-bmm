@@ -1,5 +1,5 @@
-import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, ManyToMany } from 'typeorm';
+import { Base } from './MysqlBase';
+import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
 import { type } from 'os';
 import { Code } from './MysqlCode';
 import { BusinessVenderField } from './MysqlBusinessVenderField';

@@ -10,17 +10,19 @@ export const auth = (secretName: secretNameType) => {
     const opts: StrategyOptions = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'), // 어떤 토큰으로 발행을 하는지 체크 해봐야 한다.
         secretOrKey: secretName,
+        algorithms: ['HS256'],
     };
     // (req: Request, res: Response, next: NextFunction) => {
     passport.use(
         secretName,
         new Strategy(opts, async (jwt_payload, done) => {
+            console.log('jwt_payload:', jwt_payload);
             try {
                 const serviceAccount = new ServiceAccount();
                 const level = jwt_payload.level;
 
                 if (level === 'user') {
-                    const user = serviceAccount.getUserId(jwt_payload.id);
+                    const user = serviceAccount.getUserId(jwt_payload._id);
                     return user
                         .then(user => {
                             if (user) {
@@ -34,7 +36,7 @@ export const auth = (secretName: secretNameType) => {
                             return done('dbError', null);
                         });
                 } else {
-                    const admin = serviceAccount.getAdminId(jwt_payload.id);
+                    const admin = serviceAccount.getAdminId(jwt_payload._id);
                     return admin.then(user => {
                         if (user) {
                             return done(undefined, user);

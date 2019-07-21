@@ -47,7 +47,7 @@ const apiPost = [
             const business: Business = new Business();
             const body = req.body;
             business.id = req.user.business.id;
-            const queryBusinessMeetingTime = await service.getByBusiness(business);
+            const queryBusinessMeetingTime = await service.get(business);
             if (queryBusinessMeetingTime) {
                 businessMeetingTime.id = queryBusinessMeetingTime.id;
                 if (method === 'POST') {
@@ -109,6 +109,28 @@ const apiPost = [
     },
 ];
 
+const apiGet = [
+    [businessPermission.apply(this)],
+    async (req: Request, res: Response) => {
+        const method: RequestRole = req.method.toString() as any;
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            responseJson(res, errors.array(), method, 'invalid');
+            return;
+        }
+
+        const service = new ServiceBusinessTime();
+        const business = new Business();
+        business.id = req.user.business.id;
+        console.log('business:', business);
+        const query = await service.get(business);
+
+        responseJson(res, [query], method, 'success');
+    },
+];
+
 export default {
     apiPost,
+    apiGet,
 };

@@ -35,7 +35,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
     }
 
     public async get(businessMeetingRoom: BusinessMeetingRoom) {
-        const query = await this.mysqlManager(BusinessMeetingRoom).find({
+        const query = await this.mysqlManager(BusinessMeetingRoom).findOne({
             where: {
                 id: businessMeetingRoom.id,
             },

@@ -1,4 +1,3 @@
-import { BusinessVenderFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVenderFieldChildNode';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
@@ -11,6 +10,8 @@ import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import ServiceBusinessVenderFieldChildNode from '../../service/ServiceBusinessVenderFieldChildNode';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
+import { BusinessVenderFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVenderFieldChildNode';
+import { resolve } from 'bluebird';
 
 const businessVenderPermission = () =>
     param('fieldId').custom((value, { req }) => {
@@ -124,44 +125,48 @@ const apiInit = [
             ];
 
             // 중복 체크
-            const checkDuplicate = await initFields.filter(async v => {
-                return (await service.checkDuplicate(v.name, v.informationType)) ? true : false;
+            return await new Promise(async resolve => {
+                const promiseBucket: any[] = [];
+                initFields.forEach(element => {
+                    promiseBucket.push(service.checkDuplicate(element.name, element.informationType));
+                });
+
+                resolve(promiseBucket);
+            }).then((process: Array<object>) => {
+                return Promise.all(process).then(async result => {
+                    const exists = result.filter(v => typeof v !== 'undefined');
+                    if (exists.length > 3) {
+                        console.log(`${new Date().getMilliseconds()} -> checkDuplicate: ${result}`);
+                        responseJson(
+                            res,
+                            [
+                                {
+                                    message: 'Already exists',
+                                },
+                            ],
+                            method,
+                            'success',
+                        );
+                        return;
+                    } else {
+                        const insertData = await initFields.map(v => {
+                            const businessVenderField = new BusinessVenderField();
+                            const informationType = new Code();
+                            informationType.id = v.informationType;
+                            const fieldType = new Code();
+                            fieldType.id = v.fieldType;
+                            businessVenderField.name = v.name;
+                            businessVenderField.business = business;
+                            businessVenderField.require = 'yes';
+                            businessVenderField.informationType = informationType;
+                            businessVenderField.fieldType = fieldType;
+                            return businessVenderField;
+                        });
+                        const query = await service.postArray(insertData);
+                        responseJson(res, query, method, 'success');
+                    }
+                });
             });
-
-            console.log('checkDuplicate:', checkDuplicate);
-            if (checkDuplicate.length > 3) {
-                responseJson(
-                    res,
-                    [
-                        {
-                            message: 'Already exists',
-                        },
-                    ],
-                    method,
-                    'success',
-                );
-                return;
-            }
-
-            const insertData = await initFields.map(v => {
-                const businessVenderField = new BusinessVenderField();
-                const informationType = new Code();
-                informationType.id = v.informationType;
-                const fieldType = new Code();
-                fieldType.id = v.fieldType;
-                businessVenderField.name = v.name;
-                businessVenderField.business = business;
-                businessVenderField.require = 'yes';
-                businessVenderField.informationType = informationType;
-                businessVenderField.fieldType = fieldType;
-                return businessVenderField;
-            });
-
-            console.log('Convert result:', insertData);
-
-            const query = await service.postArray(insertData);
-
-            responseJson(res, query, method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -182,7 +187,9 @@ const apiPost = [
         check('fieldType')
             .not()
             .isEmpty(),
-        check('fieldChildNodes').isArray(),
+        check('fieldChildNodes')
+            .optional()
+            .isArray(),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -225,6 +232,8 @@ const apiPost = [
             businessVenderField.businessVenderFieldChildNodes = paramChildNode;
 
             const query = await service.post(businessVenderField);
+            query.informationType = query.informationType.id as any;
+            query.fieldType = query.fieldType.id as any;
 
             responseJson(res, [query], method, 'success');
         } catch (error) {
@@ -234,7 +243,12 @@ const apiPost = [
 ];
 
 const apiPatch = [
-    [businessVenderPermission.apply(this)],
+    [
+        businessVenderPermission.apply(this),
+        check('fieldChildNodes')
+            .optional()
+            .isArray(),
+    ],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -283,6 +297,8 @@ const apiPatch = [
             }
 
             const query = await service.post(businessVenderField);
+            await Object.assign(query, { fieldChildNodes: query.businessVenderFieldChildNodes });
+            delete query.businessVenderFieldChildNodes;
             responseJson(res, [query], method, 'success');
         } catch (error) {
             tryCatch(res, error);
@@ -327,21 +343,17 @@ const apiGets = [
                 return v.informationType === 6;
             });
 
-            setTimeout(
-                () =>
-                    responseJson(
-                        res,
-                        [
-                            {
-                                companyInformation: companyInformation,
-                                informationType: informationType,
-                                manager: manager,
-                            },
-                        ],
-                        method,
-                        'success',
-                    ),
-                0,
+            responseJson(
+                res,
+                [
+                    {
+                        companyInformation: companyInformation,
+                        informationType: informationType,
+                        manager: manager,
+                    },
+                ],
+                method,
+                'success',
             );
         } catch (error) {
             tryCatch(res, error);
@@ -365,7 +377,7 @@ const apiGet = [
             delete query.createdAt;
             delete query.updatedAt;
 
-            query.fieldChildNodes = query.fieldChildNodes.map((v: BusinessVenderFieldChildNode) => {
+            query.fieldChildNodes = query.BusinessVenderFieldChildNode.map((v: BusinessVenderFieldChildNode) => {
                 delete v.createdAt;
                 delete v.updatedAt;
                 return v;

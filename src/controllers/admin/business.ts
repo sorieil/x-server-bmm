@@ -4,6 +4,7 @@ import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { businessPermission } from '../../util/permission';
 import { validationResult } from 'express-validator';
+import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 
 /**
  * 비즈니스의 상태 값을 가져온다. Header, status
@@ -14,7 +15,7 @@ const apiGet = [
             // admin 으로 비지니스 정보를 조회 하기 때문에 권한 검증은 필요 없음.
             const query = await new ServiceBusiness().get(req.user.admins[0]);
             const method: RequestRole = req.method.toString() as any;
-            responseJson(res, query, method, 'success');
+            responseJson(res, [query], method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -30,21 +31,25 @@ const apiPost = [
             const method: RequestRole = req.method.toString() as any;
             const business = new Business();
             const body = req.body;
-
-            const queryBusiness = await new ServiceBusiness().get(req.user.admins[0]);
-            if (queryBusiness.length > 0) {
-                business.id = queryBusiness[0].id;
+            const service = new ServiceBusiness();
+            const admin = new Admin();
+            admin.id = req.user.admins[0].id;
+            console.log('admin:', admin);
+            const queryBusiness = await service.get(admin);
+            if (queryBusiness) {
+                business.id = queryBusiness.id;
                 // 비즈니스는 계정한 한번만 입력을 할 수 있기때문에, 널 표시, 수정은 Patch 메서드로~
                 if (method === 'POST') {
                     responseJson(res, [], method, 'success');
                     return;
                 }
+            } else {
+                business.admin = admin;
             }
 
             business.title = body.title;
             business.subTitle = body.subTitle;
             business.status = body.status;
-            business.admin = req.user.admins[0];
 
             const query = await new ServiceBusiness().post(business);
             responseJson(res, [query], method, 'success');

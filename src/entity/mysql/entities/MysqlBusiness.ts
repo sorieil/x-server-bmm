@@ -35,8 +35,8 @@ export class Business extends Base {
     @ManyToOne(type => Admin, admin => admin.businesses, { onDelete: 'CASCADE' })
     admin: Admin;
 
-    @OneToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.business)
-    businessMeetingTime: BusinessMeetingTime;
+    @OneToMany(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.business)
+    businessMeetingTimes: BusinessMeetingTime[];
 
     @OneToMany(type => BusinessVenderField, businessVenderField => businessVenderField.business)
     businessVenderFields: BusinessVenderField[];

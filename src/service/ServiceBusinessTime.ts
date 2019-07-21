@@ -28,9 +28,8 @@ export class ServiceBusinessTime extends BaseService {
      * 비즈니스 아이디로 설정한 타임을 조회 한다.
      * @param business business.id
      */
-    public async getByBusiness(business: Business) {
+    public async get(business: Business) {
         const query = await this.mysqlManager(BusinessMeetingTime).findOne({
-            select: ['id'],
             where: {
                 business: business,
             },

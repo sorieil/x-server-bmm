@@ -10,7 +10,7 @@ export default class ServiceBusinessVenderField extends BaseService {
 
     public async postArray(venderInformation: BusinessVenderField[]) {
         const query = await this.mysqlManager(BusinessVenderField).save(venderInformation);
-        await query.map((v:any) => {
+        await query.map((v: any) => {
             delete v.business;
             v.informationType = v.informationType.id;
             v.fieldType = v.fieldType.id;
@@ -46,7 +46,7 @@ export default class ServiceBusinessVenderField extends BaseService {
                 business: business,
                 id: businessVenderField.id,
             },
-            relations: ['fieldChildNodes', 'informationType', 'fieldType'],
+            relations: ['businessVenderFieldChildNodes', 'informationType', 'fieldType'],
         });
 
         return query;

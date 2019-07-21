@@ -67,6 +67,7 @@ const apiGet = [
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
+
             const service = new ServiceBusinessVenderManager();
             const businessVenderManager = new BusinessVenderManager();
 

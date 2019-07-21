@@ -2,13 +2,16 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true, //Typeorm option
     "experimentalDecorators": true, //Typeorm option
-    // "allowJs": true,
+    "allowJs": true,
     "module": "commonjs",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "es6",
-    "noImplicitAny": true,
-    "moduleResolution": "node",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
