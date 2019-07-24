@@ -2,7 +2,7 @@
  pipelines:
    default:
      - step:
-        name: Deploy to Firebase
+        name: Deploy to BMM API
         deployment: production
         script:
             - ssh centos@52.79.251.52 'bash -s' < ./build/deploy.sh

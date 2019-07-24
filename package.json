@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "npx pm2 startOrRestart ./build/ecosystem.config.js npx ts-node -- -P tsconfig.json ./src/app.ts --watch && npx pm2 logs API",
-    "start": "npx pm2 startOrRestart ecosystem.config.js production --force npx ts-node -- -P tsconfig.json ./src/app.ts",
+    "start": "npx pm2 startOrRestart ecosystem.config.js --force npx ts-node -- -P tsconfig.json ./src/app.ts",
     "test": "jest --forceExit --coverage --verbose",
     "build": "npx tsc",
     "dev-start-nodemon": "ENVIRONMENT=development npx nodemon --exec npx ts-node ./src/app.ts",

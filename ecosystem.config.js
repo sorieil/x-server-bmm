@@ -6,7 +6,7 @@ module.exports = {
             autorestart: true,
             watch: false,
             // max_memory_restart: '1.8G',
-            env_production: {
+            env: {
                 ENVIRONMENT: 'production',
             },
         },
