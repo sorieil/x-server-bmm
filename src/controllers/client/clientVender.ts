@@ -3,7 +3,7 @@ import { validationResult, check } from 'express-validator';
 import { Request, Response } from 'express';
 import ServiceBusinessVender from '../../service/ServiceBusinessVender';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-
+const userPermission = () => {};
 /**
  *
  * 비즈니스 아이디로 벤더의 정보를 가져온다.
@@ -17,7 +17,6 @@ const apiGet = [
             .not()
             .isEmpty(),
     ],
-
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -29,10 +28,8 @@ const apiGet = [
             }
 
             const service = new ServiceBusinessVender();
-            const business = new Business();
-            business.id = req.params.businessId;
-            const query = await service.getByBusiness(business);
-            responseJson(res, query, method, 'success');
+
+            responseJson(res, [], method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }

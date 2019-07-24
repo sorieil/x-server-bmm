@@ -2,6 +2,9 @@ import { param, header, check, query } from 'express-validator';
 import { ServiceBusinessPermission } from '../service/ServiceBusinessPermission';
 import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
+import { Login } from '../entity/mysql/entities/MysqlLogin';
+import ServiceUserPermission from '../service/ServiceUserPermission';
+import { User } from '../entity/mysql/entities/MysqlUser';
 
 export const businessPermission = () => {
     return param('permission').custom((value, { req }) => {
@@ -13,6 +16,21 @@ export const businessPermission = () => {
                 Object.assign(req.user, { business: r });
             } else {
                 return Promise.reject('You don`t have permission or first insert business information..');
+            }
+        });
+    });
+};
+
+export const userPermission = () => {
+    return param('permission').custom((value, { req }) => {
+        const login = new Login();
+        login.id = req.user.login[0];
+        const query = new ServiceUserPermission()._byLogin(login);
+        return query.then((r: User) => {
+            if (r) {
+                Object.assign(req.user, { user: r });
+            } else {
+                return Promise.reject('You don`t have permission or first insert user information..');
             }
         });
     });

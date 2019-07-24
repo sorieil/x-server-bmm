@@ -158,15 +158,13 @@ connections(process.env)
          */
         if (process.env.ENVIRONMENT === 'development') {
             app.use(errorHandler());
+        } else {
+            app.use(Sentry.Handlers.errorHandler());
         }
 
         /**
          * Start Express server.
          */
-
-        if (process.env.ENVIRONMENT === 'production') {
-            app.use(Sentry.Handlers.errorHandler());
-        }
 
         app.use((err: any, req: Request, res: Response | any, next: NextFunction) => {
             // The error id is attached to `res.sentry` to be returned

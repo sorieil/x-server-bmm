@@ -35,3 +35,10 @@ printf "================================\n "
 yarn start > /dev/null
 printf "  Server start \n"
 printf "================================\n "
+
+curl https://sentry.io/api/hooks/release/builtin/1503535/df72bba18d3e5e725c6f0f6365101807337eaf29adf117b978853eb5b24db8de/ \
+  -X POST \
+  -H 'Content-Type: application/json' \
+  -d '{"version": "1.0"}'
+printf "  Deploy complete \n"
+printf "================================\n "
