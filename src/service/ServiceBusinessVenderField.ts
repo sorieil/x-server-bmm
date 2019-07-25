@@ -30,7 +30,7 @@ export default class ServiceBusinessVenderField extends BaseService {
             where: {
                 business: business,
             },
-            relations: ['informationType', 'fieldType'],
+            relations: ['informationType', 'fieldType', 'businessVenderFieldChildNodes'],
         });
         return query;
     }

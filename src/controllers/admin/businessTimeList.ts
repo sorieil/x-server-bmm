@@ -34,58 +34,62 @@ const apiPost = [
             // 업데이트가 아니라면, 기존에 있는 데이터는 삭제 한다.
             if (method === 'POST') {
                 // 있는 데이터 삭제
+                console.log('businessMeetingTimeQuery:', businessMeetingTimeQuery);
                 if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
                     businessMeetingTime.id = businessMeetingTimeQuery.id;
                     await service.deleteAll(businessMeetingTime);
+                    console.log('child delete');
                 }
             }
 
-            let timeLists: Array<BusinessMeetingTimeList>;
-            if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
-                // Patch
-                timeLists = await new Promise(resolve => {
-                    const timeBucket: Array<BusinessMeetingTimeList> = [];
-                    const items = req.body.time_lists;
+            return await setTimeout(async () => {
+                let timeLists: Array<BusinessMeetingTimeList>;
+                if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0 && method === 'PATCH') {
+                    // Patch
+                    timeLists = await new Promise(resolve => {
+                        const timeBucket: Array<BusinessMeetingTimeList> = [];
+                        const items = req.body.time_lists;
 
-                    for (let i = 0; items.length > i; i++) {
-                        const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
-                        // Patch 일경우 아이디 값을 넣어준다.
-                        Object.assign(businessMeetingTimeList, items[i], {
-                            businessMeetingTime: businessMeetingTimeQuery,
-                        });
-                        timeBucket.push(businessMeetingTimeList);
-                    }
-
-                    resolve(timeBucket);
-                });
-            } else {
-                // Post
-                timeLists = await new Promise(resolve => {
-                    const timeBucket: Array<BusinessMeetingTimeList> = [];
-                    const items = req.body.time_lists;
-                    // console.log(req.body.time_lists);
-                    for (let i = items.length; 0 < i; i--) {
-                        const firstNode = items[i - 1];
-                        // console.log('first node:', firstNode);
-                        for (let j = 0; firstNode.time.length > j; j++) {
-                            const timeBlock = firstNode.time[j];
+                        for (let i = 0; items.length > i; i++) {
                             const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
                             // Patch 일경우 아이디 값을 넣어준다.
-                            businessMeetingTimeList.businessMeetingTime = businessMeetingTimeQuery;
-                            businessMeetingTimeList.timeBlock = timeBlock.time;
-                            businessMeetingTimeList.use = timeBlock.status;
-                            businessMeetingTimeList.dateBlock = firstNode.date;
-                            console.log('====> time lists:', businessMeetingTimeList);
+                            Object.assign(businessMeetingTimeList, items[i], {
+                                businessMeetingTime: businessMeetingTimeQuery,
+                            });
                             timeBucket.push(businessMeetingTimeList);
                         }
-                    }
-                    resolve(timeBucket);
-                });
-            }
 
-            const query = await service.post(timeLists);
+                        resolve(timeBucket);
+                    });
+                } else {
+                    // Post
+                    timeLists = await new Promise(resolve => {
+                        const timeBucket: Array<BusinessMeetingTimeList> = [];
+                        const items = req.body.time_lists;
+                        // console.log(req.body.time_lists);
+                        for (let i = items.length; 0 < i; i--) {
+                            const firstNode = items[i - 1];
+                            // console.log('first node:', firstNode);
+                            for (let j = 0; firstNode.time.length > j; j++) {
+                                const timeBlock = firstNode.time[j];
+                                const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
+                                // Patch 일경우 아이디 값을 넣어준다.
+                                businessMeetingTimeList.businessMeetingTime = businessMeetingTimeQuery;
+                                businessMeetingTimeList.timeBlock = timeBlock.time;
+                                businessMeetingTimeList.use = timeBlock.status;
+                                businessMeetingTimeList.dateBlock = firstNode.date;
+                                console.log('====> time lists:', businessMeetingTimeList);
+                                timeBucket.push(businessMeetingTimeList);
+                            }
+                        }
+                        resolve(timeBucket);
+                    });
+                }
 
-            responseJson(res, query, method, 'success');
+                const query = await service.post(timeLists);
+
+                responseJson(res, query, method, 'success');
+            }, 0);
         } catch (error) {
             tryCatch(res, error);
         }
