@@ -328,6 +328,8 @@ const apiGets = [
                 delete v.updatedAt;
                 v.informationType = v.informationType.id;
                 v.fieldType = v.fieldType.id;
+                v.fieldChildNodes = v.businessVenderFieldChildNodes;
+                delete v.businessVenderFieldChildNodes;
                 return v;
             });
 
