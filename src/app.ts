@@ -15,7 +15,6 @@ import business from './controllers/admin/business';
 import businessMeetingRoom from './controllers/admin/businessMeetingRoom';
 import('./util/secrets');
 import Sentry = require('@sentry/node');
-import { API_VERSION } from '@sentry/hub/dist/hub';
 import businessTime from './controllers/admin/businessTime';
 import businessTimeList from './controllers/admin/businessTimeList';
 import businessVenderField from './controllers/admin/businessVenderField';
@@ -56,8 +55,13 @@ connections(process.env)
         }
 
         app.use(compression());
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(bodyParser.json({ limit: '50mb' }));
+        app.use(
+            bodyParser.urlencoded({
+                limit: '50mb',
+                extended: true,
+            }),
+        );
         app.use(helmet());
         app.use(passport.initialize());
 
@@ -172,6 +176,10 @@ connections(process.env)
             const method: RequestRole = req.method.toString() as any;
             responseJson(res, [res.sentry], method, 'invalid');
         });
+
+        // process.on('SIGINT', (e: any) => {
+        //    console.error(e)
+        // });
 
         app.listen(app.get('port'), () => {
             console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.ENVIRONMENT);
