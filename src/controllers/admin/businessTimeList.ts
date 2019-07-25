@@ -24,13 +24,14 @@ const apiPost = [
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
-            // 업데이트가 아니라면, 기존에 있는 데이터는 삭제 한다.
+
             const service = new ServiceBusinessTimeList();
             const business = new Business();
             business.id = req.user.business.id;
             const businessMeetingTime = new BusinessMeetingTime();
             const businessMeetingTimeQuery: BusinessMeetingTime = await service.get(business);
 
+            // 업데이트가 아니라면, 기존에 있는 데이터는 삭제 한다.
             if (method === 'POST') {
                 // 있는 데이터 삭제
                 if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
@@ -65,7 +66,7 @@ const apiPost = [
                     // console.log(req.body.time_lists);
                     for (let i = items.length; 0 < i; i--) {
                         const firstNode = items[i - 1];
-                        console.log('first node:', firstNode);
+                        // console.log('first node:', firstNode);
                         for (let j = 0; firstNode.time.length > j; j++) {
                             const timeBlock = firstNode.time[j];
                             const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
@@ -74,6 +75,7 @@ const apiPost = [
                             businessMeetingTimeList.timeBlock = timeBlock.time;
                             businessMeetingTimeList.use = timeBlock.status;
                             businessMeetingTimeList.dateBlock = firstNode.date;
+                            console.log('====> time lists:', businessMeetingTimeList);
                             timeBucket.push(businessMeetingTimeList);
                         }
                     }
