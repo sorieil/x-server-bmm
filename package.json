@@ -14,7 +14,7 @@
     "dev-start-nodemon": "ENVIRONMENT=development npx nodemon --exec npx ts-node ./src/app.ts",
     "live-start-nodemon": "ENVIRONMENT=production npx nodemon --exec npx ts-node ./src/app.ts",
     "webpack-dev": "webpack --config webpack.config.js",
-    "stop-all": "npx pm2 stop all",
+    "stop": "npx pm2 stop all",
     "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix"
   },
   "devDependencies": {
