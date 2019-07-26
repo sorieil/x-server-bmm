@@ -16,17 +16,23 @@ export const auth = (secretName: secretNameType) => {
     passport.use(
         secretName,
         new Strategy(opts, async (jwt_payload, done) => {
-            console.log('jwt_payload:', jwt_payload);
+            // console.log('jwt_payload:', jwt_payload);s
             try {
                 const serviceAccount = new ServiceAccount();
                 const level = jwt_payload.level;
 
+                // 이벤트 아이디가 있어야지만 이용 할 수 있다.
+                if (typeof jwt_payload.eventId === 'undefined') {
+                    return done('noEventId', null);
+                }
+
                 if (level === 'user') {
                     const user = serviceAccount.getUserId(jwt_payload._id);
                     return user
-                        .then(user => {
-                            if (user) {
-                                return done(undefined, user);
+                        .then(r => {
+                            if (r) {
+                                r.eventId = jwt_payload.eventId;
+                                return done(undefined, r);
                             } else {
                                 return done(undefined, null);
                             }
@@ -37,9 +43,10 @@ export const auth = (secretName: secretNameType) => {
                         });
                 } else {
                     const admin = serviceAccount.getAdminId(jwt_payload._id);
-                    return admin.then(user => {
-                        if (user) {
-                            return done(undefined, user);
+                    return admin.then(r => {
+                        if (r) {
+                            r.eventId = jwt_payload.eventId;
+                            return done(undefined, r);
                         } else {
                             return done(undefined, null);
                         }
@@ -74,6 +81,15 @@ export const auth = (secretName: secretNameType) => {
                     result: [],
                 });
             }
+
+            if (err === 'noEventId') {
+                res.status(401).json({
+                    resCode: 401,
+                    message: 'No allow token. It is not event token.',
+                    result: [],
+                });
+            }
+
             if (user === null || !user || typeof info !== 'undefined') {
                 res.status(401).json({
                     resCode: 401,

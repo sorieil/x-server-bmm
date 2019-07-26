@@ -15,6 +15,7 @@ export class BusinessVenderFieldChildNode extends Base {
 
     @ManyToOne(type => BusinessVenderField, businessVenderField => businessVenderField.businessVenderFieldChildNodes, {
         onDelete: 'CASCADE',
+        nullable: false,
     })
     businessVenderField: BusinessVenderField;
 

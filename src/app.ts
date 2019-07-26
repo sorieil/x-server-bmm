@@ -90,7 +90,7 @@ connections(process.env)
         // Meeting time list
         app.get('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiGets);
         app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
-        app.patch('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
+        app.patch('/api/v1/business_time_list/:timeListId', adminCheck, ...businessTimeList.apiPatch);
 
         // vender field init
         app.post('/api/v1/business_vender_field_init', adminCheck, ...businessVenderField.apiInit);

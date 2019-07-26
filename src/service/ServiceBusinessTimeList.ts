@@ -26,8 +26,13 @@ export class ServiceBusinessTimeList extends BaseService {
         return query;
     }
 
-    public async get(business: Business) {
-        const query = await this.mysqlManager(BusinessMeetingTime).findOne({
+    public async update(businessMeetingTimeList: BusinessMeetingTimeList) {
+        const query = await this.mysqlManager(BusinessMeetingTimeList).save(businessMeetingTimeList);
+        return query;
+    }
+
+    public getByBusiness(business: Business) {
+        const query = this.mysqlManager(BusinessMeetingTime).findOne({
             where: {
                 business: business,
             },
@@ -37,8 +42,13 @@ export class ServiceBusinessTimeList extends BaseService {
         return query;
     }
 
-    public async deleteAll(businessMeetingTime: BusinessMeetingTime) {
-        const query = await this.mysqlManager(BusinessMeetingTimeList).delete({
+    public get(businessMeetingTimeList: BusinessMeetingTimeList) {
+        const query = this.mysqlManager(BusinessMeetingTimeList).findOne(businessMeetingTimeList);
+        return query;
+    }
+
+    public deleteAllMeetingTimeList(businessMeetingTime: BusinessMeetingTime) {
+        const query = this.mysqlManager(BusinessMeetingTimeList).delete({
             businessMeetingTime: businessMeetingTime,
         });
 

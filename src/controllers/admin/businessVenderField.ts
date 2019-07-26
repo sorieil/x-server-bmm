@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
 import { businessPermission } from '../../util/permission';
-import ServiceBusinessVenderField from '../../service/ServiceBusinessVenderField';
+import ServiceBusinessVenderField, { BusinessVenderFieldType } from '../../service/ServiceBusinessVenderField';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
 import ServiceBusinessVenderInformationChildNode from '../../service/ServiceBusinessVenderFieldChildNode';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
@@ -11,10 +11,9 @@ import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermissi
 import ServiceBusinessVenderFieldChildNode from '../../service/ServiceBusinessVenderFieldChildNode';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { BusinessVenderFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVenderFieldChildNode';
-import { resolve } from 'bluebird';
 
 const businessVenderPermission = () =>
-    param('fieldId').custom((value, { req }) => {
+    param('fieldId').custom(async (value, { req }) => {
         if (!value) {
             return Promise.reject('Invalid insert data.');
         }
@@ -26,32 +25,27 @@ const businessVenderPermission = () =>
         admin.id = req.user.admins[0];
 
         businessVenderField.id = value;
-        return new Promise(async resolve => {
+        const r = await new Promise(async resolve => {
             const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
-
             if (!businessQuery) {
                 resolve(null);
             }
-
             business.id = businessQuery.id;
             const query = await service.getWithBusiness(businessVenderField, business);
-
             resolve(query);
-        }).then((r: any) => {
-            if (r === null) {
-                return Promise.reject('You don`t have permission or first insert business default data.');
-            }
-
-            if (r) {
-                Object.assign(req.user, { vender: r });
-            } else {
-                return Promise.reject('You don`t have permission or first insert vender fields..');
-            }
         });
+        if (r === null) {
+            return Promise.reject('You don`t have permission or first insert business default data.');
+        }
+        if (r) {
+            Object.assign(req.user, { vender: r });
+        } else {
+            return Promise.reject('You don`t have permission or first insert vender fields..');
+        }
     });
 
 const businessVenderChildPermission = () =>
-    param('fieldChildNodeId').custom((value, { req }) => {
+    param('fieldChildNodeId').custom(async (value, { req }) => {
         if (!value) {
             return Promise.reject('Invalid insert data.');
         }
@@ -66,37 +60,31 @@ const businessVenderChildPermission = () =>
         admin.id = req.user.admins[0];
         businessVenderFieldChildNode.id = value;
 
-        return new Promise(async resolve => {
+        const r = await new Promise(async resolve => {
             const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
-
             if (!businessQuery) {
                 resolve(null);
             }
-
             business.id = businessQuery.id;
             const fieldQuery = await service.get(business);
             if (!fieldQuery) {
                 resolve(null);
             }
-
             businessVenderField.id = fieldQuery[0].id;
             const venderFieldChildNodeQuery = await childService.getByBusinessVenderField(
                 businessVenderField,
                 businessVenderFieldChildNode,
             );
-
             resolve(venderFieldChildNodeQuery);
-        }).then((r: any) => {
-            if (r === null) {
-                return Promise.reject('You don`t have permission or first insert business or vender default data.');
-            }
-
-            if (r) {
-                Object.assign(req.user, { filedChildNode: r });
-            } else {
-                return Promise.reject('You don`t have permission or first insert vender child fields..');
-            }
         });
+        if (r === null) {
+            return Promise.reject('You don`t have permission or first insert business or vender default data.');
+        }
+        if (r) {
+            Object.assign(req.user, { filedChildNode: r });
+        } else {
+            return Promise.reject('You don`t have permission or first insert vender child fields..');
+        }
     });
 const apiInit = [
     [businessPermission.apply(this)],
@@ -117,8 +105,14 @@ const apiInit = [
             business.id = req.user.business.id;
             const informationType = new Code();
 
-            const initFields = [
+            const initFields: BusinessVenderFieldType[] = [
                 { name: '기업명', require: 'yes', informationType: 4, fieldType: 1 },
+                { name: '대표명', require: 'no', informationType: 4, fieldType: 1 },
+                { name: '설립일', require: 'no', informationType: 4, fieldType: 1 },
+                { name: '업체구분', require: 'no', informationType: 5, fieldType: 3 },
+                { name: '제품/서비스', require: 'no', informationType: 5, fieldType: 3 },
+                { name: '관심분야', require: 'no', informationType: 5, fieldType: 1 },
+                { name: '제품소개', require: 'no', informationType: 5, fieldType: 1 },
                 { name: '담당자명', require: 'yes', informationType: 6, fieldType: 1 },
                 { name: '연락처', require: 'yes', informationType: 6, fieldType: 1 },
                 { name: '이메일', require: 'yes', informationType: 6, fieldType: 1 },
@@ -128,44 +122,43 @@ const apiInit = [
             return await new Promise(async resolve => {
                 const promiseBucket: any[] = [];
                 initFields.forEach(element => {
-                    promiseBucket.push(service.checkDuplicate(element.name, element.informationType));
+                    promiseBucket.push(service.checkDuplicate(element));
                 });
 
                 resolve(promiseBucket);
-            }).then((process: Array<object>) => {
-                return Promise.all(process).then(async result => {
-                    const exists = result.filter(v => typeof v !== 'undefined');
-                    if (exists.length > 3) {
-                        console.log(`${new Date().getMilliseconds()} -> checkDuplicate: ${result}`);
-                        responseJson(
-                            res,
-                            [
-                                {
-                                    message: 'Already exists',
-                                },
-                            ],
-                            method,
-                            'success',
-                        );
-                        return;
-                    } else {
-                        const insertData = await initFields.map(v => {
-                            const businessVenderField = new BusinessVenderField();
-                            const informationType = new Code();
-                            informationType.id = v.informationType;
-                            const fieldType = new Code();
-                            fieldType.id = v.fieldType;
-                            businessVenderField.name = v.name;
-                            businessVenderField.business = business;
-                            businessVenderField.require = 'yes';
-                            businessVenderField.informationType = informationType;
-                            businessVenderField.fieldType = fieldType;
-                            return businessVenderField;
-                        });
-                        const query = await service.postArray(insertData);
-                        responseJson(res, query, method, 'success');
-                    }
-                });
+            }).then(async (process: Array<object>) => {
+                const result = await Promise.all(process);
+                const exists = result.filter(v => typeof v !== 'undefined');
+                console.log(`exists: ${exists.length} , initFields: ${initFields.length}`);
+                if (exists.length === initFields.length) {
+                    responseJson(
+                        res,
+                        [
+                            {
+                                message: 'Already exists',
+                            },
+                        ],
+                        method,
+                        'success',
+                    );
+                    return;
+                } else {
+                    const insertData = await initFields.map(v => {
+                        const businessVenderField = new BusinessVenderField();
+                        const informationType = new Code();
+                        informationType.id = v.informationType;
+                        const fieldType = new Code();
+                        fieldType.id = v.fieldType;
+                        businessVenderField.name = v.name;
+                        businessVenderField.business = business;
+                        businessVenderField.require = 'yes';
+                        businessVenderField.informationType = informationType;
+                        businessVenderField.fieldType = fieldType;
+                        return businessVenderField;
+                    });
+                    const query = await service.postArray(insertData);
+                    responseJson(res, query, method, 'success');
+                }
             });
         } catch (error) {
             tryCatch(res, error);

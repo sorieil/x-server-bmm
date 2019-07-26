@@ -3,6 +3,13 @@ import { BusinessVenderField } from '../entity/mysql/entities/MysqlBusinessVende
 import { ServiceBusiness } from './ServiceBusiness';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
+import { StatusTypeRole } from '../entity/mysql/entities/MysqlBase';
+export type BusinessVenderFieldType = {
+    name: string;
+    require: StatusTypeRole;
+    informationType: number;
+    fieldType: number;
+};
 export default class ServiceBusinessVenderField extends BaseService {
     constructor() {
         super();
@@ -65,15 +72,12 @@ export default class ServiceBusinessVenderField extends BaseService {
         return query;
     }
 
-    public async checkDuplicate(name: string, informationTypeId: number) {
-        const informationType = new Code();
-        informationType.id = informationTypeId;
+    public async checkDuplicate(field: BusinessVenderFieldType) {
         const query = this.mysqlManager(BusinessVenderField).findOne({
             where: {
-                name: name,
-                require: 'yes',
-                informationType: informationType,
-                fieldType: 1,
+                name: field.name,
+                informationType: field.informationType,
+                fieldType: field.fieldType,
             },
         });
 

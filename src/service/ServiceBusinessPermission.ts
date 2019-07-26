@@ -36,8 +36,8 @@ export class ServiceBusinessPermission extends BaseService {
      * Admin id 와 business id 로 business의 소유권이 있는지 체크
      * @param admin admin.id
      */
-    public async _ByAdmin(admin: Admin) {
-        const query = await this.mysqlManager(Business).findOne({
+    public _ByAdmin(admin: Admin) {
+        const query = this.mysqlManager(Business).findOne({
             where: { admin: admin.id },
         });
         return query;

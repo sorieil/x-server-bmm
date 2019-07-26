@@ -113,7 +113,6 @@ export default class ServiceAccount extends BaseService {
     }
 
     public async getAdminId(id: any) {
-        console.log('id:', id);
         // const mongoManager = await getMongoManager(connectionMongoDB);
         const mysqlManager = await getManager(connectionMysql);
         const mongoQuery = this.mongoManager(Admins).findOne(id);

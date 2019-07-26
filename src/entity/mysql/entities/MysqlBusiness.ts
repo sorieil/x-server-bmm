@@ -7,6 +7,7 @@ import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 import { Admin } from './MysqlAdmin';
 import { BusinessVenderField } from './MysqlBusinessVenderField';
+import { EventBridge } from './MysqlEventBridge';
 
 @Entity()
 export class Business extends Base {
@@ -40,4 +41,7 @@ export class Business extends Base {
 
     @OneToMany(type => BusinessVenderField, businessVenderField => businessVenderField.business)
     businessVenderFields: BusinessVenderField[];
+
+    @OneToOne(type => EventBridge, eventBridge => eventBridge.business)
+    eventBridge: EventBridge;
 }

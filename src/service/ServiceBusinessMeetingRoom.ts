@@ -25,7 +25,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * @param id Business.id
      */
     public async gets(business: Business) {
-        const query = await this.mysqlManager(BusinessMeetingRoom).find({
+        const query = this.mysqlManager(BusinessMeetingRoom).find({
             where: {
                 business: business,
             },
@@ -35,7 +35,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
     }
 
     public async get(businessMeetingRoom: BusinessMeetingRoom) {
-        const query = await this.mysqlManager(BusinessMeetingRoom).findOne({
+        const query = this.mysqlManager(BusinessMeetingRoom).findOne({
             where: {
                 id: businessMeetingRoom.id,
             },
@@ -59,7 +59,7 @@ export class ServiceBusinessMeetingRoom extends BaseService {
      * @param adminId Admin.id
      */
     public async delete(businessMeetingRoom: BusinessMeetingRoom) {
-        const query = await this.mysqlManager(BusinessMeetingRoom).delete(businessMeetingRoom);
+        const query = this.mysqlManager(BusinessMeetingRoom).delete(businessMeetingRoom);
         return query;
     }
 }

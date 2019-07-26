@@ -171,7 +171,7 @@ const apiGets = [
                     j.value = j.text || j.textarea;
                     delete j.text;
                     delete j.textarea;
-                    j.businessVenderField = j.businessVenderField.id;
+                    // j.businessVenderField = j.businessVenderField.id;
                     return j;
                 });
                 return v;
@@ -265,11 +265,9 @@ const apiPost = [
             });
 
             // 코드 상태 변경
-            const businessCode = new BusinessCode();
-            businessCode.id = businessCodeQuery.id;
-            businessCode.use = 'yes';
-            businessCode.businessVender = businessVender;
-            await new ServiceBusinessCode().post(businessCode);
+            businessCodeQuery.use = 'yes';
+            businessCodeQuery.businessVender = businessVender;
+            await new ServiceBusinessCode().post(businessCodeQuery);
             responseJson(res, [businessVender], method, 'success');
         } catch (error) {
             tryCatch(res, error);

@@ -9,14 +9,16 @@ import { Code } from './MysqlCode';
 export class BusinessVenderFieldValue extends Base {
     @ManyToOne(type => BusinessVender, businessVender => businessVender.businessVenderFieldValues, {
         onDelete: 'CASCADE',
+        nullable: false,
     })
     businessVender: BusinessVender;
 
     @ManyToOne(type => Code, code => code.businessVenderFieldValues)
     code: Code;
 
-    @ManyToOne(type => BusinessVenderField, businessVenderField => businessVenderField.businessVenderFieldValues)
-    @JoinColumn()
+    @ManyToOne(type => BusinessVenderField, businessVenderField => businessVenderField.businessVenderFieldValues, {
+        nullable: false,
+    })
     businessVenderField: BusinessVenderField;
 
     @Column('varchar', { nullable: true })

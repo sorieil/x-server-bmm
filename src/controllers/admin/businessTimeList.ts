@@ -3,7 +3,7 @@ import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMeetingTime';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
-import { check, validationResult } from 'express-validator';
+import { check, validationResult, param } from 'express-validator';
 import { businessPermission } from '../../util/permission';
 import { ServiceBusinessTimeList } from '../../service/ServiceBusinessTimeList';
 
@@ -29,62 +29,35 @@ const apiPost = [
             const business = new Business();
             business.id = req.user.business.id;
             const businessMeetingTime = new BusinessMeetingTime();
-            const businessMeetingTimeQuery: BusinessMeetingTime = await service.get(business);
+            const businessMeetingTimeQuery: BusinessMeetingTime = await service.getByBusiness(business);
 
-            // 업데이트가 아니라면, 기존에 있는 데이터는 삭제 한다.
-            if (method === 'POST') {
-                // 있는 데이터 삭제
-                console.log('businessMeetingTimeQuery:', businessMeetingTimeQuery);
-                if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
-                    businessMeetingTime.id = businessMeetingTimeQuery.id;
-                    await service.deleteAll(businessMeetingTime);
-                    console.log('child delete');
-                }
+            // 이벤트 기간을 새로 설정한다는 의미는 타임 테이블이 변경되는다는 의미 이기 때문에 등록되어 있는 타임테이블을 모두 삭제 한다.
+            if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0) {
+                businessMeetingTime.id = businessMeetingTimeQuery.id;
+                await service.deleteAllMeetingTimeList(businessMeetingTime);
             }
 
+            // setTimeout 을여기에서 해주는 이유는 setTimeout는 모든 프로세스에서 마지막으로 실행이 된다. 비동기에 대한 확실한 프로세스를 진행하기 위해서
+            // 코드 삽입
             return await setTimeout(async () => {
                 let timeLists: Array<BusinessMeetingTimeList>;
-                if (businessMeetingTimeQuery.businessMeetingTimeLists.length > 0 && method === 'PATCH') {
-                    // Patch
-                    timeLists = await new Promise(resolve => {
-                        const timeBucket: Array<BusinessMeetingTimeList> = [];
-                        const items = req.body.time_lists;
-
-                        for (let i = 0; items.length > i; i++) {
+                timeLists = await new Promise(resolve => {
+                    const timeBucket: Array<BusinessMeetingTimeList> = [];
+                    const items = req.body.time_lists;
+                    for (let i = items.length; 0 < i; i--) {
+                        const firstNode = items[i - 1];
+                        for (let j = 0; firstNode.time.length > j; j++) {
+                            const timeBlock = firstNode.time[j];
                             const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
-                            // Patch 일경우 아이디 값을 넣어준다.
-                            Object.assign(businessMeetingTimeList, items[i], {
-                                businessMeetingTime: businessMeetingTimeQuery,
-                            });
+                            businessMeetingTimeList.businessMeetingTime = businessMeetingTimeQuery;
+                            businessMeetingTimeList.timeBlock = timeBlock.time;
+                            businessMeetingTimeList.use = timeBlock.status;
+                            businessMeetingTimeList.dateBlock = firstNode.date;
                             timeBucket.push(businessMeetingTimeList);
                         }
-
-                        resolve(timeBucket);
-                    });
-                } else {
-                    // Post
-                    timeLists = await new Promise(resolve => {
-                        const timeBucket: Array<BusinessMeetingTimeList> = [];
-                        const items = req.body.time_lists;
-                        // console.log(req.body.time_lists);
-                        for (let i = items.length; 0 < i; i--) {
-                            const firstNode = items[i - 1];
-                            // console.log('first node:', firstNode);
-                            for (let j = 0; firstNode.time.length > j; j++) {
-                                const timeBlock = firstNode.time[j];
-                                const businessMeetingTimeList: BusinessMeetingTimeList = new BusinessMeetingTimeList();
-                                // Patch 일경우 아이디 값을 넣어준다.
-                                businessMeetingTimeList.businessMeetingTime = businessMeetingTimeQuery;
-                                businessMeetingTimeList.timeBlock = timeBlock.time;
-                                businessMeetingTimeList.use = timeBlock.status;
-                                businessMeetingTimeList.dateBlock = firstNode.date;
-                                console.log('====> time lists:', businessMeetingTimeList);
-                                timeBucket.push(businessMeetingTimeList);
-                            }
-                        }
-                        resolve(timeBucket);
-                    });
-                }
+                    }
+                    resolve(timeBucket);
+                });
 
                 const query = await service.post(timeLists);
 
@@ -93,6 +66,45 @@ const apiPost = [
         } catch (error) {
             tryCatch(res, error);
         }
+    },
+];
+
+const apiPatch = [
+    [
+        businessPermission.apply(this),
+        param('timeListId')
+            .not()
+            .isEmpty()
+            .isNumeric(),
+        check('use')
+            .not()
+            .isEmpty(),
+    ],
+    async (req: Request, res: Response) => {
+        const method: RequestRole = req.method.toString() as any;
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            responseJson(res, errors.array(), method, 'invalid');
+            return;
+        }
+        const body = req.body;
+        const businessMeetingTimeList = new BusinessMeetingTimeList();
+        businessMeetingTimeList.id = req.params.timeListId;
+
+        const service = new ServiceBusinessTimeList();
+        const businessTimeListQuery = await service.get(businessMeetingTimeList);
+
+        if (!businessTimeListQuery) {
+            responseJson(res, [{ message: 'You don`t have permission or invalid data.' }], method, 'invalid');
+            return;
+        }
+
+        console.log('timeblock:', businessTimeListQuery);
+        businessTimeListQuery.use = body.use;
+
+        const query = await service.update(businessTimeListQuery);
+        responseJson(res, [query], method, 'success');
     },
 ];
 
@@ -111,7 +123,9 @@ const apiGets = [
         const business = new Business();
         business.id = req.user.business.id;
 
-        const query = await service.get(business);
+        const query = await service.getByBusiness(business);
+        Object.assign(query, { timeLists: query.businessMeetingTimeLists });
+        delete query.businessMeetingTimeLists;
 
         responseJson(res, [query], method, 'success');
     },
@@ -120,4 +134,5 @@ const apiGets = [
 export default {
     apiPost,
     apiGets,
+    apiPatch,
 };

@@ -18,7 +18,7 @@ export class ServiceBusiness extends BaseService {
      * @param entity AdminLogin
      */
     public async get(admin: Admin) {
-        const query = await this.mysqlManager(Business).findOne({ where: { admin: admin } });
+        const query = this.mysqlManager(Business).findOne({ where: { admin: admin } });
         return query;
     }
     /**
@@ -50,7 +50,7 @@ export class ServiceBusiness extends BaseService {
      * @param id Business.id
      */
     public async permissionBusiness(id: number) {
-        const query = await this.mysqlManager(Business).find({
+        const query = this.mysqlManager(Business).find({
             where: {
                 id: id,
             },
@@ -60,7 +60,7 @@ export class ServiceBusiness extends BaseService {
     }
 
     public async delete(business: Business) {
-        const query = await this.mysqlManager(Business).delete(business);
+        const query = this.mysqlManager(Business).delete(business);
         return query;
     }
 }
