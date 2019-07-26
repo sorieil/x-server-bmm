@@ -28,4 +28,4 @@ To build and run this app locally you will need a few things:
 This api server is BMM. But it will be merged with legacy 2.0 server.
 
 # API (Postman)
-[LINK](https://documenter.getpostman.com/view/105985/SVSKMUPG)
+[LINK](https://documenter.getpostman.com/view/105985/SVYjTNCo)

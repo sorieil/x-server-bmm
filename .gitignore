@@ -1,5 +1,4 @@
 .idea/
-.vscode/
 node_modules/
 tmp/
 temp/
@@ -8,4 +7,4 @@ ormlogs.log
 debug.log
 dist/
 yarn-error.log
-mysql
+mysql/
