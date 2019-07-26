@@ -8,12 +8,6 @@ import { BusinessVenderFieldValue } from './MysqlBusinessVenderFieldValue';
 
 @Entity()
 export class BusinessVender extends Base {
-    @Column('varchar', { nullable: true })
-    logoImage: string;
-
-    // @Column('varchar', { nullable: true })
-    // serviceTarget: string;
-
     @OneToMany(type => BusinessVenderManager, businessVenderManager => businessVenderManager.businessVender)
     businessVenderManagers: BusinessVenderManager[];
 

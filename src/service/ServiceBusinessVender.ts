@@ -10,19 +10,6 @@ export default class ServiceBusinessVender extends BaseService {
         super();
     }
 
-    /*
-    public async checkFieldType(businessVenderField: BusinessVenderField) {
-        const query = this.mysqlManager(BusinessVenderField).findOne({
-            where: {
-                id: businessVenderField,
-            },
-            relations: ['fieldType'],
-        });
-
-        return query;
-    }
-    */
-
     public async checkFieldType(businessVenderField: BusinessVenderField) {
         const query = this.mysqlConnection
             .getRepository(BusinessVenderField)
@@ -33,7 +20,7 @@ export default class ServiceBusinessVender extends BaseService {
         return query;
     }
 
-    public async getField(business: Business, informationType: Code) {
+    public async _getField(business: Business, informationType: Code) {
         const query = this.mysqlManager(BusinessVenderField).find({
             where: {
                 business: business,
@@ -46,13 +33,18 @@ export default class ServiceBusinessVender extends BaseService {
 
     public async get(businessVender: BusinessVender) {
         const query = this.mysqlManager(BusinessVender).findOne({
-            relations: ['businessCode'],
+            relations: [
+                'businessCode',
+                'businessVenderFieldValues',
+                'businessVenderFieldValues.businessVenderField',
+                'businessVenderFieldValues.businessVenderField.informationType',
+            ],
             where: { id: businessVender.id },
         });
         return query;
     }
 
-    public async getWithBusiness(businessVender: BusinessVender, business: Business) {
+    public async _getWithBusiness(businessVender: BusinessVender, business: Business) {
         const query = this.mysqlManager(BusinessVender).findOne({
             relations: ['businessCode', 'businessVenderFieldValues', 'businessVenderFieldValues.businessVenderField'],
             where: { id: businessVender.id, business: business },
@@ -65,12 +57,12 @@ export default class ServiceBusinessVender extends BaseService {
         return query;
     }
 
-    public async postVenderFieldValue(businessVenderFieldValue: BusinessVenderFieldValue[]) {
+    public async _postVenderFieldValue(businessVenderFieldValue: BusinessVenderFieldValue[]) {
         const query = this.mysqlManager(BusinessVenderFieldValue).save(businessVenderFieldValue);
         return query;
     }
 
-    public async getByBusiness(business: Business) {
+    public async _getByBusiness(business: Business) {
         const query = this.mysqlManager(BusinessVender).find({
             relations: [
                 'businessCode',
@@ -88,8 +80,39 @@ export default class ServiceBusinessVender extends BaseService {
         return query;
     }
 
+    public async _getByVender(businessVender: BusinessVender) {
+        const query = this.mysqlManager(BusinessVender).findOne({
+            relations: [
+                'businessCode',
+                'businessVenderFieldValues',
+                'businessVenderFieldValues.businessVenderField',
+                'businessVenderFieldValues.businessVenderField.informationType',
+            ],
+            where: {
+                id: businessVender.id,
+            },
+        });
+
+        return query;
+    }
+
     public async delete(businessVender: BusinessVender) {
         const query = this.mysqlManager(BusinessVender).delete(businessVender);
+        return query;
+    }
+
+    public _getByCode(code: Code) {
+        const query = this.mysqlManager(Code).findOne(code);
+        return query;
+    }
+
+    public _getBVenderFieldValue(businessVenderFieldValue: BusinessVenderFieldValue) {
+        const query = this.mysqlManager(BusinessVenderFieldValue).findOne({
+            where: {
+                id: businessVenderFieldValue.id,
+            },
+            relations: ['businessVenderField', 'businessVenderField.fieldType'],
+        });
         return query;
     }
 }

@@ -120,6 +120,11 @@ connections(process.env)
         app.patch('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiPatch);
         app.delete('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiDelete);
         app.get('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiGet);
+        app.get(
+            '/api/v1/business_vender/:venderId/information_type/:informationType',
+            adminCheck,
+            ...businessVender.apiGetInformationType,
+        );
         app.get('/api/v1/business_vender', adminCheck, ...businessVender.apiGets);
         app.get('/api/v1/business_vender_field_list/:informationTypeId', adminCheck, ...businessVender.apiGetField);
 

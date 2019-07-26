@@ -1,5 +1,4 @@
 import { BusinessVenderFieldValue } from './../../entity/mysql/entities/MysqlBusinessVenderFieldValue';
-import { BusinessCode } from './../../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVender } from './../../entity/mysql/entities/MysqlBusinessVender';
 import { Request, Response } from 'express';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
@@ -10,9 +9,18 @@ import ServiceBusinessVender from '../../service/ServiceBusinessVender';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
-import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
-
+import { Code } from '../../entity/mysql/entities/MysqlCode';
+const businessVenderFieldTypePermission = () =>
+    param('informationType').custom(async (v, { req }) => {
+        const service = new ServiceBusinessVender();
+        const code = new Code();
+        code.id = v;
+        const codeQuery = await service._getByCode(code);
+        if (!codeQuery) {
+            return Promise.reject(`Does not exist '${v}' informationType key.`);
+        }
+    });
 const businessVenderPermission = () =>
     param('venderId').custom((value, { req }) => {
         const businessVender = new BusinessVender();
@@ -36,7 +44,7 @@ const businessVenderPermission = () =>
 
             business.id = businessQuery.id;
 
-            const query = await service.getWithBusiness(businessVender, business);
+            const query = await service._getWithBusiness(businessVender, business);
 
             resolve(query);
         }).then(r => {
@@ -110,7 +118,7 @@ const apiGetField = [
             const informationType = new Code();
             business.id = req.user.business.id;
             informationType.id = req.params.informationTypeId;
-            const query = await service.getField(business, informationType);
+            const query = await service._getField(business, informationType);
 
             console.log('query:', query);
 
@@ -160,7 +168,7 @@ const apiGets = [
             const service = new ServiceBusinessVender();
             const business = new Business();
             business.id = req.user.business.id;
-            const query = await service.getByBusiness(business);
+            const query = await service._getByBusiness(business);
             query.map((v: any) => {
                 delete v.createdAt;
                 delete v.updatedAt;
@@ -184,8 +192,39 @@ const apiGets = [
     },
 ];
 
+const apiGetInformationType = [
+    [businessVenderPermission.apply(this), businessVenderFieldTypePermission.apply(this)],
+    async (req: Request, res: Response) => {
+        try {
+            const method: RequestRole = req.method.toString() as any;
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const service = new ServiceBusinessVender();
+            const businessVender = new BusinessVender();
+            const informationType = req.params.informationType;
+            businessVender.id = req.user.vender.id;
+            const query = await service._getByVender(businessVender);
+
+            query.businessCode = query.businessCode.code as any;
+            query.businessVenderFieldValues.filter((j: any) => {
+                console.log('id:', j['Code']);
+                return j.informationType.id === informationType;
+            });
+
+            responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+
 /**
- * 비즈니스의 상태값을 저장/ 수정 한다.
+ * 밴더 값 입력 / 수정
  */
 const apiPost = [
     [businessPermission.apply(this)],
@@ -202,12 +241,7 @@ const apiPost = [
             const businessVender = new BusinessVender();
             const service = new ServiceBusinessVender();
             const business = new Business();
-
             const body = req.body;
-
-            business.id = req.user.business.id;
-
-            businessVender.business = business;
 
             // 사용하지 않는 코드를 가져온다.
             const businessCodeQuery = await new ServiceBusinessCode().getNotUseOneCode();
@@ -215,60 +249,65 @@ const apiPost = [
                 responseJson(res, [{ message: '사용가능한 코드가 없습니다.' }], method, 'invalid');
                 return;
             }
+
+            // 비즈니스 설정
+            business.id = req.user.business.id;
+            businessVender.business = business;
+
+            // 비즈니스 코드 저장
+            businessVender.businessCode = businessCodeQuery;
+
+            // 밴더 기본정보 저장
+            await service.post(businessVender);
+
+            // 비즈니스 코드 상태 변경
+            businessCodeQuery.use = 'yes';
+            businessCodeQuery.businessVender = businessVender;
+            await new ServiceBusinessCode().post(businessCodeQuery);
+
             const query: BusinessVenderFieldValue[] = [];
 
             for (let field in body) {
                 const businessVenderFieldValue = new BusinessVenderFieldValue();
                 const businessVenderField = new BusinessVenderField();
-                businessVenderField.id = parseInt(field, 10); // field 아이디
-                if (field.toString() !== 'informationType') {
-                    // await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
-                    const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
-                    console.log('field type:', fieldTypeQuery);
-                    // text textarea 로 조회 해서 구분해줘야 한다.
-                    if (!fieldTypeQuery) {
-                        responseJson(
-                            res,
-                            [{ message: `The parameter field id ${parseInt(field, 10)} of  does not exist.` }],
-                            method,
-                            'invalid',
-                        );
-                        return;
-                    }
-                    if (fieldTypeQuery.fieldType.columnType === 'text') {
-                        businessVenderFieldValue.text = body[field];
-                    } else {
-                        businessVenderFieldValue.textarea = body[field];
-                    }
-                    businessVenderFieldValue.businessVenderField = businessVenderField; // 필드의 아아디 값 지정
-                    query.push(businessVenderFieldValue);
+                businessVenderField.id = parseInt(field, 10); // field 아이
+                const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
+
+                // text textarea 로 조회 해서 구분해줘야 한다.
+                if (!fieldTypeQuery) {
+                    responseJson(
+                        res,
+                        [{ message: `The parameter field id ${parseInt(field, 10)} of  does not exist.` }],
+                        method,
+                        'invalid',
+                    );
+                    return;
                 }
+
+                if (fieldTypeQuery.fieldType.columnType === 'text') {
+                    businessVenderFieldValue.text = body[field];
+                } else {
+                    businessVenderFieldValue.textarea = body[field];
+                }
+                businessVenderFieldValue.businessVenderField = businessVenderField; // 필드의 아아디 값 지정
+                businessVenderFieldValue.businessVender = businessVender;
+                query.push(businessVenderFieldValue);
             }
 
-            const venderQuery = await service.postVenderFieldValue(query);
-            // console.log('venderQuery:', venderQuery);
-
-            businessVender.businessCode = businessCodeQuery; // 밴더 코드 지정
-
-            if (venderQuery.length > 0) {
-                businessVender.businessVenderFieldValues = venderQuery;
-            }
-            await service.post(businessVender); // businessVenderFieldValue의 값을 저장
-            delete businessVender.business;
-            businessVender.businessCode = businessVender.businessCode.code as any;
-            businessVender.businessVenderFieldValues.map((v: any) => {
-                v.businessVenderField = v.businessVenderField.id;
+            await service._postVenderFieldValue(query);
+            const businessVenderQuery = await service.get(businessVender);
+            businessVenderQuery.businessCode = businessVenderQuery.businessCode.code as any;
+            businessVenderQuery.businessVenderFieldValues.map((v: any) => {
+                delete v.createdAt;
+                delete v.updatedAt;
                 v.value = v.text || v.textarea;
                 delete v.text;
                 delete v.textarea;
+                // j.businessVenderField = j.businessVenderField.id;
                 return v;
             });
 
-            // 코드 상태 변경
-            businessCodeQuery.use = 'yes';
-            businessCodeQuery.businessVender = businessVender;
-            await new ServiceBusinessCode().post(businessCodeQuery);
-            responseJson(res, [businessVender], method, 'success');
+            responseJson(res, [businessVenderQuery], method, 'success');
         } catch (error) {
             tryCatch(res, error);
         }
@@ -276,13 +315,7 @@ const apiPost = [
 ];
 
 const apiPatch = [
-    [
-        businessVenderPermission.apply(this),
-        check('data')
-            .not()
-            .isEmpty()
-            .isArray(),
-    ],
+    [businessVenderPermission.apply(this)],
     async (req: Request, res: Response) => {
         const method: RequestRole = req.method.toString() as any;
         const errors = validationResult(req);
@@ -295,44 +328,43 @@ const apiPatch = [
         const service = new ServiceBusinessVender();
         const businessVender = new BusinessVender();
         const body: Array<{ id: number; businessVenderField: number; value: string }> = req.body.data;
+
+        // 밴더 인증후 밴더 아이디 지정
         const vender = req.user.vender;
         businessVender.id = vender.id;
-        const businessVenderValeQuery: Array<BusinessVenderFieldValue> = [];
+
+        const businessVenderValueQuery: Array<BusinessVenderFieldValue> = [];
         for (let i = 0; body.length > i; i++) {
             const businessVenderValue = new BusinessVenderFieldValue();
-            const businessVenderField = new BusinessVenderField();
             businessVenderValue.id = body[i].id;
-            businessVenderValue.businessVender = businessVender;
-
-            businessVenderField.id = body[i].businessVenderField; // field 아이디
-            businessVenderValue.businessVenderField = businessVenderField;
-            const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
-            if (fieldTypeQuery) {
-                if (fieldTypeQuery.fieldType.columnType === 'text') {
-                    businessVenderValue.text = body[i].value;
+            const businessVenderFieldValueQuery = await service._getBVenderFieldValue(businessVenderValue);
+            const fieldType = businessVenderFieldValueQuery.businessVenderField.fieldType;
+            if (fieldType) {
+                if (fieldType.columnType === 'text') {
+                    businessVenderFieldValueQuery.text = body[i].value;
                 } else {
-                    businessVenderValue.textarea = body[i].value;
+                    businessVenderFieldValueQuery.textarea = body[i].value;
                 }
             } else {
                 responseJson(res, [{ message: `${body[i].businessVenderField} dose net exist.` }], method, 'invalid');
                 return;
             }
 
-            businessVenderValeQuery.push(businessVenderValue);
+            businessVenderValueQuery.push(businessVenderFieldValueQuery);
         }
 
-        delete businessVender.updatedAt;
-
-        const query = await service.postVenderFieldValue(businessVenderValeQuery);
-        query.map((v: any) => {
-            v.businessVenderField = v.businessVenderField.id;
-            delete v.businessVender;
-            v.value = v.text || v.textarea;
-            delete v.text;
-            delete v.textarea;
-            return v;
-        });
-        responseJson(res, query, method, 'success');
+        await setTimeout(async () => {
+            const query = await service._postVenderFieldValue(businessVenderValueQuery);
+            query.map((v: any) => {
+                // v.businessVenderField = v.businessVenderField.id;
+                delete v.businessVender;
+                v.value = v.text || v.textarea;
+                delete v.text;
+                delete v.textarea;
+                return v;
+            });
+            responseJson(res, query, method, 'success');
+        }, 0);
     },
 ];
 
@@ -363,6 +395,7 @@ export default {
     apiPatch,
     apiDelete,
     apiGetField,
+    apiGetInformationType,
 };
 
 /*

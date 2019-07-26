@@ -82,19 +82,7 @@ const apiGet = [
 ];
 
 const apiPost = [
-    [
-        businessVenderPermission.apply(this),
-        check('name')
-            .not()
-            .isEmpty(),
-        check('phone')
-            .not()
-            .isEmpty(),
-        check('email')
-            .not()
-            .isEmpty()
-            .isEmail(),
-    ],
+    [businessVenderPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;
