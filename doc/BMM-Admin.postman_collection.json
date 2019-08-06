@@ -1,0 +1,1785 @@
+{
+	"info": {
+		"_postman_id": "40cf5297-b123-4db6-b428-20ecc0843db6",
+		"name": "BMM-Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Business",
+			"item": [
+				{
+					"name": "SELECT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c290f673-396a-4ead-97d9-30a11bb54124",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business"
+							]
+						},
+						"description": "### 비즈니스 기본 정보 조회"
+					},
+					"response": []
+				},
+				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"상상을 현실로 하는 회사\",\n    \"subTitle\": \"서브타이틀을 입력!!\",\n    \"status\": \"yes\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business"
+							]
+						},
+						"description": "### 비즈니스 기본 정보 입력\n\n#### body\n- status: __yes/no 만 가능합니다.__\n\n#### 주의사항\n> ___비즈니스 정보가 존재 하면, 재 입력 안됩니다.___"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"상상을 현실로 하는 회사(수정테스트)\",\n    \"subTitle\": \"서브타이틀을 입력!!(수정테스트)\",\n    \"status\": \"yes\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business"
+							]
+						},
+						"description": "### 비즈니스 기본 정보 수정\n\n#### body\n- status: __yes/no 만 가능합니다.__"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business"
+							]
+						},
+						"description": "### 비즈니스 삭제\n\n#### 주의사항\n> ___비즈니스 정보를 삭제 하면, 관련된 모든 데이터가 삭제 됩니다.___"
+					},
+					"response": []
+				}
+			],
+			"description": "## 비즈니스의 기본 정보 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b275cae6-2448-4d09-918a-0b5b9b6d253f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d0934e93-c942-4849-9284-ceb023b73f46",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Meeting Room",
+			"item": [
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_meeting_room",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_meeting_room"
+							]
+						},
+						"description": "### 미팅룸 조회\n> 등록한 미팅룸 리스트를 출력합니다."
+					},
+					"response": []
+				},
+				{
+					"name": "INSERT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40a1d567-64a0-4713-805d-dc506c15d1d8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "API 2.0 에서 발급 받은 토큰앞에 'JWT ' 를 붙이시면 됩니다. 주의 할 점은 jwt뒤로 띄어쓰기가 있다는 부분입니다. ",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"미니룸 2\",\n    \"location\": \"M2\",\n    \"sort\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_meeting_room",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_meeting_room"
+							]
+						},
+						"description": "### 미팅룸 생성"
+					},
+					"response": [
+						{
+							"name": "Business Meeting Room create",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMjYxZGZhNDE5NzdjNGM3MDU3YjAwOCIsImxldmVsIjoiYWRtaW4iLCJpYXQiOjE1NjI4NTY3NjcsImV4cCI6MTY2Mjg1Njc2Nn0.pXYOp4hG0qQSB0Uvf_fstDF_5RNnOdMv65Mko1zNiEM",
+										"description": "API 2.0 에서 발급 받은 토큰앞에 'JWT ' 를 붙이시면 됩니다. 주의 할 점은 jwt뒤로 띄어쓰기가 있다는 부분입니다. ",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Default 이방은 폐쇠되었습니다.\",\n    \"location\": \"B102\",\n    \"sort\": \"1\"\n}"
+								},
+								"url": {
+									"raw": "localhost:8989/api/v1/business/1/meetingroom",
+									"host": [
+										"localhost"
+									],
+									"port": "8989",
+									"path": [
+										"api",
+										"v1",
+										"business",
+										"1",
+										"meetingroom"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "172"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ac-Iz5wF5UwMG3tB+WvhEdDStZVaZs\""
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 15 Jul 2019 23:40:46 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"resCode\": 400,\n    \"message\": \"Input data is invalid\",\n    \"result\": [\n        {\n            \"value\": \"{{business_id}}\",\n            \"msg\": \"First insert business information.\",\n            \"param\": \"businessId\",\n            \"location\": \"params\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"미니룸 1-1 (수정)\",\n    \"location\": \"M1-1\",\n    \"sort\": \"0\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_meeting_room/5",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_meeting_room",
+								"5"
+							]
+						},
+						"description": "### 미팅룸 수정\n- {{meeting_room_id}}: 수정하고자 하는 미팅룸 아이디"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_meeting_room/3",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_meeting_room",
+								"3"
+							]
+						},
+						"description": "### 미팅룸 삭제"
+					},
+					"response": []
+				}
+			],
+			"description": "## 미팅룸 관리 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "df3d476f-b9bb-4c41-a818-cb66715dc279",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "565ce9f2-74fd-40bd-a76c-6c69dac2d442",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Time Table",
+			"item": [
+				{
+					"name": "TIME LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_time",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time"
+							]
+						},
+						"description": "### 이벤트 시간 & 리스트"
+					},
+					"response": []
+				},
+				{
+					"name": "TIME CREATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"start_time\": \"08:00\",\n    \"end_time\": \"09:00\",\n    \"start_date\": \"2019-01-01 00:00:00\",\n    \"end_date\": \"2019-01-02 00:00:00\",\n    \"interval_time\": \"120\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_time",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time"
+							]
+						},
+						"description": "### 이벤트 시간 저장\n> ___나온 결과물은 실제 디비에는 이벤트 기간에대해서만 저장장되고, 타임리스트는 view에 뿌려주기 위한 가상 데이터 입니다. 실제로 데이터를 저장하려면 이 API 에서 출력된 타임 리스트를 list에 create 해주셔야 합니다.___"
+					},
+					"response": []
+				},
+				{
+					"name": "TIME UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"start_date\": \"2019-01-01 00:00:00\",\n    \"end_date\": \"2019-01-02 00:00:00\",\n    \"interval_time\": \"120\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_time",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time"
+							]
+						},
+						"description": "### 이벤트 시간 수정\n> 이벤트 기간만 저장 됩니다."
+					},
+					"response": []
+				},
+				{
+					"name": "TIME LIST  LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_time_list",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time_list"
+							]
+						},
+						"description": "### 이벤트 시간 저장\n> ___ TIME CREATE 에서 나온 타임리스트를 저장합니다.___"
+					},
+					"response": []
+				},
+				{
+					"name": "TIME LIST CREATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"time_lists\":[\n        {\n            \"date\": \"2019-01-01\",\n            \"time\": [\n                {\n                    \"time\": \"02:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"04:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"06:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"08:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"10:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"12:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"14:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"16:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"18:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"20:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"22:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"00:00\",\n                    \"status\": \"no\"\n                }\n            ]\n        },\n        {\n            \"date\": \"2019-01-02\",\n            \"time\": [\n                {\n                    \"time\": \"02:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"04:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"06:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"08:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"10:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"12:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"14:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"16:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"18:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"20:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"22:00\",\n                    \"status\": \"no\"\n                },\n                {\n                    \"time\": \"00:00\",\n                    \"status\": \"no\"\n                }\n            ]\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_time_list",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time_list"
+							]
+						},
+						"description": "### 타임 리스트 저장\n> Time api(create/update)에서 나온 결과물에 status 필드만 추가 해서 저장하시면 됩니다."
+					},
+					"response": []
+				},
+				{
+					"name": "TIME LIST UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"use\": \"no\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_time_list/20977",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_time_list",
+								"20977"
+							]
+						},
+						"description": "### 타임 리스트 생성\n1. 타임 리스트는 /api/v1/business_time 에서 생성하여 가져온다.\n2. time_lists 안에 배열로 넣는다."
+					},
+					"response": []
+				}
+			],
+			"description": "## 미팅 시간을 설정하는 API 입니다.\n> 유의할 사항은 타임 테이블을 create 한다는 것은 타임 리스트를 생성하는 것이 아니라 이벤트 기간 시간을 저장 하는 곳이고, 타임테이블이 결과물로 나오는 것은 View 에 뿌려주기 위한 데이터 입니다. 타임 테이블을 실제로 저장을 하려면, 가상으로 나온 타임 테이블을 list 에 create 해주셔야 합니다.  \n\n> 타임 테이블을 새로 생성하게 되면 기존에 있는 데이터가 모두 삭제 됩니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0ed230b4-75e5-4a5f-9ae9-ed6d9db5690e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8f6e261f-bb2e-4868-8a02-466a90be6e8d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Vender Field",
+			"item": [
+				{
+					"name": "INIT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field_init",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field_init"
+							]
+						},
+						"description": "### 밴더 인포메이션 기본 등록\n> 인포메이션에서 기본적으로 사용할 필드를 등록 시켜줍니다."
+					},
+					"response": []
+				},
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field"
+							]
+						},
+						"description": "### 인포메이션 필드 목록 모두 조회\n> 인포메이션의 필드를 분류별로 모두 출력 합니다."
+					},
+					"response": []
+				},
+				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"제품소개\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field"
+							]
+						},
+						"description": "### 밴더 인포메이션 등록"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"제품소개(수정)\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1(수정)\",\n            \"id\": 24,\n            \"sort\": 0\n        }\n    ],\n    \"id\": 105,\n    \"sort\": 0\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field/105",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field",
+								"105"
+							]
+						},
+						"description": "### 밴더 인포메이션 목록 조회\n\n#### url\n- {{information_id}}: __[POST/GET] api/v1/business_vender_information_field/{{information_field_id}} 의 id__ 값"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field/{{vendor_infomation_id}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field",
+								"{{vendor_infomation_id}}"
+							]
+						},
+						"description": "### 벤더의 인포메이션의 필드 삭제\n- {{vendor_infomation_id}}: 밴더 인포메이션 아이디"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE ALL",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field_all",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field_all"
+							]
+						},
+						"description": "### 벤더의 인포메이션의 필드 모두 삭제"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE CHILD FIELD",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field/7/child/20",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field",
+								"7",
+								"child",
+								"20"
+							]
+						},
+						"description": "### 벤더 인포메이션의 자식 필드 삭제"
+					},
+					"response": []
+				}
+			],
+			"description": "___현재 수정중 입니다. 수정이 완료되는 대로 연락 드리겠습니다.___\n\n## 인포메이션 컬럼을 관리하는 API  입니다.\n> ___ 처음 진행시 INIT api를 호출 해주세요.___",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f6a91738-bc42-4845-ace1-f4e0021832d5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "191817ac-3284-4216-8470-dd58bb24701b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Vender",
+			"item": [
+				{
+					"name": "SELECT VENDER",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender"
+							]
+						},
+						"description": "### 벤더별 인포메이션 타입 별 조회\n> 벤더의 아이디로 기업정보, 참여 정보, 담당자 등..\n##### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender id__ 값"
+					},
+					"response": []
+				},
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender"
+							]
+						},
+						"description": "### 모든 벤더 리스트\n> 전체 밴더 리스트를 조회 합니다."
+					},
+					"response": []
+				},
+				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다."
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"159\": \"company Name\",\n\t\"160\": \"홍길동1\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender"
+							]
+						},
+						"description": "### 밴더 추가\n> 밴더들을 추가 합니다.\n\n#### 사전작업\n- 비즈니스 기본 정보를 추가 하셔야 됩니다. __[POST] api/v1/business__   \n- __/api/v1/business_vender_field_information/{{information_type_id}} 에서 필드의 아이디를 가져올 수 있습니다.__"
+					},
+					"response": [
+						{
+							"name": "Business vender create",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+										"key": "Authorization",
+										"type": "text",
+										"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMjYxZGZhNDE5NzdjNGM3MDU3YjAwOCIsImxldmVsIjoiYWRtaW4iLCJpYXQiOjE1NjI4NTY3NjcsImV4cCI6MTY2Mjg1Njc2Nn0.pXYOp4hG0qQSB0Uvf_fstDF_5RNnOdMv65Mko1zNiEM"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Company name\",\n    \"ceoName\": \"CEO name\",\n    \"establishmentDate\": \"2019-02-02\"\n}"
+								},
+								"url": {
+									"raw": "localhost:8989/api/v1/business_vender",
+									"host": [
+										"localhost"
+									],
+									"port": "8989",
+									"path": [
+										"api",
+										"v1",
+										"business_vender"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": [\n        {\n            \"id\": 45,\n            \"value\": \"안녕하세요.\"\n        },\n        {\n        \t\"id\": 46,\n            \"value\": \"수정했어요. \"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender/40",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender",
+								"40"
+							]
+						},
+						"description": "### 비즈니스 밴더 업데이트\n###### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 결과 id__\n\n###### body\n- businessCategory: __[GET] /api/v1/code_table/business_category 의 코드 id__ \n- serviceCategory: __[GET] /api/v1/code_table/service_category 의 코드 id__"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}api/v1/business_vender/30",
+							"host": [
+								"{{server}}api"
+							],
+							"path": [
+								"v1",
+								"business_vender",
+								"30"
+							]
+						},
+						"description": "### 비즈니스 밴더 삭제\n#### url\n- {{vender_id}} : __[POST/GET] api/v1/business_vender__ 의 __id__ 값"
+					},
+					"response": []
+				}
+			],
+			"description": "## 밴더 목록 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8b8ac00c-3995-4557-b4e5-75903ab0b0cb",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9d844cca-e5d0-4f8d-b47d-ac806b640886",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Vender Code",
+			"item": [
+				{
+					"name": "SELECT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_code",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_code"
+							]
+						},
+						"description": "### 비즈니스 코드 출력\n> 비즈니스에서 발급되어 사용되는 코드를 조회 합니다.   \n  사용하지 않는 코드 한개만 조회 합니다."
+					},
+					"response": []
+				}
+			],
+			"description": "## 벤더가 발급받는 API 입니다.\n> ___벤더에게 하나씩 발급되는 코드 입니다. 이 코드는 한번 사용되면, 재사용이 불가능합니다.___",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0997ca0b-e137-4334-8876-63f6c3dbf156",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "380a49e6-4eb2-448f-b02c-481c5de9baad",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Code",
+			"item": [
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/code",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"code"
+							]
+						},
+						"description": "### 비즈니스 필드 카테고리 조회\n\n- {{tag}} : information, company_info_type\n\n_현재 등록된 태그들 추후 계속 추가 될수 있습니다._"
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/code/{{tag}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"code",
+								"{{tag}}"
+							]
+						},
+						"description": "### 비즈니스 기본 정보 조회\n\n- {{tag}} : information, company_info_type\n\n_현재 등록된 태그들 추후 계속 추가 될수 있습니다._"
+					},
+					"response": []
+				}
+			],
+			"description": "## 코드 테이블\n> 코드를 조회 할 수 있는 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b7a072ed-9338-48a2-9023-b70990e8adf6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a8f032d5-1bb8-4355-965b-daad72f310e8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Generate",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\":\"xsync-admin\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/token",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"token"
+							]
+						},
+						"description": "### 테스트용 토큰 발행\n> 개발시 임시로 토큰을 발급합니다. 이 토큰은 레코드에 있는 제일 처음 있는 데이터를 가져와서 토큰을 발급합니다.\n\n#### body\n- type: 'xsync-admin' | 'xsync-user'"
+					},
+					"response": []
+				}
+			],
+			"description": "## 토큰 관리 API 입니다.\n> __정식 API는 아님니다. ㅎㅎ__\n\n> 개발시 임시로 발급 할 수 있는 토큰 입니다. 랜덤이 아니라 레코드상 정렬되지 않은 제일 처음에 있는 관리자의 정보를 가져와서 토큰을 발행합니다.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dd8c8289-894a-4adf-83b9-57587e670355",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e302b6e-bb9a-44a9-a5ca-7da26e4126cc",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Business Vender Manager",
+			"item": [
+				{
+					"name": "SELECT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender",
+								"{{vender_id}}",
+								"manager",
+								"{{vender_manager_id}}"
+							]
+						},
+						"description": "### 벤더 매니저 목록 조회\n> 매니저 정보를 조회 합니다.\n\n#### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST/GET] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값"
+					},
+					"response": []
+				},
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender",
+								"{{vender_id}}",
+								"manager"
+							]
+						},
+						"description": "### 벤더 목록 모두 조회\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMjYxZGZhNDE5NzdjNGM3MDU3YjAwOCIsImxldmVsIjoiYWRtaW4iLCJpYXQiOjE1NjI4NTY3NjcsImV4cCI6MTY2Mjg1Njc2Nn0.pXYOp4hG0qQSB0Uvf_fstDF_5RNnOdMv65Mko1zNiEM"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
+							"host": [
+								"{{server}}api"
+							],
+							"path": [
+								"v1",
+								"business_vender",
+								"{{vender_id}}",
+								"manager",
+								"{{vender_manager_id}}"
+							]
+						},
+						"description": "### 벤더 매니저 목록 삭제\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값"
+					},
+					"response": []
+				},
+				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"150\": \"홍21동\",\n\t\"159\": \"010-0200-2020\",\n\t\"160\": \"email@email.com\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender",
+								"{{vender_id}}",
+								"manager"
+							]
+						},
+						"description": "### 벤더 맴버 생성\n\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값\n\n#### body\n- email: __이메일 형식을 지켜주세요.__"
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"홍길동 수정\",\n\t\"phone\": \"010-0200-2020\",\n\t\"email\": \"email@email.com\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender",
+								"{{vender_id}}",
+								"manager",
+								"{{vender_manager_id}}"
+							]
+						},
+						"description": "### 벤더 맴버 수정\n> 밴더 맴버의 정보를 수정 합니다.\n\n#### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST/GET] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값\n\n#### body\n- email: ___이메일 형식을 지켜주세요___"
+					},
+					"response": []
+				}
+			],
+			"description": "## 벤더의 매니저 API 입니다.\n___현재 필요없는 API 입니다.....___\n아아아 괜히 만듬..",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "eb6430c8-d0ad-4447-a2b6-d2a9e11d76b8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "73364e70-1323-4f3b-b604-e0b3d7e9bed8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	}
+}
