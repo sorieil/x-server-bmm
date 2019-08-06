@@ -18,12 +18,13 @@ import Sentry = require('@sentry/node');
 import businessTime from './controllers/admin/businessTime';
 import businessTimeList from './controllers/admin/businessTimeList';
 import businessVenderField from './controllers/admin/businessVenderField';
-import clientVender from './controllers/client/clientVender';
+import userVender from './controllers/user/userVender';
 import code from './controllers/code';
 import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
 import businessVenderManager from './controllers/admin/businessVenderManager';
 import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
+import userFavorite from './controllers/user/userFavorite';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -159,8 +160,14 @@ connections(process.env)
 
         // == user
         const clientCheck = auth('xsync-user').isAuthenticate;
-        app.get('/api/v1/vender/:businessId', clientCheck, ...clientVender.apiGet);
-        app.get('/api/v1/vender/:businessId/favorite', clientCheck, ...clientVender.apiGet);
+        app.get('/api/v1/user/vender', clientCheck, ...userVender.apiGets);
+        app.get('/api/v1/user/vender/:businessId', clientCheck, ...userVender.apiGet);
+        app.get('/api/v1/user/vender/:businessId/favorite', clientCheck, ...userVender.apiGet);
+
+        // Favorite
+        app.get('/api/v1/user/favorite', clientCheck, ...userFavorite.apiGets);
+        app.post('/api/v1/user/favorite/:venderId', clientCheck, ...userFavorite.apiPost);
+        app.delete('/api/v1/user/favorite/:venderId', clientCheck, ...userFavorite.apiDelete);
 
         /**
          * Error Handler. Provides full stack - remove for production
