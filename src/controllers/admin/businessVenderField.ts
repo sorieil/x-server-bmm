@@ -198,19 +198,9 @@ const apiPost = [
             const serviceChild = new ServiceBusinessVenderInformationChildNode();
             const businessVenderField = new BusinessVenderField();
             const body = req.body;
-            const paramChildNode = body.fieldChildNodes.map((v: BusinessVenderFieldChildNode) => {
-                const schema = new BusinessVenderFieldChildNode();
-                return Object.assign(schema, v);
-            });
-
-            let paramChildNodeQuery: BusinessVenderFieldChildNode;
 
             const business = new Business();
             business.id = req.user.business.id;
-
-            if (paramChildNode.length > 0) {
-                await serviceChild.post(paramChildNode);
-            }
 
             const informationType = new Code();
             informationType.id = body.informationType;
@@ -222,9 +212,20 @@ const apiPost = [
             businessVenderField.require = body.require;
             businessVenderField.informationType = informationType;
             businessVenderField.fieldType = fieldType;
-            businessVenderField.businessVenderFieldChildNodes = paramChildNode;
 
             const query = await service.post(businessVenderField);
+
+            const paramChildNode = body.fieldChildNodes.map((v: BusinessVenderFieldChildNode) => {
+                const schema = new BusinessVenderFieldChildNode();
+                v.businessVenderField = query;
+                return Object.assign(schema, v);
+            });
+
+            if (paramChildNode.length > 0) {
+                await serviceChild.post(paramChildNode);
+            }
+
+            await Object.assign(query, { serviceChild: await serviceChild.gets(businessVenderField) });
             query.informationType = query.informationType.id as any;
             query.fieldType = query.fieldType.id as any;
 
@@ -256,7 +257,6 @@ const apiPatch = [
             const serviceChild = new ServiceBusinessVenderInformationChildNode();
             const businessVenderField = new BusinessVenderField();
             const body = req.body;
-
             delete businessVenderField.business;
             delete businessVenderField.createdAt;
             delete businessVenderField.updatedAt;
@@ -277,21 +277,28 @@ const apiPatch = [
                 if (body.fieldChildNodes.length > 0) {
                     // 만약 자식이 줄어 들었다면, 업데이트에 포함이 되지 않은 자식 같은 경우는 삭제 해줘야 한다.
                     const deleteTargetQuery = await serviceChild.get(businessVenderField);
-
+                    // 아이디가 없는 경우는 새로운 입력이기 대문에 아이디를 넣어준다.
                     const paramChildNode = await body.fieldChildNodes.map((v: BusinessVenderFieldChildNode) => {
                         const schema = new BusinessVenderFieldChildNode();
+                        if (!v.hasOwnProperty('id')) {
+                            v.businessVenderField = businessVenderField;
+                        }
                         delete v.createdAt;
                         delete v.updatedAt;
                         return Object.assign(schema, v);
                     });
                     await serviceChild.post(paramChildNode);
-                    businessVenderField.businessVenderFieldChildNodes = paramChildNode;
                 }
             }
 
+            // 새로 입력 하는 타입에서 business_vender_field_id 값을 빼줘야 한다.
             const query = await service.post(businessVenderField);
-            await Object.assign(query, { fieldChildNodes: query.businessVenderFieldChildNodes });
-            delete query.businessVenderFieldChildNodes;
+
+            // 자식 노드들이 업데이트가 됐다면, 주입해준다.
+            if (body.fieldChildNodes.length > 0) {
+                Object.assign(query, { fieldChildNodes: await serviceChild.gets(businessVenderField) });
+            }
+
             responseJson(res, [query], method, 'success');
         } catch (error) {
             tryCatch(res, error);

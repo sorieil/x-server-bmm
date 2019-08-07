@@ -4,10 +4,11 @@ module.exports = {
             name: 'API',
             instances: 1,
             autorestart: true,
+            script: './src/app.ts',
             watch: false,
             // max_memory_restart: '1.8G',
             env: {
-                ENVIRONMENT: 'development',
+                NODE_ENV: 'development',
             },
         },
     ],

@@ -1,1 +1,1 @@
-ENVIRONMENT=production npx nodemon ./dist/app.js
+NODE_ENV=production npx nodemon ./dist/app.js

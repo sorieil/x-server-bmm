@@ -7,7 +7,7 @@ import { Business } from './MysqlBusiness';
 export class BusinessEventBridge extends Base {
     @Column('varchar')
     eventId: string;
-    @OneToOne(type => Business, business => business.eventBridge, { onDelete: 'CASCADE' })
+    @OneToOne(type => Business, business => business.businessEventBridge, { onDelete: 'CASCADE' })
     @JoinColumn()
     business: Business;
 }

@@ -24,7 +24,7 @@ export class BaseService {
 
     public mysqlConnection = getManager(connectionMysql);
 
-    public async transInsertQuery(query?: string) {
+    public async transInsertQuery(query: string) {
         const queryRunner = getManager(this.connectionName).connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();

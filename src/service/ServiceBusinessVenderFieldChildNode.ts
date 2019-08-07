@@ -27,6 +27,15 @@ export default class ServiceBusinessVenderFieldChildNode extends BaseService {
         return query;
     }
 
+    public async gets(businessVenderField: BusinessVenderField) {
+        const query = this.mysqlManager(BusinessVenderFieldChildNode).find({
+            where: {
+                businessVenderField: businessVenderField,
+            },
+        });
+        return query;
+    }
+
     public async getByBusinessVenderField(
         businessVenderField: BusinessVenderField,
         businessVenderFieldChildNode: BusinessVenderFieldChildNode,

@@ -12,14 +12,18 @@ import { User } from '../entity/mysql/entities/MysqlUser';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
 import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import logger from '../util/logger';
-import { ObjectID } from 'mongodb';
+
+/**
+ * TODO 당분간은 디비 마이그레이션을 하기 위해서 매번 API 요청할때마다 몽고디비에 최신 디비를
+ * TODO Mysql으로 점진적으로 이관을 및 업데이트를 실시한다.
+ */
+
 export type TokenLevelRole = 'admin' | 'user';
 export default class ServiceAccount extends BaseService {
     constructor() {
         super();
     }
     public async getUserId(id: any) {
-        console.log('object id:', id);
         const mongoManager = await getMongoManager(connectionMongoDB);
         const mysqlManager = await getManager(connectionMysql);
         const mongoQuery = mongoManager.getMongoRepository(Accounts).findOne(id);
@@ -205,10 +209,11 @@ export default class ServiceAccount extends BaseService {
                 id: query.id,
                 name: query.name,
                 level: 'user',
+                eventId: query.eventList[0],
             },
             secretKey,
             { expiresIn: 99999999 },
         );
-        return { token: 'JWT ' + token, id: query._id, name: query.name, level: 'user' };
+        return { token: 'JWT ' + token, id: query._id, name: query.name, level: 'eUser' };
     }
 }

@@ -1,36 +1,65 @@
-import { BusinessFavorite } from './../entity/mysql/entities/MysqlBusinessFavorite';
-import { BusinessVender } from '../entity/mysql/entities/MysqlBusinessVender';
+import { BusinessVenderFavorite } from '../entity/mysql/entities/MysqlBusinessVenderFavorite';
 import { BaseService } from './BaseService';
-import { BusinessVenderField } from '../entity/mysql/entities/MysqlBusinessVenderField';
-import { ServiceBusiness } from './ServiceBusiness';
-import { Business } from '../entity/mysql/entities/MysqlBusiness';
-import { Login } from '../entity/mysql/entities/MysqlLogin';
 import { User } from '../entity/mysql/entities/MysqlUser';
+import { Business } from '../entity/mysql/entities/MysqlBusiness';
 export default class ServiceBusinessVenderFavorite extends BaseService {
     constructor() {
         super();
     }
 
-    public async post(venderInformation: BusinessVenderField) {
-        const query = this.mysqlManager(BusinessVenderField).save(venderInformation);
+    public async post(businessVenderFavorite: BusinessVenderFavorite) {
+        const query = this.mysqlManager(BusinessVenderFavorite).save(businessVenderFavorite);
         return query;
     }
 
-    public async getByUser(user: User) {
-        const query = this.mysqlManager(BusinessFavorite).find({
+    public async _getByWhere(businessVenderFavorite: BusinessVenderFavorite) {
+        const query = this.mysqlConnection
+            .getRepository(BusinessVenderFavorite)
+            .createQueryBuilder('favorite')
+            .innerJoin('favorite.user', 'user')
+            .innerJoin('favorite.businesses', 'business')
+            .innerJoin('favorite.businessVenders', 'businessVenders')
+            .where('user.id = :userId', { userId: businessVenderFavorite.user.id })
+            .andWhere('business.id = :businessId', { businessId: businessVenderFavorite.businesses[0].id })
+            .andWhere('businessVenders.id = :venderId', { venderId: businessVenderFavorite.businessVenders[0].id })
+            .getOne();
+        return query;
+    }
+
+    // 이 부분이 문제이다.
+    // business vender favorite과 business vender 의 관계가 ManyToMany 인데 joinTable 은
+
+    public async _getByUserWithBusinessVender(user: User, business: Business) {
+        const query = this.mysqlManager(BusinessVenderFavorite).find({
             where: {
                 user: user,
+                business: business,
             },
+            relations: [
+                'businessVenders',
+                'businessVenders.businessVenderFieldValues',
+                'businessVenders.businessVenderFieldValues.businessVenderField',
+            ],
         });
 
         return query;
     }
 
-    public async delete(business: Business) {
-        const query = this.mysqlManager(BusinessVenderField).delete({
-            business: business,
-        });
+    public async _deleteByWhere(businessVenderFavorite: BusinessVenderFavorite) {
+        const query = this.mysqlConnection
+            .getRepository(BusinessVenderFavorite)
+            .createQueryBuilder('favorite')
+            .innerJoin('favorite.user', 'user')
+            .innerJoin('favorite.businesses', 'business')
+            .innerJoin('favorite.businessVenders', 'businessVenders')
+            .where('user.id = :userId', { userId: businessVenderFavorite.user.id })
+            .andWhere('business.id = :businessId', { businessId: businessVenderFavorite.businesses[0].id })
+            .andWhere('businessVenders.id = :venderId', { venderId: businessVenderFavorite.businessVenders[0].id })
+            .getOne();
 
-        return query;
+        return query.then(row => {
+            const deleteQuery = this.mysqlManager(BusinessVenderFavorite).delete({ id: row.id });
+            return deleteQuery;
+        });
     }
 }

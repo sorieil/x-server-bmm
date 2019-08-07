@@ -82,10 +82,11 @@ const apiGet = [
             query.businessVenderFieldValues.map((j: any) => {
                 delete j.createdAt;
                 delete j.updatedAt;
-                j.value = j.text || j.textarea;
+                j.value = j.text || j.textarea || j.idx;
                 delete j.text;
                 delete j.textarea;
-                j.businessVenderField = j.businessVenderField.id;
+                delete j.idx;
+                // j.businessVenderField = j.businessVenderField.id;
                 return j;
             });
 
@@ -176,9 +177,10 @@ const apiGets = [
                 v.businessVenderFieldValues.map((j: any) => {
                     delete j.createdAt;
                     delete j.updatedAt;
-                    j.value = j.text || j.textarea;
+                    j.value = j.text || j.textarea || j.idx;
                     delete j.text;
                     delete j.textarea;
+                    delete j.idx;
                     // j.businessVenderField = j.businessVenderField.id;
                     return j;
                 });
@@ -273,7 +275,7 @@ const apiPost = [
                 businessVenderField.id = parseInt(field, 10); // field 아이
                 const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
 
-                // text textarea 로 조회 해서 구분해줘야 한다.
+                // text textarea idx 로 조회 해서 구분해줘야 한다.
                 if (!fieldTypeQuery) {
                     responseJson(
                         res,
@@ -286,8 +288,10 @@ const apiPost = [
 
                 if (fieldTypeQuery.fieldType.columnType === 'text') {
                     businessVenderFieldValue.text = body[field];
-                } else {
+                } else if (fieldTypeQuery.fieldType.columnType === 'textarea') {
                     businessVenderFieldValue.textarea = body[field];
+                } else {
+                    businessVenderFieldValue.idx = Number(body[field]) as any;
                 }
                 businessVenderFieldValue.businessVenderField = businessVenderField; // 필드의 아아디 값 지정
                 businessVenderFieldValue.businessVender = businessVender;
@@ -300,9 +304,10 @@ const apiPost = [
             businessVenderQuery.businessVenderFieldValues.map((v: any) => {
                 delete v.createdAt;
                 delete v.updatedAt;
-                v.value = v.text || v.textarea;
+                v.value = v.text || v.textarea || v.idx;
                 delete v.text;
                 delete v.textarea;
+                delete v.idx;
                 // j.businessVenderField = j.businessVenderField.id;
                 return v;
             });
@@ -342,8 +347,10 @@ const apiPatch = [
             if (fieldType) {
                 if (fieldType.columnType === 'text') {
                     businessVenderFieldValueQuery.text = body[i].value;
-                } else {
+                } else if (fieldType.columnType === 'textarea') {
                     businessVenderFieldValueQuery.textarea = body[i].value;
+                } else {
+                    businessVenderFieldValueQuery.idx = Number(body[i].value) as any;
                 }
             } else {
                 responseJson(res, [{ message: `${body[i].businessVenderField} dose net exist.` }], method, 'invalid');
@@ -358,9 +365,10 @@ const apiPatch = [
             query.map((v: any) => {
                 // v.businessVenderField = v.businessVenderField.id;
                 delete v.businessVender;
-                v.value = v.text || v.textarea;
+                v.value = v.text || v.textarea || v.idx;
                 delete v.text;
                 delete v.textarea;
+                delete v.idx;
                 return v;
             });
             responseJson(res, query, method, 'success');

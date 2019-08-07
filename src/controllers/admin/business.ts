@@ -6,7 +6,7 @@ import { businessPermission } from '../../util/permission';
 import { validationResult } from 'express-validator';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { BusinessEventBridge } from '../../entity/mysql/entities/MysqlBusinessEventBridge';
-import ServiceEventBridge from '../..//service/ServiceEventBridge';
+import ServiceBusinessEventBridge from '../../service/ServiceBusinessEventBridge';
 
 /**
  * 비즈니스의 상태 값을 가져온다. Header, status
@@ -49,10 +49,10 @@ const apiPost = [
                 // 새로 입력하는 경우 이벤트 아이디와 브릿지를 해준다.
                 // 모든 유저가 이벤트 아이디의 토큰을 xsync 2.0 에서 발급 받아, 이 값으로 이벤트 가입 여부를 확인한다.
                 const eventBridge = new BusinessEventBridge();
-                const serviceEventBridge = new ServiceEventBridge();
+                const serviceEventBridge = new ServiceBusinessEventBridge();
                 eventBridge.eventId = req.user.eventId;
                 const eventBridgeQuery = await serviceEventBridge.post(eventBridge);
-                business.eventBridge = eventBridgeQuery;
+                business.businessEventBridge = eventBridgeQuery;
                 business.admin = admin;
             }
 

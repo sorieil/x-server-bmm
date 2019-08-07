@@ -46,7 +46,12 @@ export default class ServiceBusinessVender extends BaseService {
 
     public async _getWithBusiness(businessVender: BusinessVender, business: Business) {
         const query = this.mysqlManager(BusinessVender).findOne({
-            relations: ['businessCode', 'businessVenderFieldValues', 'businessVenderFieldValues.businessVenderField'],
+            relations: [
+                'businessCode',
+                'businessVenderFieldValues',
+                'businessVenderFieldValues.businessVenderField',
+                'businessVenderFieldValues.businessVenderField.informationType',
+            ],
             where: { id: businessVender.id, business: business },
         });
         return query;

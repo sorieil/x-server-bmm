@@ -1,4 +1,4 @@
-import { BusinessFavorite } from './MysqlBusinessFavorite';
+import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, OneToMany, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
@@ -38,6 +38,6 @@ export class User extends Base {
     @OneToMany(type => BusinessMeetingTimeList, businessMeetingTimeList => businessMeetingTimeList.user)
     businessMeetingTimeLists: BusinessMeetingTimeList[];
 
-    @OneToMany(type => BusinessFavorite, businessFavorite => businessFavorite.user)
-    businessFavorites: BusinessFavorite[];
+    @OneToMany(type => BusinessVenderFavorite, businessFavorite => businessFavorite.user)
+    businessFavorites: BusinessVenderFavorite[];
 }

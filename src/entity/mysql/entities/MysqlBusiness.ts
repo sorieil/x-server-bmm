@@ -1,10 +1,11 @@
+import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
 import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { BusinessDetail } from './MysqlBusinessDetail';
 import { BusinessVender } from './MysqlBusinessVender';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, ManyToMany } from 'typeorm';
 import { Admin } from './MysqlAdmin';
 import { BusinessVenderField } from './MysqlBusinessVenderField';
 import { BusinessEventBridge } from './MysqlBusinessEventBridge';
@@ -43,5 +44,5 @@ export class Business extends Base {
     businessVenderFields: BusinessVenderField[];
 
     @OneToOne(type => BusinessEventBridge, eventBridge => eventBridge.business)
-    eventBridge: BusinessEventBridge;
+    businessEventBridge: BusinessEventBridge;
 }

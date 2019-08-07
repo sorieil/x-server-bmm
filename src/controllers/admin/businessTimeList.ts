@@ -100,7 +100,6 @@ const apiPatch = [
             return;
         }
 
-        console.log('timeblock:', businessTimeListQuery);
         businessTimeListQuery.use = body.use;
 
         const query = await service.update(businessTimeListQuery);

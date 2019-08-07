@@ -1,7 +1,8 @@
 import { BaseService } from './BaseService';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
 import { User } from '../entity/mysql/entities/MysqlUser';
-import { userInfo } from 'os';
+import { BusinessVender } from '../entity/mysql/entities/MysqlBusinessVender';
+import { Business } from '../entity/mysql/entities/MysqlBusiness';
 export default class ServiceUserPermission extends BaseService {
     constructor() {
         super();
@@ -12,6 +13,13 @@ export default class ServiceUserPermission extends BaseService {
             where: {
                 login: login,
             },
+        });
+        return query;
+    }
+
+    public async _getWithBusiness(businessVender: BusinessVender, business: Business) {
+        const query = this.mysqlManager(BusinessVender).findOne({
+            where: { id: businessVender.id, business: business },
         });
         return query;
     }

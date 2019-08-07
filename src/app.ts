@@ -22,14 +22,13 @@ import userVender from './controllers/user/userVender';
 import code from './controllers/code';
 import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
-import businessVenderManager from './controllers/admin/businessVenderManager';
 import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
 import userFavorite from './controllers/user/userFavorite';
 
-// Load environment variables from .env file, where API keys and passwords are configured
+// Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
 
-if (process.env.ENVIRONMENT === 'production') {
+if (process.env.NODE_ENV === 'production') {
     Sentry.init({ dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535' });
     Sentry.configureScope(scope => {
         scope.setUser({ email: 'jhkim@xsync.co' });
@@ -45,7 +44,7 @@ connections(process.env)
         const app = express();
         // Express configuration
         app.set('port', process.env.PORT || 3003);
-        if (process.env.ENVIRONMENT === 'production') {
+        if (process.env.NODE_ENV === 'production') {
             app.use(Sentry.Handlers.requestHandler());
             app.use(
                 cors({
@@ -129,25 +128,6 @@ connections(process.env)
         app.get('/api/v1/business_vender', adminCheck, ...businessVender.apiGets);
         app.get('/api/v1/business_vender_field_list/:informationTypeId', adminCheck, ...businessVender.apiGetField);
 
-        // Business vender manager
-        app.get('/api/v1/business_vender/:venderId/manager', adminCheck, ...businessVenderManager.apiGets);
-        app.get(
-            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
-            adminCheck,
-            ...businessVenderManager.apiGet,
-        );
-        app.post('/api/v1/business_vender/:venderId/manager', adminCheck, ...businessVenderManager.apiPost);
-        app.patch(
-            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
-            adminCheck,
-            ...businessVenderManager.apiPatch,
-        );
-        app.delete(
-            '/api/v1/business_vender/:venderId/manager/:venderManagerId',
-            adminCheck,
-            ...businessVenderManager.apiDelete,
-        );
-
         // Business code get
         app.get('/api/v1/business_code', adminCheck, ...businessCode.apiGet);
 
@@ -169,10 +149,18 @@ connections(process.env)
         app.post('/api/v1/user/favorite/:venderId', clientCheck, ...userFavorite.apiPost);
         app.delete('/api/v1/user/favorite/:venderId', clientCheck, ...userFavorite.apiDelete);
 
+        // Meeting reservation
+        app.get('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.patch('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.delete('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+
+        // Meeting Lists
+        app.get('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        
         /**
          * Error Handler. Provides full stack - remove for production
          */
-        if (process.env.ENVIRONMENT === 'development') {
+        if (process.env.NODE_ENV === 'development') {
             app.use(errorHandler());
         } else {
             app.use(Sentry.Handlers.errorHandler());
@@ -194,7 +182,7 @@ connections(process.env)
         // });
 
         app.listen(app.get('port'), () => {
-            console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.ENVIRONMENT);
+            console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.NODE_ENV);
             console.log('  Press CTRL-C to stop\n');
         });
     })
