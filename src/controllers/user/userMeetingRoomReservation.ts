@@ -28,6 +28,9 @@ const apiPatch = [
         // 이미 다른 사람이 예약이 되어 있다면, 예약을 못하게 해야 한다.
         //  true 면 성공, false 는 실패이거나 이미 다른 사람이 등록
         if (query) {
+            responseJson(res, [query], method, 'success');
+        } else {
+            responseJson(res, [{ message: 'Alreadyㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ' }], method, 'success');
         }
     },
 ];
