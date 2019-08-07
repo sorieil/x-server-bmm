@@ -30,7 +30,7 @@ const apiPatch = [
         if (query) {
             responseJson(res, [query], method, 'success');
         } else {
-            responseJson(res, [{ message: 'Alreadyㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ' }], method, 'success');
+            responseJson(res, [{ message: 'Already exist' }], method, 'success');
         }
     },
 ];
