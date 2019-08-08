@@ -82,6 +82,7 @@ const apiGet = [
             query.businessVenderFieldValues.map((j: any) => {
                 delete j.createdAt;
                 delete j.updatedAt;
+                console.log('field:', j.fieldType.columnType)
                 j.value = j.text || j.textarea || j.idx;
                 delete j.text;
                 delete j.textarea;
@@ -170,18 +171,37 @@ const apiGets = [
             const business = new Business();
             business.id = req.user.business.id;
             const query = await service._getByBusiness(business);
-            query.map((v: any) => {
+            query.map(async (v: any) => {
                 delete v.createdAt;
                 delete v.updatedAt;
                 v.businessCode = v.businessCode.code;
-                v.businessVenderFieldValues.map((j: any) => {
+                let duplicateFinderValue: any = null;
+                let duplicateFinderIndex: number = null;
+                await v.businessVenderFieldValues.map((j: any, index: number) => {
+                    // // 여기에서 만약에 fieldId의 값이 중복이 되면, 제일 처음 값에게 배열로 푸쉬를 해준다.
+                    // if (duplicateFinderValue === j.businessVenderField.id) {
+                    //     console.log('중복되는 값이다 ==== ', duplicateFinderValue, duplicateFinderIndex);
+                    //     v.businessVenderFieldValues[duplicateFinderIndex].value = [
+                    //         ...v.businessVenderFieldValues[duplicateFinderIndex].value,
+                    //     ].push(j.idx);
+                    //     j = null;
+                    //     return j;
+                    // }
                     delete j.createdAt;
                     delete j.updatedAt;
-                    j.value = j.text || j.textarea || j.idx;
+                    console.log('column type:', j.businessVenderField);
+                    v.value = j[j.businessVenderField.fieldType.columnType] || null;
+
                     delete j.text;
                     delete j.textarea;
-                    delete j.idx;
-                    // j.businessVenderField = j.businessVenderField.id;
+                    delete j.idxId;
+                    // j.businessVenderField = j.businessVenderField.id as any;
+
+                    // Run at the end process.
+
+                    duplicateFinderValue = j.businessVenderField.id;
+                    duplicateFinderIndex = index;
+
                     return j;
                 });
                 return v;

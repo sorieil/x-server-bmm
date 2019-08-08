@@ -18,8 +18,8 @@ export class Code extends Base {
     @Column('tinyint', { default: 0 })
     sort: number;
 
-    @Column({ type: 'enum', enum: ['textarea', 'text', 'select_box', 'no_type', 'null'] })
-    columnType: 'textarea' | 'text' | 'select_box' | 'no_type';
+    @Column({ type: 'enum', enum: ['textarea', 'text', 'select_box', 'no_type', 'null', 'idxId'] })
+    columnType: 'textarea' | 'text' | 'select_box' | 'no_type' | 'idxId';
 
     @OneToMany(type => BusinessVenderFieldValue, businessVenderField => businessVenderField.code)
     businessVenderFieldValues: BusinessVenderFieldValue[];

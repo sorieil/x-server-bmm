@@ -13,9 +13,9 @@ export default class ServiceBusinessVender extends BaseService {
     public async checkFieldType(businessVenderField: BusinessVenderField) {
         const query = this.mysqlConnection
             .getRepository(BusinessVenderField)
-            .createQueryBuilder('business_vender_field')
-            .leftJoinAndSelect('business_vender_field.fieldType', 'code')
-            .where('business_vender_field.id = :id', { id: businessVenderField.id })
+            .createQueryBuilder('field')
+            .leftJoinAndSelect('field.fieldType', 'code')
+            .where('field.id = :id', { id: businessVenderField.id })
             .getOne();
         return query;
     }
@@ -51,6 +51,7 @@ export default class ServiceBusinessVender extends BaseService {
                 'businessVenderFieldValues',
                 'businessVenderFieldValues.businessVenderField',
                 'businessVenderFieldValues.businessVenderField.informationType',
+                'businessVenderFieldValues.businessVenderField.fieldType',
             ],
             where: { id: businessVender.id, business: business },
         });
@@ -73,6 +74,7 @@ export default class ServiceBusinessVender extends BaseService {
                 'businessCode',
                 'businessVenderFieldValues',
                 'businessVenderFieldValues.businessVenderField',
+                'businessVenderFieldValues.businessVenderField.fieldType',
                 'businessVenderFieldValues.businessVenderField.informationType',
             ],
             where: {
