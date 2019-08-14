@@ -51,7 +51,7 @@ export default class ServiceSearchVender extends BaseService {
             // 필터의 값을 숫자 크기대로 정렬 해준다. 그리고 스트링으로 직열화 한다.
             const filter = businessVenderQuery.businessVenderFieldValues.reduce((a, c) => {
                 const tempValue = c.idx ? c.idx.id : null;
-                // console.log('Type of a', typeof a, a, c);
+                console.log('Type of a', typeof a);
                 if (!a) a = [];
                 if (!tempValue) return a;
                 return a.push(tempValue);
