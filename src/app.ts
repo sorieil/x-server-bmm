@@ -63,6 +63,7 @@ connections(process.env)
             }),
         );
         app.use(helmet());
+
         app.use(passport.initialize());
 
         /**
@@ -140,6 +141,8 @@ connections(process.env)
 
         // == user
         const clientCheck = auth('xsync-user').isAuthenticate;
+
+        // Vender
         app.get('/api/v1/user/vender', clientCheck, ...userVender.apiGets);
         app.get('/api/v1/user/vender/:businessId', clientCheck, ...userVender.apiGet);
         app.get('/api/v1/user/vender/:businessId/favorite', clientCheck, ...userVender.apiGet);
@@ -156,7 +159,7 @@ connections(process.env)
 
         // Meeting Lists
         app.get('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
-        
+
         /**
          * Error Handler. Provides full stack - remove for production
          */
@@ -182,6 +185,7 @@ connections(process.env)
         // });
 
         app.listen(app.get('port'), () => {
+            console.clear();
             console.log('  App is running at http://localhost:%d in %s mode', app.get('port'), process.env.NODE_ENV);
             console.log('  Press CTRL-C to stop\n');
         });

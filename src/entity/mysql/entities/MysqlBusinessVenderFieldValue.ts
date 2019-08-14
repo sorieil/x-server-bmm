@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn, OneToMany, ManyToMany } from 'typeorm';
 import { BusinessVender } from './MysqlBusinessVender';
 import { Code } from './MysqlCode';
+import UserManager from './MysqlUserManager';
 
 @Entity()
 export class BusinessVenderFieldValue extends Base {
@@ -40,4 +41,8 @@ export class BusinessVenderFieldValue extends Base {
         { nullable: true },
     )
     idx: BusinessVenderFieldChildNode;
+
+    // 모바일에서 입력하는 매니저가 있는데 회원정보와 일치를 시켜주러면, 맵핑해주는 컴럼이 필요하다.
+    @OneToOne(type => UserManager, userManger => userManger.businessVenderFieldValue, { onDelete: 'CASCADE' })
+    userManager: UserManager;
 }

@@ -16,6 +16,7 @@ export class BusinessVenderFavorite extends Base {
     @ManyToOne(type => User, user => user.businessFavorites, { onDelete: 'CASCADE' })
     user: User;
 
-    @ManyToMany(type => Business, { onDelete: 'CASCADE' })
+    @ManyToMany(type => Business, business => business.businessVenderFavorities, { onDelete: 'CASCADE' })
+    @JoinTable()
     businesses: Business[];
 }

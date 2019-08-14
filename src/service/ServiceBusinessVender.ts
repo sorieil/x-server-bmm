@@ -4,6 +4,7 @@ import { BusinessVender } from './../entity/mysql/entities/MysqlBusinessVender';
 import { BaseService } from './BaseService';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
+import ServiceSearchVender from './ServiceSearchVender';
 
 export default class ServiceBusinessVender extends BaseService {
     constructor() {
@@ -36,8 +37,10 @@ export default class ServiceBusinessVender extends BaseService {
             relations: [
                 'businessCode',
                 'businessVenderFieldValues',
+                'businessVenderFieldValues.idx',
                 'businessVenderFieldValues.businessVenderField',
                 'businessVenderFieldValues.businessVenderField.informationType',
+                'businessVenderFieldValues.businessVenderField.fieldType',
             ],
             where: { id: businessVender.id },
         });
@@ -49,6 +52,7 @@ export default class ServiceBusinessVender extends BaseService {
             relations: [
                 'businessCode',
                 'businessVenderFieldValues',
+                'businessVenderFieldValues.idx',
                 'businessVenderFieldValues.businessVenderField',
                 'businessVenderFieldValues.businessVenderField.informationType',
                 'businessVenderFieldValues.businessVenderField.fieldType',
@@ -59,12 +63,18 @@ export default class ServiceBusinessVender extends BaseService {
     }
 
     public async post(businessVender: BusinessVender) {
-        const query = this.mysqlManager(BusinessVender).save(businessVender);
+        const query = await this.mysqlManager(BusinessVender).save(businessVender);
+        const serviceSearchVender = new ServiceSearchVender();
+        await serviceSearchVender._updateBySelectBusinessVender(businessVender);
         return query;
     }
 
     public async _postVenderFieldValue(businessVenderFieldValue: BusinessVenderFieldValue[]) {
-        const query = this.mysqlManager(BusinessVenderFieldValue).save(businessVenderFieldValue);
+        const query = await this.mysqlManager(BusinessVenderFieldValue).save(businessVenderFieldValue);
+        const serviceSearchVender = new ServiceSearchVender();
+        // 여기에서는 밴더의 아이디를 받지 않는다.. value의 값으로 한다.
+        console.log('>>>>>>>>>>>>>>>>>> Business vender :', businessVenderFieldValue[0]);
+        // await serviceSearchVender._updateBySelectBusinessVender(businessVenderFieldValue[0].businessVender);
         return query;
     }
 
@@ -73,9 +83,10 @@ export default class ServiceBusinessVender extends BaseService {
             relations: [
                 'businessCode',
                 'businessVenderFieldValues',
+                'businessVenderFieldValues.idx',
                 'businessVenderFieldValues.businessVenderField',
-                'businessVenderFieldValues.businessVenderField.fieldType',
                 'businessVenderFieldValues.businessVenderField.informationType',
+                'businessVenderFieldValues.businessVenderField.fieldType',
             ],
             where: {
                 business: business,
@@ -92,8 +103,10 @@ export default class ServiceBusinessVender extends BaseService {
             relations: [
                 'businessCode',
                 'businessVenderFieldValues',
+                'businessVenderFieldValues.idx',
                 'businessVenderFieldValues.businessVenderField',
                 'businessVenderFieldValues.businessVenderField.informationType',
+                'businessVenderFieldValues.businessVenderField.fieldType',
             ],
             where: {
                 id: businessVender.id,
@@ -118,7 +131,7 @@ export default class ServiceBusinessVender extends BaseService {
             where: {
                 id: businessVenderFieldValue.id,
             },
-            relations: ['businessVenderField', 'businessVenderField.fieldType'],
+            relations: ['businessVenderField', 'businessVenderField.fieldType', 'businessVenderField.informationType'],
         });
         return query;
     }

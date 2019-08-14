@@ -45,4 +45,7 @@ export class Business extends Base {
 
     @OneToOne(type => BusinessEventBridge, eventBridge => eventBridge.business)
     businessEventBridge: BusinessEventBridge;
+
+    @ManyToMany(type => BusinessVenderFavorite, businessVenderFavorite => businessVenderFavorite.businessVenders)
+    businessVenderFavorities: BusinessVenderFavorite[];
 }

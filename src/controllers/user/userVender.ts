@@ -1,6 +1,8 @@
+import { BusinessVenderFieldType } from './../../service/ServiceBusinessVenderField';
+import { BusinessVenderFavorite } from './../../entity/mysql/entities/MysqlBusinessVenderFavorite';
 import { Login } from '../../entity/mysql/entities/MysqlLogin';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
-import { validationResult, param } from 'express-validator';
+import { validationResult, param, check } from 'express-validator';
 import { Request, Response } from 'express';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import ServiceUserVender from '../../service/ServiceUserVender';
@@ -77,6 +79,14 @@ const apiGet = [
 ];
 
 const apiGets = [
+    [
+        check('filter')
+            .optional()
+            .isString(),
+        check('keyword')
+            .optional()
+            .isString(),
+    ],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -89,18 +99,53 @@ const apiGets = [
 
             const service = new ServiceUserVender();
             const business = new Business();
+            const filter: string = req.query.filter
+                .split(',')
+                .map((v: any) => Number(v))
+                .sort((a: number, b: number) => a - b)
+                .join();
+            const keyword = req.query.keyword;
             business.id = req.user.business.id;
-            const query = await service._getByBusiness(business);
-            // query.map((v: any) => {
-            //     v.businessVenderFieldValues.map((j: any) => {
-            //         j.value = j.text || j.textarea || j.idx;
-            //         delete j.text;
-            //         delete j.textarea;
-            //         delete j.idx;
-            //         return j;
-            //     });
-            //     return v;
-            // });
+            const query = await service._getByBusiness(business, keyword, filter);
+            console.log('query >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n', query);
+            query.map((v: any) => {
+                delete v.createdAt;
+                delete v.updatedAt;
+                delete v.filter;
+                v.businessVender.businessVenderFieldValues.map((j: any) => {
+                    // console.log('j:', j);       8
+
+                    if (j.businessVenderField.name === '기업명') {
+                        v.companyName = j.text;
+                    }
+
+                    j.value = j.text || j.textarea || j.idx;
+
+                    delete j.text;
+                    delete j.textarea;
+                    delete j.idx;
+                    delete j.id;
+                    delete j.createdAt;
+                    delete j.updatedAt;
+                    // delete j.businessVenderField;
+                    return j;
+                });
+
+                delete v.businessVender.business;
+
+                const userCheck = v.businessVender.businessVenderFavorities.filter((u: any) => {
+                    return u.user.id === req.user.id;
+                });
+
+                if (userCheck.length > 0 && userCheck) {
+                    console.log('userCheck.length:', userCheck.length);
+                    v.businessVender.businessVenderFavorite = true;
+                } else {
+                    v.businessVender.businessVenderFavorite = false;
+                }
+                delete v.businessVender.businessVenderFavorities;
+                return v;
+            });
 
             responseJson(res, query, method, 'success');
         } catch (error) {

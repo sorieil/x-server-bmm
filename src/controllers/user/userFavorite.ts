@@ -91,7 +91,7 @@ const apiPost = [
             businessVenderFavorite.user = user;
             businessVenderFavorite.businessVenders = [businessVender];
             businessVenderFavorite.businesses = [business];
-            // console.log('business vender favorite: \n', businessVenderFavorite);
+            console.log('business vender favorite: \n', businessVenderFavorite);
 
             const duplicateCheck = await service._getByWhere(businessVenderFavorite);
             console.log('duplicateCheck ===== ', duplicateCheck);

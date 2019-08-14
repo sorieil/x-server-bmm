@@ -82,12 +82,14 @@ const apiGet = [
             query.businessVenderFieldValues.map((j: any) => {
                 delete j.createdAt;
                 delete j.updatedAt;
-                console.log('field:', j.fieldType.columnType)
+
                 j.value = j.text || j.textarea || j.idx;
+
                 delete j.text;
                 delete j.textarea;
                 delete j.idx;
-                // j.businessVenderField = j.businessVenderField.id;
+                j.businessVenderField.informationType = j.businessVenderField.informationType.id;
+                j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
                 return j;
             });
 
@@ -189,16 +191,16 @@ const apiGets = [
                     // }
                     delete j.createdAt;
                     delete j.updatedAt;
-                    console.log('column type:', j.businessVenderField);
-                    v.value = j[j.businessVenderField.fieldType.columnType] || null;
+
+                    j.value = j.text || j.textarea || j.idx;
 
                     delete j.text;
                     delete j.textarea;
-                    delete j.idxId;
-                    // j.businessVenderField = j.businessVenderField.id as any;
+                    delete j.idx;
+                    j.businessVenderField.informationType = j.businessVenderField.informationType.id;
+                    j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
 
                     // Run at the end process.
-
                     duplicateFinderValue = j.businessVenderField.id;
                     duplicateFinderIndex = index;
 
@@ -292,7 +294,8 @@ const apiPost = [
             for (let field in body) {
                 const businessVenderFieldValue = new BusinessVenderFieldValue();
                 const businessVenderField = new BusinessVenderField();
-                businessVenderField.id = parseInt(field, 10); // field 아이
+                businessVenderField.id = parseInt(field.split('-')[0], 10); // field 아이
+
                 const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
 
                 // text textarea idx 로 조회 해서 구분해줘야 한다.
@@ -328,6 +331,8 @@ const apiPost = [
                 delete v.text;
                 delete v.textarea;
                 delete v.idx;
+                v.businessVenderField.informationType = v.businessVenderField.informationType.id;
+                v.businessVenderField.fieldType = v.businessVenderField.fieldType.columnType;
                 // j.businessVenderField = j.businessVenderField.id;
                 return v;
             });
@@ -383,12 +388,13 @@ const apiPatch = [
         await setTimeout(async () => {
             const query = await service._postVenderFieldValue(businessVenderValueQuery);
             query.map((v: any) => {
-                // v.businessVenderField = v.businessVenderField.id;
                 delete v.businessVender;
                 v.value = v.text || v.textarea || v.idx;
                 delete v.text;
                 delete v.textarea;
                 delete v.idx;
+                v.businessVenderField.informationType = v.businessVenderField.informationType.id;
+                v.businessVenderField.fieldType = v.businessVenderField.fieldType.columnType;
                 return v;
             });
             responseJson(res, query, method, 'success');
@@ -425,17 +431,3 @@ export default {
     apiGetField,
     apiGetInformationType,
 };
-
-/*
- check('title', 'Name cannot be blank')
-            .not()
-            .isEmpty(),
-        check('email', 'Email is not valid').isEmail(),
-        check('message', 'Message cannot be blank')
-            .not()
-            .isEmpty(),
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(200).json({ error: errors.array() });
-        }
-        */

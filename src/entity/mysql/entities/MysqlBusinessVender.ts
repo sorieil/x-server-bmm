@@ -4,6 +4,7 @@ import { Base } from './MysqlBase';
 import { Entity, ManyToOne, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessVenderFieldValue } from './MysqlBusinessVenderFieldValue';
+import SearchVender from './MysqlSearchVender';
 
 @Entity()
 export class BusinessVender extends Base {
@@ -19,4 +20,7 @@ export class BusinessVender extends Base {
 
     @ManyToMany(type => BusinessVenderFavorite, businessVenderFavorite => businessVenderFavorite.businessVenders)
     businessVenderFavorities: BusinessVenderFavorite[];
+
+    @OneToOne(type => SearchVender, searchVender => searchVender.businessVender)
+    searchVender: SearchVender;
 }

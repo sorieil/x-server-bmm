@@ -1,10 +1,13 @@
 import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, OneToOne } from 'typeorm';
 import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
 import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
+import { BusinessCode } from './MysqlBusinessCode';
+import UserManager from './MysqlUserManager';
+import UserBuyer from './MysqlUserBuyer';
 @Entity()
 export class User extends Base {
     @Column('varchar', { nullable: true })
@@ -40,4 +43,13 @@ export class User extends Base {
 
     @OneToMany(type => BusinessVenderFavorite, businessFavorite => businessFavorite.user)
     businessFavorites: BusinessVenderFavorite[];
+
+    @ManyToOne(type => BusinessCode, businessCode => businessCode.users)
+    businessCode: BusinessCode;
+
+    @OneToMany(type => UserManager, userManager => userManager.user)
+    userManagers: UserManager[];
+
+    @OneToOne(type => UserBuyer, userBuyer => userBuyer.user)
+    userBuyer: UserBuyer;
 }

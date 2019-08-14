@@ -1,9 +1,7 @@
 import { BusinessVender } from './MysqlBusinessVender';
-import { Business } from './MysqlBusiness';
-import { AdminLogin } from './MysqlAdminLogin';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToOne, JoinColumn, Unique } from 'typeorm';
-import { Login } from './MysqlLogin';
+import { Entity, Column, OneToOne, JoinColumn, Unique, OneToMany } from 'typeorm';
+import { User } from './MysqlUser';
 
 @Entity()
 // @Unique(['business'])
@@ -16,4 +14,7 @@ export class BusinessCode extends Base {
 
     @OneToOne(type => BusinessVender, businessVender => businessVender.businessCode)
     businessVender: BusinessVender;
+
+    @OneToMany(type => User, user => user.businessCode)
+    users: User[];
 }
