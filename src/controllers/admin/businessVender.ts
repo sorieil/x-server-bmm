@@ -197,13 +197,14 @@ const apiGets = [
                     delete j.text;
                     delete j.textarea;
                     delete j.idx;
+
                     j.businessVenderField.informationType = j.businessVenderField.informationType.id;
                     j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
 
                     // Run at the end process.
                     duplicateFinderValue = j.businessVenderField.id;
                     duplicateFinderIndex = index;
-
+                    // delete j.businessVenderField;
                     return j;
                 });
                 return v;
@@ -294,7 +295,7 @@ const apiPost = [
             for (let field in body) {
                 const businessVenderFieldValue = new BusinessVenderFieldValue();
                 const businessVenderField = new BusinessVenderField();
-                businessVenderField.id = parseInt(field.split('-')[0], 10); // field 아이
+                // businessVenderField.id = field.id; // field 아이
 
                 const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
 

@@ -107,6 +107,7 @@ const apiInit = [
 
             const initFields: BusinessVenderFieldType[] = [
                 { name: '기업명', require: 'yes', informationType: 4, fieldType: 1 },
+                { name: '노출명', require: 'yes', informationType: 4, fieldType: 1 },
                 { name: '대표명', require: 'no', informationType: 4, fieldType: 1 },
                 { name: '설립일', require: 'no', informationType: 4, fieldType: 1 },
                 { name: '업체구분', require: 'no', informationType: 5, fieldType: 3 },

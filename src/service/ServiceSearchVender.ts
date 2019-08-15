@@ -51,17 +51,16 @@ export default class ServiceSearchVender extends BaseService {
             // 필터의 값을 숫자 크기대로 정렬 해준다. 그리고 스트링으로 직열화 한다.
             const filter = businessVenderQuery.businessVenderFieldValues.reduce((a, c) => {
                 const tempValue = c.idx ? c.idx.id : null;
-                console.log('Type of a', typeof a);
-                if (!a) a = [];
+                console.log('Type of a', typeof a, a);
                 if (!tempValue) return a;
                 return a.push(tempValue);
-            }, []) as [];
+            }, []);
 
             console.log('filter:', filter);
 
             searchVender.keyword = keyword;
             searchVender.businessVender = businessVender;
-            searchVender.filter = filter.sort((a: number, b: number) => a - b).join();
+            // searchVender.filter = filter.sort((a: number, b: number) => a - b).join();
 
             const query = await this.mysqlManager(SearchVender).save(searchVender);
             return query;
