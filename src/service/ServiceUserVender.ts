@@ -9,7 +9,7 @@ export default class ServiceUserVender extends BaseService {
         super();
     }
 
-    public _getByBusiness(business: Business, keyword?: string, filter?: string) {
+    public async _getByBusiness(business: Business, keyword?: string, filter?: string) {
         const queryBuilder = this.mysqlConnection
             .getRepository(SearchVender)
             .createQueryBuilder('search')
@@ -25,14 +25,14 @@ export default class ServiceUserVender extends BaseService {
             .where('business.id = :id', { id: business.id });
 
         if (filter) {
-            // queryBuilder.andWhere('search.filter like "%:filter%"', { filter });
+            queryBuilder.andWhere('search.filter = ":filter"', { filter });
         }
 
         if (keyword) {
-            // queryBuilder.andWhere('search.keyword like "%:keyword%"', { keyword });
+            queryBuilder.andWhere('search.keyword like "%:keyword%"', { keyword });
         }
         const query = queryBuilder.getMany();
-        console.log('before query: \n', query);
+        console.log('before query: \n', await query);
         return query;
     }
 }

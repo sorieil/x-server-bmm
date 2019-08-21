@@ -1,16 +1,17 @@
+import { Request, Response } from 'express';
 import { BusinessVenderFieldValue } from './../../entity/mysql/entities/MysqlBusinessVenderFieldValue';
 import { BusinessVender } from './../../entity/mysql/entities/MysqlBusinessVender';
-import { Request, Response } from 'express';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { check, validationResult, query, param } from 'express-validator';
+import { validationResult, param } from 'express-validator';
 import { businessPermission } from '../../util/permission';
-import ServiceBusinessVender from '../../service/ServiceBusinessVender';
-import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
+import ServiceBusinessVender from '../../service/ServiceBusinessVender';
+import ServiceBusinessCode from '../../service/ServiceBusinessCode';
+
 const businessVenderFieldTypePermission = () =>
     param('informationType').custom(async (v, { req }) => {
         const service = new ServiceBusinessVender();
@@ -88,8 +89,8 @@ const apiGet = [
                 delete j.text;
                 delete j.textarea;
                 delete j.idx;
-                j.businessVenderField.informationType = j.businessVenderField.informationType.id;
-                j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
+                // j.businessVenderField.informationType = j.businessVenderField.informationType.id;
+                // j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
                 return j;
             });
 
@@ -198,8 +199,8 @@ const apiGets = [
                     delete j.textarea;
                     delete j.idx;
 
-                    j.businessVenderField.informationType = j.businessVenderField.informationType.id;
-                    j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
+                    // j.businessVenderField.informationType = j.businessVenderField.informationType.id;
+                    // j.businessVenderField.fieldType = j.businessVenderField.fieldType.columnType;
 
                     // Run at the end process.
                     duplicateFinderValue = j.businessVenderField.id;
@@ -265,8 +266,9 @@ const apiPost = [
 
             const businessVender = new BusinessVender();
             const service = new ServiceBusinessVender();
+            const serviceBusinessCode = new ServiceBusinessCode();
             const business = new Business();
-            const body = req.body;
+            const body = req.body.data;
 
             // 사용하지 않는 코드를 가져온다.
             const businessCodeQuery = await new ServiceBusinessCode().getNotUseOneCode();
@@ -288,18 +290,20 @@ const apiPost = [
             // 비즈니스 코드 상태 변경
             businessCodeQuery.use = 'yes';
             businessCodeQuery.businessVender = businessVender;
-            await new ServiceBusinessCode().post(businessCodeQuery);
+            await serviceBusinessCode.post(businessCodeQuery);
 
             const query: BusinessVenderFieldValue[] = [];
 
             for (let field in body) {
+                console.log('body:', field, body);
                 const businessVenderFieldValue = new BusinessVenderFieldValue();
                 const businessVenderField = new BusinessVenderField();
-                // businessVenderField.id = field.id; // field 아이
+                businessVenderField.id = body[field].id; // field 아이
 
                 const fieldTypeQuery = await service.checkFieldType(businessVenderField); // 필드가 어떤 타입인지 체크
 
                 // text textarea idx 로 조회 해서 구분해줘야 한다.
+                // 필드 정보가 없으면, 잘못된 field id 값을 입력한 것이다.
                 if (!fieldTypeQuery) {
                     responseJson(
                         res,
@@ -311,11 +315,11 @@ const apiPost = [
                 }
 
                 if (fieldTypeQuery.fieldType.columnType === 'text') {
-                    businessVenderFieldValue.text = body[field];
+                    businessVenderFieldValue.text = body[field].value;
                 } else if (fieldTypeQuery.fieldType.columnType === 'textarea') {
-                    businessVenderFieldValue.textarea = body[field];
+                    businessVenderFieldValue.textarea = body[field].value;
                 } else {
-                    businessVenderFieldValue.idx = Number(body[field]) as any;
+                    businessVenderFieldValue.idx = Number(body[field].value) as any;
                 }
                 businessVenderFieldValue.businessVenderField = businessVenderField; // 필드의 아아디 값 지정
                 businessVenderFieldValue.businessVender = businessVender;

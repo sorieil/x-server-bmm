@@ -34,15 +34,17 @@ export default class ServiceSearchVender extends BaseService {
             );
 
             // 그전에 데이터가 있는지 검색한다.
-            const searchVender = await this.mysqlManager(SearchVender).findOne({
+            let searchVender = await this.mysqlManager(SearchVender).findOne({
                 where: {
                     businessVender: businessVender,
                 },
             });
 
+            if (!searchVender) searchVender = new SearchVender();
             // 키워드를 스트링으로 직열화 해준다.
             const keyword = businessVenderQuery.businessVenderFieldValues.reduce((a, c) => {
                 let tempValue = c.text || c.textarea;
+                console.log('Type of a keyword: ', typeof a, a);
                 if (!tempValue) return a;
                 if (a) tempValue = ',' + tempValue;
                 return a + tempValue;
@@ -51,18 +53,21 @@ export default class ServiceSearchVender extends BaseService {
             // 필터의 값을 숫자 크기대로 정렬 해준다. 그리고 스트링으로 직열화 한다.
             const filter = businessVenderQuery.businessVenderFieldValues.reduce((a, c) => {
                 const tempValue = c.idx ? c.idx.id : null;
-                console.log('Type of a', typeof a, a);
+                console.log('Type of a filter: ', typeof a, a);
                 if (!tempValue) return a;
-                return a.push(tempValue);
+                a.push(tempValue);
+                return a;
             }, []);
 
-            console.log('filter:', filter);
+            const query = setTimeout(async () => {
+                console.log('filter:', filter);
+                searchVender.keyword = keyword;
+                searchVender.filter = filter.sort((a: number, b: number) => a - b).join();
+                searchVender.businessVender = businessVender;
+                console.log('Final process');
+                return await this.mysqlManager(SearchVender).save(searchVender);
+            }, 0);
 
-            searchVender.keyword = keyword;
-            searchVender.businessVender = businessVender;
-            // searchVender.filter = filter.sort((a: number, b: number) => a - b).join();
-
-            const query = await this.mysqlManager(SearchVender).save(searchVender);
             return query;
         } catch (error) {
             throw new Error('_updateBySelectBusinessVender error' + error);

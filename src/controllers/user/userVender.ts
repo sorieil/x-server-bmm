@@ -133,6 +133,7 @@ const apiGets = [
 
                 delete v.businessVender.business;
 
+                // Favorite check
                 const userCheck = v.businessVender.businessVenderFavorities.filter((u: any) => {
                     return u.user.id === req.user.id;
                 });
