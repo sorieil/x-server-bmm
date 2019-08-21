@@ -99,12 +99,17 @@ const apiGets = [
 
             const service = new ServiceUserVender();
             const business = new Business();
-            const filter: string = req.query.filter
-                .split(',')
-                .map((v: any) => Number(v))
-                .sort((a: number, b: number) => a - b)
-                .join();
-            const keyword = req.query.keyword;
+            let filter: string = '';
+            let keyword: string = '';
+            if (req.query.filter) {
+                filter = req.query.filter
+                    .split(',')
+                    .map((v: any) => Number(v))
+                    .sort((a: number, b: number) => a - b)
+                    .join();
+            }
+
+            if (req.query.keyword) keyword = req.query.keyword;
             business.id = req.user.business.id;
             const query = await service._getByBusiness(business, keyword, filter);
             console.log('query >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n', query);
@@ -112,6 +117,7 @@ const apiGets = [
                 delete v.createdAt;
                 delete v.updatedAt;
                 delete v.filter;
+                v.keyword = '#' + v.keyword.replace(/,/gi, ' #');
                 v.businessVender.businessVenderFieldValues.map((j: any) => {
                     // console.log('j:', j);       8
 

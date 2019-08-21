@@ -25,7 +25,7 @@ export default class ServiceUserVender extends BaseService {
             .where('business.id = :id', { id: business.id });
 
         if (filter) {
-            queryBuilder.andWhere('search.filter = ":filter"', { filter });
+            queryBuilder.andWhere('search.filter = :filter', { filter });
         }
 
         if (keyword) {
