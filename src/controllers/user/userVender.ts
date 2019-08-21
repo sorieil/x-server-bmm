@@ -112,15 +112,12 @@ const apiGets = [
             if (req.query.keyword) keyword = req.query.keyword;
             business.id = req.user.business.id;
             const query = await service._getByBusiness(business, keyword, filter);
-            console.log('query >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n', query);
             query.map((v: any) => {
                 delete v.createdAt;
                 delete v.updatedAt;
                 delete v.filter;
                 v.keyword = '#' + v.keyword.replace(/,/gi, ' #');
                 v.businessVender.businessVenderFieldValues.map((j: any) => {
-                    // console.log('j:', j);       8
-
                     if (j.businessVenderField.name === '기업명') {
                         v.companyName = j.text;
                     }
@@ -133,7 +130,6 @@ const apiGets = [
                     delete j.id;
                     delete j.createdAt;
                     delete j.updatedAt;
-                    // delete j.businessVenderField;
                     return j;
                 });
 
@@ -145,10 +141,9 @@ const apiGets = [
                 });
 
                 if (userCheck.length > 0 && userCheck) {
-                    console.log('userCheck.length:', userCheck.length);
-                    v.businessVender.businessVenderFavorite = true;
+                    v.businessVenderFavorite = true;
                 } else {
-                    v.businessVender.businessVenderFavorite = false;
+                    v.favorite = false;
                 }
                 delete v.businessVender.businessVenderFavorities;
                 return v;

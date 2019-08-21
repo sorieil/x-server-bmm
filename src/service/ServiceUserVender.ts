@@ -29,7 +29,7 @@ export default class ServiceUserVender extends BaseService {
         }
 
         if (keyword) {
-            queryBuilder.andWhere('search.keyword like "%:keyword%"', { keyword });
+            queryBuilder.andWhere('search.keyword like :keyword', { keyword: `%${keyword}%` });
         }
         const query = queryBuilder.getMany();
         console.log('before query: \n', await query);
