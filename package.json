@@ -15,7 +15,8 @@
         "live-start-nodemon": "NODE_ENV=production npx nodemon --exec npx ts-node ./src/app.ts",
         "webpack-dev": "webpack --config webpack.config.js",
         "stop": "npx pm2 stop all",
-        "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix"
+        "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix",
+        "setTimeout:": "npx nodemon --exec npx ts-node setTimeout.ts"
     },
     "devDependencies": {
         "@types/aws-sdk": "^2.7.0",
