@@ -115,7 +115,6 @@ export const auth = (secretName: secretNameType) => {
                 res.status(500).json({
                     resCode: 500,
                     message: '관리자에게 문의해주세요.',
-                    result: [],
                 });
                 return;
             }
@@ -124,7 +123,6 @@ export const auth = (secretName: secretNameType) => {
                 res.status(401).json({
                     resCode: 401,
                     message: 'No allow token. It is not event token.',
-                    result: [],
                 });
                 return;
             }
@@ -133,7 +131,6 @@ export const auth = (secretName: secretNameType) => {
                 res.status(401).json({
                     resCode: 401,
                     message: 'No auth token',
-                    result: [],
                 });
                 return;
             } else {

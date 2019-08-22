@@ -1,3 +1,4 @@
+import { BusinessCode } from './../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVenderFavorite } from './../entity/mysql/entities/MysqlBusinessVenderFavorite';
 import { BaseService } from './BaseService';
 import { BusinessVender } from '../entity/mysql/entities/MysqlBusinessVender';
@@ -25,7 +26,7 @@ export default class ServiceUserVender extends BaseService {
             .where('business.id = :id', { id: business.id });
 
         if (filter) {
-            queryBuilder.andWhere('search.filter = :filter', { filter });
+            queryBuilder.andWhere('search.filter like :filter', { filter: `%${filter}%` });
         }
 
         if (keyword) {
@@ -33,6 +34,39 @@ export default class ServiceUserVender extends BaseService {
         }
         const query = queryBuilder.getMany();
         console.log('before query: \n', await query);
+        return query;
+    }
+
+    public get(businessVender: BusinessVender) {
+        const query = this.mysqlManager(BusinessVender).findOne({
+            where: {
+                id: businessVender.id,
+            },
+            relations: [
+                'businessVenderFieldValues',
+                'businessVenderFieldValues.businessVenderField',
+                'businessVenderFieldValues.businessVenderField.informationType',
+                'businessVenderFieldValues.businessVenderField.fieldType',
+                'businessVenderFieldValues.idx',
+            ],
+        });
+        return query;
+    }
+
+    public verityVenderCode(businessVender: BusinessVender) {
+        console.log('verify vender code:', businessVender);
+        const query = this.mysqlConnection
+            .getRepository(BusinessVender)
+            .createQueryBuilder('vender')
+            .leftJoinAndSelect('vender.businessCode', 'code')
+            .leftJoinAndSelect('vender.businessVenderFieldValues', 'value')
+            .leftJoinAndSelect('value.businessVenderField', 'field')
+            .leftJoinAndSelect('field.informationType', 'informationType')
+            .leftJoinAndSelect('field.fieldType', 'fieldType')
+            .where('vender.id = :venderId', { venderId: businessVender.id })
+            .andWhere('code.code = :venderCode', { venderCode: businessVender.businessCode.code })
+            .andWhere('code.use = "yes"')
+            .getOne();
         return query;
     }
 }

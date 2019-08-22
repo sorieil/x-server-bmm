@@ -17,7 +17,7 @@ export default class ServiceUserPermission extends BaseService {
         return query;
     }
 
-    public async _getWithBusiness(businessVender: BusinessVender, business: Business) {
+    public async _getWithBusinessVender(businessVender: BusinessVender, business: Business) {
         const query = this.mysqlManager(BusinessVender).findOne({
             where: { id: businessVender.id, business: business },
         });

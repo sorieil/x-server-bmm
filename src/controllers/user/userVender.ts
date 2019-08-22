@@ -1,15 +1,16 @@
+import { BusinessCode } from './../../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVenderFieldType } from './../../service/ServiceBusinessVenderField';
 import { BusinessVenderFavorite } from './../../entity/mysql/entities/MysqlBusinessVenderFavorite';
 import { Login } from '../../entity/mysql/entities/MysqlLogin';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
-import { validationResult, param, check } from 'express-validator';
+import { validationResult, param, check, body } from 'express-validator';
 import { Request, Response } from 'express';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import ServiceUserVender from '../../service/ServiceUserVender';
 import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
 
-const businessVenderPermission = () =>
+const userVenderPermission = () =>
     param('venderId').custom((value, { req }) => {
         const businessVender = new BusinessVender();
         const service = new ServiceUserPermission();
@@ -26,7 +27,7 @@ const businessVenderPermission = () =>
             // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
             business.id = req.user.business.id;
-            const query = await service._getWithBusiness(businessVender, business);
+            const query = await service._getWithBusinessVender(businessVender, business);
             resolve(query);
         }).then(r => {
             if (r) {
@@ -45,7 +46,7 @@ const businessVenderPermission = () =>
  *
  */
 const apiGet = [
-    [businessVenderPermission.apply(this)],
+    [userVenderPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -55,11 +56,15 @@ const apiGet = [
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
-            const query = req.user.vender;
+
+            const service = new ServiceUserVender();
+            const businessVender = req.user.vender;
+            const query = await service.get(businessVender);
+
+            console.log('get query:', query);
 
             delete query.createdAt;
             delete query.updatedAt;
-            query.businessCode = query.businessCode.code;
             query.businessVenderFieldValues.map((j: any) => {
                 delete j.createdAt;
                 delete j.updatedAt;
@@ -67,7 +72,7 @@ const apiGet = [
                 delete j.text;
                 delete j.textarea;
                 delete j.idx;
-                // j.businessVenderField = j.businessVenderField.id;
+
                 return j;
             });
 
@@ -156,4 +161,59 @@ const apiGets = [
     },
 ];
 
-export default { apiGet, apiGets };
+const apiPostVerifyVenderCode = [
+    [
+        userVenderPermission.apply(this),
+        body('venderCode').custom((value, { req }) => {
+            const service = new ServiceUserVender();
+            const businessVender = new BusinessVender();
+            const businessCode = new BusinessCode();
+            if (!value) return Promise.reject('Invalid insert data.');
+
+            return new Promise(async resolve => {
+                businessVender.id = req.params.venderId;
+                businessCode.code = value;
+                businessVender.businessCode = businessCode;
+                const query = service.verityVenderCode(businessVender);
+                resolve(query);
+            }).then(r => {
+                if (r) {
+                    Object.assign(req.user, { vender: r });
+                } else {
+                    return Promise.reject('This is no venderId or invalid vender code.');
+                }
+            });
+        }),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            const method: RequestRole = req.method.toString() as any;
+
+            if (!errors.isEmpty()) {
+                responseJson(res, errors.array(), method, 'invalid');
+                return;
+            }
+
+            const query = req.user.vender;
+
+            delete query.createdAt;
+            delete query.updatedAt;
+            query.businessVenderFieldValues.map((j: any) => {
+                delete j.createdAt;
+                delete j.updatedAt;
+                j.value = j.text || j.textarea || j.idx;
+                delete j.text;
+                delete j.textarea;
+                delete j.idx;
+
+                return j;
+            });
+
+            responseJson(res, [query], method, 'success');
+        } catch (error) {
+            tryCatch(res, error);
+        }
+    },
+];
+export default { apiGet, apiGets, apiPostVerifyVenderCode };

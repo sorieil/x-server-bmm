@@ -139,13 +139,17 @@ connections(process.env)
         // Temperature token
         app.post('/api/v1/token', ...api.generateToken);
 
-        // == user
+        // == user ================================================================================
         const clientCheck = auth('xsync-user').isAuthenticate;
 
         // Vender
         app.get('/api/v1/user/vender', clientCheck, ...userVender.apiGets);
-        app.get('/api/v1/user/vender/:businessId', clientCheck, ...userVender.apiGet);
-        app.get('/api/v1/user/vender/:businessId/favorite', clientCheck, ...userVender.apiGet);
+        app.get('/api/v1/user/vender/:venderId', clientCheck, ...userVender.apiGet);
+        app.post(
+            '/api/v1/user/vender/:venderId/verify_vender_code',
+            clientCheck,
+            ...userVender.apiPostVerifyVenderCode,
+        );
 
         // Favorite
         app.get('/api/v1/user/favorite', clientCheck, ...userFavorite.apiGets);

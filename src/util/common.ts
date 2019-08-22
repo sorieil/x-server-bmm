@@ -40,7 +40,6 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
             res.status(code).json({
                 resCode: code,
                 message: message,
-                result: data,
             });
         }
     } else if (responseType === 'delete') {
@@ -58,14 +57,12 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
             res.status(code).json({
                 resCode: code,
                 message: message,
-                result: [],
             });
         }
     } else {
         res.status(400).json({
             resCode: 400,
             message: 'Input data is invalid',
-            result: data,
         });
     }
 };
