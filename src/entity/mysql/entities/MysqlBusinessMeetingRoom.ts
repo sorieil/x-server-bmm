@@ -1,8 +1,9 @@
 import { Business } from './MysqlBusiness';
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
-import { Entity, Column, ManyToOne, JoinTable, JoinColumn, RelationId, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinTable, JoinColumn, RelationId, OneToMany, OneToOne } from 'typeorm';
 import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
+import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 
 @Entity()
 export class BusinessMeetingRoom extends Base {
@@ -19,6 +20,9 @@ export class BusinessMeetingRoom extends Base {
     @JoinColumn()
     business: Business;
 
-    @OneToMany(type => BusinessMeetingTimeList, businessMeetingTimeList => businessMeetingTimeList.businessMeetingRoom)
-    businessMeetingTimeLists: BusinessMeetingTimeList[];
+    @OneToMany(
+        type => BusinessMeetingRoomReservation,
+        businessMeetingRoomReservation => businessMeetingRoomReservation.businessMeetingRoom,
+    )
+    businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
 }

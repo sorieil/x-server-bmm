@@ -3,6 +3,26 @@ import { Request, Response } from 'express';
 import { responseJson, RequestRole } from '../../util/common';
 import { validationResult, param } from 'express-validator';
 import ServiceUserMeetingRoomReservation from '../../service/ServiceUserMeetingRoomReservation';
+import ServiceUserBuyerPermission from '../../service/ServiceUserBuyerPermission';
+import UserBuyer from '../../entity/mysql/entities/MysqlUserBuyer';
+
+// 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
+const checkBuyerInformation = () =>
+    param('userId').custom((value, { req }) => {
+        const service = new ServiceUserBuyerPermission();
+        const user = req.user;
+
+        return new Promise(async resolve => {
+            const query = await service._getByUser(user);
+            resolve(query);
+        }).then(r => {
+            if (r) {
+                Object.assign(req.user, { buyer: r });
+            } else {
+                return Promise.reject('Please enter buyer information first.');
+            }
+        });
+    });
 
 const apiPatch = [
     [

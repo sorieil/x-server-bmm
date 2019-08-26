@@ -14,7 +14,4 @@ export class BusinessCode extends Base {
 
     @OneToOne(type => BusinessVender, businessVender => businessVender.businessCode)
     businessVender: BusinessVender;
-
-    @OneToMany(type => User, user => user.businessCode)
-    users: User[];
 }

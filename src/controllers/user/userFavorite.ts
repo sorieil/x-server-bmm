@@ -25,7 +25,7 @@ const businessVenderPermission = () =>
             // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
             business.id = req.user.business.id;
-            const query = await service._getWithBusiness(businessVender, business);
+            const query = await service._getWithBusinessVender(businessVender, business);
             resolve(query);
         }).then(r => {
             if (r) {

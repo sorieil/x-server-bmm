@@ -374,6 +374,8 @@ const apiPatch = [
             businessVenderValue.id = body[i].id;
             const businessVenderFieldValueQuery = await service._getBVenderFieldValue(businessVenderValue);
             const fieldType = businessVenderFieldValueQuery.businessVenderField.fieldType;
+
+            // 타입체크를 해서 타입에 따른 필드에 입력해준다.
             if (fieldType) {
                 if (fieldType.columnType === 'text') {
                     businessVenderFieldValueQuery.text = body[i].value;
@@ -390,6 +392,7 @@ const apiPatch = [
             businessVenderValueQuery.push(businessVenderFieldValueQuery);
         }
 
+        // setTimeout에 0 초로 두면, setTimeout이 프로세스상 제일 마지막에 파싱되기 때문에 모든 스크립트가 파싱되고나서 실행된다.
         await setTimeout(async () => {
             const query = await service._postVenderFieldValue(businessVenderValueQuery);
             query.map((v: any) => {

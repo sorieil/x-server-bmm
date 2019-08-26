@@ -20,7 +20,6 @@ export class ServiceBusinessTimeList extends BaseService {
             delete v.businessMeetingTime;
             delete v.createdAt;
             delete v.updatedAt;
-            delete v.memo;
             return v;
         });
         return query;

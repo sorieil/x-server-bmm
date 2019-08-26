@@ -16,6 +16,11 @@ export default class ServiceCode extends BaseService {
             where: {
                 category: code.category,
             },
+            relations: [
+                'businessVenderFieldInformationTypes',
+                'businessVenderFieldInformationTypes.businessVenderFieldChildNodes',
+                'businessVenderFieldInformationTypes.fieldType',
+            ],
         });
         return query;
     }

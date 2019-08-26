@@ -77,60 +77,60 @@ connections(process.env)
         app.delete('/api/v1/business', adminCheck, ...business.apiDelete);
 
         // meeting room
-        app.post('/api/v1/business_meeting_room', adminCheck, ...businessMeetingRoom.apiPost);
-        app.get('/api/v1/business_meeting_room', adminCheck, ...businessMeetingRoom.apiGets);
-        app.get('/api/v1/business_meeting_room/meetingRoomId', adminCheck, ...businessMeetingRoom.apiGet);
-        app.patch('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiPost);
-        app.delete('/api/v1/business_meeting_room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiDelete);
+        app.post('/api/v1/business-meeting-room', adminCheck, ...businessMeetingRoom.apiPost);
+        app.get('/api/v1/business-meeting-room', adminCheck, ...businessMeetingRoom.apiGets);
+        app.get('/api/v1/business-meeting-room/meetingRoomId', adminCheck, ...businessMeetingRoom.apiGet);
+        app.patch('/api/v1/business-meeting-room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiPost);
+        app.delete('/api/v1/business-meeting-room/:meetingRoomId', adminCheck, ...businessMeetingRoom.apiDelete);
 
         // meeting time
-        app.get('/api/v1/business_time', adminCheck, ...businessTime.apiGet);
-        app.post('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
-        app.patch('/api/v1/business_time', adminCheck, ...businessTime.apiPost);
+        app.get('/api/v1/business-time', adminCheck, ...businessTime.apiGet);
+        app.post('/api/v1/business-time', adminCheck, ...businessTime.apiPost);
+        app.patch('/api/v1/business-time', adminCheck, ...businessTime.apiPost);
 
         // Meeting time list
-        app.get('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiGets);
-        app.post('/api/v1/business_time_list', adminCheck, ...businessTimeList.apiPost);
-        app.patch('/api/v1/business_time_list/:timeListId', adminCheck, ...businessTimeList.apiPatch);
+        app.get('/api/v1/business-time-list', adminCheck, ...businessTimeList.apiGets);
+        app.post('/api/v1/business-time-list', adminCheck, ...businessTimeList.apiPost);
+        app.patch('/api/v1/business-time-list/:timeListId', adminCheck, ...businessTimeList.apiPatch);
 
         // vender field init
-        app.post('/api/v1/business_vender_field_init', adminCheck, ...businessVenderField.apiInit);
+        app.post('/api/v1/business-vender-field-init', adminCheck, ...businessVenderField.apiInit);
 
         // vender field
-        app.post('/api/v1/business_vender_field', adminCheck, ...businessVenderField.apiPost);
-        app.get('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiGet);
-        app.get('/api/v1/business_vender_field', adminCheck, ...businessVenderField.apiGets);
-        app.patch('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiPatch);
-        app.delete('/api/v1/business_vender_field/:fieldId', adminCheck, ...businessVenderField.apiDelete);
+        app.post('/api/v1/business-vender-field', adminCheck, ...businessVenderField.apiPost);
+        app.get('/api/v1/business-vender-field/:fieldId', adminCheck, ...businessVenderField.apiGet);
+        app.get('/api/v1/business-vender-field', adminCheck, ...businessVenderField.apiGets);
+        app.patch('/api/v1/business-vender-field/:fieldId', adminCheck, ...businessVenderField.apiPatch);
+        app.delete('/api/v1/business-vender-field/:fieldId', adminCheck, ...businessVenderField.apiDelete);
         app.delete(
-            '/api/v1/business_vender_field/:fieldId/child/:fieldChildNodeId',
+            '/api/v1/business-vender-field/:fieldId/child/:fieldChildNodeId',
             adminCheck,
             ...businessVenderField.apiDeleteChildNode,
         );
-        app.delete('/api/v1/business_vender_field_all', adminCheck, ...businessVenderField.apiDeleteAll);
+        app.delete('/api/v1/business-vender-field-all', adminCheck, ...businessVenderField.apiDeleteAll);
 
         // vender field child node
         app.delete(
-            '/api/v1/business_vender_field_child/:fieldChildNodeId',
+            '/api/v1/business-vender-field-child/:fieldChildNodeId',
             adminCheck,
             ...businessVenderFieldChildNode.apiDelete,
         );
 
         // Business vender
-        app.post('/api/v1/business_vender', adminCheck, ...businessVender.apiPost);
-        app.patch('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiPatch);
-        app.delete('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiDelete);
-        app.get('/api/v1/business_vender/:venderId', adminCheck, ...businessVender.apiGet);
+        app.post('/api/v1/business-vender', adminCheck, ...businessVender.apiPost);
+        app.patch('/api/v1/business-vender/:venderId', adminCheck, ...businessVender.apiPatch);
+        app.delete('/api/v1/business-vender/:venderId', adminCheck, ...businessVender.apiDelete);
+        app.get('/api/v1/business-vender/:venderId', adminCheck, ...businessVender.apiGet);
         app.get(
-            '/api/v1/business_vender/:venderId/information_type/:informationType',
+            '/api/v1/business-vender/:venderId/information-type/:informationType',
             adminCheck,
             ...businessVender.apiGetInformationType,
         );
-        app.get('/api/v1/business_vender', adminCheck, ...businessVender.apiGets);
-        app.get('/api/v1/business_vender_field_list/:informationTypeId', adminCheck, ...businessVender.apiGetField);
+        app.get('/api/v1/business-vender', adminCheck, ...businessVender.apiGets);
+        app.get('/api/v1/business-vender-field-list/:informationTypeId', adminCheck, ...businessVender.apiGetField);
 
         // Business code get
-        app.get('/api/v1/business_code', adminCheck, ...businessCode.apiGet);
+        app.get('/api/v1/business-code', adminCheck, ...businessCode.apiGet);
 
         // code table
         app.get('/api/v1/code/:category', ...code.apiGet);
@@ -146,7 +146,7 @@ connections(process.env)
         app.get('/api/v1/user/vender', clientCheck, ...userVender.apiGets);
         app.get('/api/v1/user/vender/:venderId', clientCheck, ...userVender.apiGet);
         app.post(
-            '/api/v1/user/vender/:venderId/verify_vender_code',
+            '/api/v1/user/vender/:venderId/verify-vender-code',
             clientCheck,
             ...userVender.apiPostVerifyVenderCode,
         );
@@ -157,12 +157,12 @@ connections(process.env)
         app.delete('/api/v1/user/favorite/:venderId', clientCheck, ...userFavorite.apiDelete);
 
         // Meeting reservation
-        app.get('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
-        app.patch('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
-        app.delete('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.get('/api/v1/user/meeting-reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.patch('/api/v1/user/meeting-reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.delete('/api/v1/user/meeting-reservation/blockId', clientCheck, ...userFavorite.apiGets);
 
         // Meeting Lists
-        app.get('/api/v1/user/meeting_reservation/blockId', clientCheck, ...userFavorite.apiGets);
+        app.get('/api/v1/user/meeting-reservation/blockId', clientCheck, ...userFavorite.apiGets);
 
         /**
          * Error Handler. Provides full stack - remove for production

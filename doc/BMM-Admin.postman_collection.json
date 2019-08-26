@@ -800,6 +800,46 @@
 					"response": []
 				},
 				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"제품소개\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1\"\n        },\n        {\n            \"text\": \"옵션2\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/business_vender_field",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"business_vender_field"
+							]
+						},
+						"description": "### 밴더 인포메이션 등록"
+					},
+					"response": []
+				},
+				{
 					"name": "LISTS",
 					"request": {
 						"auth": {
@@ -836,46 +876,6 @@
 					"response": []
 				},
 				{
-					"name": "INSERT",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"description": "기존 admin 용 으로 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"제품소개\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "{{server}}/api/v1/business_vender_field",
-							"host": [
-								"{{server}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"business_vender_field"
-							]
-						},
-						"description": "### 밴더 인포메이션 등록"
-					},
-					"response": []
-				},
-				{
 					"name": "UPDATE",
 					"request": {
 						"auth": {
@@ -898,10 +898,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"제품소개(수정)\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1(수정)\",\n            \"id\": 24,\n            \"sort\": 0\n        }\n    ],\n    \"id\": 105,\n    \"sort\": 0\n}"
+							"raw": "{\n    \"name\": \"제품/서비스(수정)\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션3(수정-1)\",\n            \"sort\": 0,\n            \"id\": 31\n        },\n        {\n            \"text\": \"옵션6(신규)\",\n            \"sort\": 0\n        }\n    ],\n    \"id\": 173,\n    \"sort\": 0\n}"
 						},
 						"url": {
-							"raw": "{{server}}/api/v1/business_vender_field/105",
+							"raw": "{{server}}/api/v1/business_vender_field/173",
 							"host": [
 								"{{server}}"
 							],
@@ -909,7 +909,7 @@
 								"api",
 								"v1",
 								"business_vender_field",
-								"105"
+								"173"
 							]
 						},
 						"description": "### 밴더 인포메이션 목록 조회\n\n#### url\n- {{information_id}}: __[POST/GET] api/v1/business_vender_information_field/{{information_field_id}} 의 id__ 값"
@@ -1078,14 +1078,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{server}}/api/v1/business_vender",
+							"raw": "{{server}}/api/v1/business_vender/61",
 							"host": [
 								"{{server}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"business_vender"
+								"business_vender",
+								"61"
 							]
 						},
 						"description": "### 벤더별 인포메이션 타입 별 조회\n> 벤더의 아이디로 기업정보, 참여 정보, 담당자 등..\n##### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender id__ 값"
@@ -1150,7 +1151,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"159\": \"company Name\",\n\t\"160\": \"홍길동1\"\n}"
+							"raw": "{\n    \"data\": [\n        {\n            \"id\": 169,\n            \"value\": \"김재혁기업\"\n        },\n        {\n            \"id\": 170,\n            \"value\": \"김재혁\"\n        },\n        {\n            \"id\": 171,\n            \"value\": \"2001-01-02\"\n        },\n        {\n        \t\"id\": 172,\n        \t\"value\": 32\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 31\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 33\n        },\n        {\n        \t\"id\": 174,\n        \t\"value\": \"관심분야의 모든 것들\"\n        },\n        {\n        \t\"id\": 175,\n        \t\"value\": \"우리의 제품은 정말로 좋고 최고의 작품입니다. 앞으로 당신이 사용할 우리의 제품은 다시는 볼 수 없을 것입니다.\"\n        },\n        {\n        \t\"id\": 176,\n        \t\"value\": \"김재혁 (입력)\"\n        },\n        {\n        \t\"id\": 177,\n        \t\"value\": \"010-2790-9418\"\n        },\n        {\n        \t\"id\": 178,\n        \t\"value\": \"jhkim@xsync.co\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/business_vender",
@@ -1163,7 +1164,7 @@
 								"business_vender"
 							]
 						},
-						"description": "### 밴더 추가\n> 밴더들을 추가 합니다.\n\n#### 사전작업\n- 비즈니스 기본 정보를 추가 하셔야 됩니다. __[POST] api/v1/business__   \n- __/api/v1/business_vender_field_information/{{information_type_id}} 에서 필드의 아이디를 가져올 수 있습니다.__"
+						"description": "### 밴더 추가\n> 밴더들을 추가 합니다.\n\n#### 사전작업\n- 비즈니스 기본 정보를 추가 하셔야 됩니다. __[POST] api/v1/business__   \n- __/api/v1/business_vender_field 에서 필드의 아이디를 가져올 수 있습니다.__\n- ___체크박스 값의 경우 키 값에 173-1 식의 방식으로 넣어주시면 됩니다.___"
 					},
 					"response": [
 						{
@@ -1230,10 +1231,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"data\": [\n        {\n            \"id\": 45,\n            \"value\": \"안녕하세요.\"\n        },\n        {\n        \t\"id\": 46,\n            \"value\": \"수정했어요. \"\n        }\n    ]\n}"
+							"raw": "{\n    \"data\": [\n        {\n            \"id\": 194,\n            \"value\": \"홍만기업 수정.\"\n        },\n        {\n        \t\"id\": 198,\n            \"value\": 33\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "{{server}}/api/v1/business_vender/40",
+							"raw": "{{server}}/api/v1/business_vender/61",
 							"host": [
 								"{{server}}"
 							],
@@ -1241,7 +1242,7 @@
 								"api",
 								"v1",
 								"business_vender",
-								"40"
+								"61"
 							]
 						},
 						"description": "### 비즈니스 밴더 업데이트\n###### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 결과 id__\n\n###### body\n- businessCategory: __[GET] /api/v1/code_table/business_category 의 코드 id__ \n- serviceCategory: __[GET] /api/v1/code_table/service_category 의 코드 id__"
@@ -1498,7 +1499,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"type\":\"xsync-admin\"\n}"
+							"raw": "{\n\t\"type\":\"xsync-user\"\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/token",
@@ -1532,232 +1533,6 @@
 					"listen": "test",
 					"script": {
 						"id": "4e302b6e-bb9a-44a9-a5ca-7da26e4126cc",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "Business Vender Manager",
-			"item": [
-				{
-					"name": "SELECT",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
-							"host": [
-								"{{server}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"business_vender",
-								"{{vender_id}}",
-								"manager",
-								"{{vender_manager_id}}"
-							]
-						},
-						"description": "### 벤더 매니저 목록 조회\n> 매니저 정보를 조회 합니다.\n\n#### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST/GET] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값"
-					},
-					"response": []
-				},
-				{
-					"name": "LISTS",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager",
-							"host": [
-								"{{server}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"business_vender",
-								"{{vender_id}}",
-								"manager"
-							]
-						},
-						"description": "### 벤더 목록 모두 조회\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값"
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "DELETE",
-						"header": [
-							{
-								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMjYxZGZhNDE5NzdjNGM3MDU3YjAwOCIsImxldmVsIjoiYWRtaW4iLCJpYXQiOjE1NjI4NTY3NjcsImV4cCI6MTY2Mjg1Njc2Nn0.pXYOp4hG0qQSB0Uvf_fstDF_5RNnOdMv65Mko1zNiEM"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{server}}api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
-							"host": [
-								"{{server}}api"
-							],
-							"path": [
-								"v1",
-								"business_vender",
-								"{{vender_id}}",
-								"manager",
-								"{{vender_manager_id}}"
-							]
-						},
-						"description": "### 벤더 매니저 목록 삭제\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값"
-					},
-					"response": []
-				},
-				{
-					"name": "INSERT",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"150\": \"홍21동\",\n\t\"159\": \"010-0200-2020\",\n\t\"160\": \"email@email.com\"\n}"
-						},
-						"url": {
-							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager",
-							"host": [
-								"{{server}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"business_vender",
-								"{{vender_id}}",
-								"manager"
-							]
-						},
-						"description": "### 벤더 맴버 생성\n\n#### url\n- {{vender_id}}: __[POST] api/v1/business_vender 의 id__ 값\n\n#### body\n- email: __이메일 형식을 지켜주세요.__"
-					},
-					"response": []
-				},
-				{
-					"name": "UPDATE",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "PATCH",
-						"header": [
-							{
-								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
-								"key": "Authorization",
-								"type": "text",
-								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTI2MWRmYTQxOTc3YzRjNzA1N2IwMDgiLCJpZCI6InhzeW5jIiwibmFtZSI6InhTeW5jIFN1cGVyIEFkbWluIiwibGV2ZWwiOiJzdXBlciIsImV2ZW50SWQiOiI1YzJkYmMxNjA3NmY2MzFkNjg1YmNlMWMiLCJwYWNrYWdlTmFtZSI6ImNvbS54c3luYy5ldmVudDIiLCJpYXQiOjE1NjM4NTgzOTYsImV4cCI6MTAwMDAxNTYzODU4Mzk1fQ.cqHgnz1AmeGMjQea6sUndQOErmkzlFjnbl7N7lo_Dn4"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"홍길동 수정\",\n\t\"phone\": \"010-0200-2020\",\n\t\"email\": \"email@email.com\"\n}"
-						},
-						"url": {
-							"raw": "{{server}}/api/v1/business_vender/{{vender_id}}/manager/{{vender_manager_id}}",
-							"host": [
-								"{{server}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"business_vender",
-								"{{vender_id}}",
-								"manager",
-								"{{vender_manager_id}}"
-							]
-						},
-						"description": "### 벤더 맴버 수정\n> 밴더 맴버의 정보를 수정 합니다.\n\n#### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 id__ 값\n- {{vender_manager_id}}: __[POST/GET] api/v1/business_vender/{{vender_id}}/manager 의 id__ 값\n\n#### body\n- email: ___이메일 형식을 지켜주세요___"
-					},
-					"response": []
-				}
-			],
-			"description": "## 벤더의 매니저 API 입니다.\n___현재 필요없는 API 입니다.....___\n아아아 괜히 만듬..",
-			"auth": {
-				"type": "noauth"
-			},
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "eb6430c8-d0ad-4447-a2b6-d2a9e11d76b8",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "73364e70-1323-4f3b-b604-e0b3d7e9bed8",
 						"type": "text/javascript",
 						"exec": [
 							""
