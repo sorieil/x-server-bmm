@@ -7,34 +7,7 @@ import { User } from '../../entity/mysql/entities/MysqlUser';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
 import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-
-const businessVenderPermission = () =>
-    param('venderId').custom((value, { req }) => {
-        const businessVender = new BusinessVender();
-        const service = new ServiceUserPermission();
-        const business = new Business();
-
-        if (!value) {
-            return Promise.reject('Invalid insert data.');
-        }
-
-        businessVender.id = value;
-        return new Promise(async resolve => {
-            // 비즈니스 퍼미션과 다르게 유저는 비즈니스 아이디가 특정되어 있기 때문에,
-            // 관리자 처럼 비즈니스 보유 여부를 체크 할 필요가 없다.
-            // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
-
-            business.id = req.user.business.id;
-            const query = await service._getWithBusinessVender(businessVender, business);
-            resolve(query);
-        }).then(r => {
-            if (r) {
-                Object.assign(req.user, { vender: r });
-            } else {
-                return Promise.reject('This is no vender id.');
-            }
-        });
-    });
+import { businessVenderPermission } from '../../util/permission';
 
 const apiGets = [
     async (req: Request, res: Response) => {

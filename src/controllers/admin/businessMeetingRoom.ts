@@ -6,34 +6,8 @@ import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { BusinessMeetingRoom } from '../../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { check, validationResult, param } from 'express-validator';
 import { ServiceBusinessMeetingRoom } from '../../service/ServiceBusinessMeetingRoom';
-import { businessPermission } from '../../util/permission';
+import { businessPermission, businessMeetingRoomByIdPermission } from '../../util/permission';
 
-const businessMeetingRoomPermissionById = () =>
-    param('meetingRoomId').custom((value, { req }) => {
-        const meetingRoom = new BusinessMeetingRoom();
-        const business = new Business();
-        const admin = new Admin();
-        admin.id = req.user.admins[0].id;
-
-        const businessQuery = new ServiceBusinessPermission()._ByAdmin(admin);
-        return businessQuery.then((r: Business) => {
-            Object.assign(req.user, { Business: r });
-            if (r) {
-                meetingRoom.id = Number(value);
-                business.id = r.id;
-                const meetingRoomQuery = new ServiceBusinessMeetingRoom().getWidthBusiness(meetingRoom, business);
-                return meetingRoomQuery.then((r1: BusinessMeetingRoom) => {
-                    if (r1) {
-                        return Object.assign(req.user, { meetingRoom: r1 });
-                    } else {
-                        return Promise.reject('You are not authorized or already deleted');
-                    }
-                });
-            } else {
-                return Promise.reject('You are not authorized or have no data.');
-            }
-        });
-    });
 /**
  * Post/update Business meeting room
  */
@@ -131,7 +105,7 @@ const apiGets = [
  * Get business meeting room lists
  */
 const apiGet = [
-    [businessMeetingRoomPermissionById.apply(this)],
+    [businessMeetingRoomByIdPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -156,7 +130,7 @@ const apiGet = [
  * Delete business meeting room
  */
 const apiDelete = [
-    [businessMeetingRoomPermissionById.apply(this)],
+    [businessMeetingRoomByIdPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;

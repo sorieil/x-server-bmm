@@ -38,7 +38,7 @@ export class ServiceBusinessPermission extends BaseService {
      */
     public _ByAdmin(admin: Admin) {
         const query = this.mysqlManager(Business).findOne({
-            where: { admin: admin.id },
+            where: { admin: admin },
         });
         return query;
     }

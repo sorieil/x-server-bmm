@@ -24,6 +24,7 @@ import businessCode from './controllers/admin/businessCode';
 import businessVender from './controllers/admin/businessVender';
 import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
 import userFavorite from './controllers/user/userFavorite';
+import userBusinessTime from './controllers/user/userBusinessTime';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -163,6 +164,10 @@ connections(process.env)
 
         // Meeting Lists
         app.get('/api/v1/user/meeting-reservation/blockId', clientCheck, ...userFavorite.apiGets);
+
+        // Vender Time
+        app.get('/api/v1/user/time', clientCheck, ...userBusinessTime.apiGets);
+        app.get('/api/v1/user/time/:date', clientCheck, ...userBusinessTime.apiGet);
 
         /**
          * Error Handler. Provides full stack - remove for production
