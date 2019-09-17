@@ -35,24 +35,20 @@ export const auth = (secretName: secretNameType) => {
                     console.log('jwt_payload.eventId:', jwt_payload.eventId);
                     return done('noEventId', null);
                 }
-
+                // 토큰의 상태가 유저인지 관리자인지 체크 한다.
                 if (level === 'eUser') {
-                    // console.log('jwt id:', jwt_payload._id);
                     const user = serviceAccount.getUserId(jwt_payload._id);
                     return user
                         .then(r => {
-                            // console.log('eUser:', r);
                             if (r) {
                                 const eventId = jwt_payload.eventId;
                                 const service = new ServiceBusinessEventBridge();
                                 const businessEventBridge = new BusinessEventBridge();
                                 businessEventBridge.eventId = eventId;
-                                // console.log('eventId:', eventId);
 
                                 // 디비에서 등록된 이벤트 아이디가 있는지 체크 한다.
                                 // 비즈니스 아이디를 발급 해준다.
                                 return service.get(businessEventBridge).then(rr => {
-                                    // console.log('service rr:', rr);
                                     if (rr) {
                                         Object.assign(r, { business: rr.business });
                                         return setTimeout(() => {
@@ -82,6 +78,10 @@ export const auth = (secretName: secretNameType) => {
 
                         if (r) {
                             Object.assign(r, { eventId: jwt_payload.eventId });
+                            // 여기에서 setTimeout 으로 처리하는 이유는 위 오브젝트의 연산시 패스하고
+                            // 바로 결과로 넘어 갈 수 있어서 확실히 하기 위해서 setTimeout은 코어 스크립트
+                            // 에서 제일 마지막에 실행되기 때문에 코드를 이렇게 해놨다. (그냥 혹시나 하는 마음에..)
+                            // 혹시라도 불안해서.. node 의 불안요소때문에..ㅎㅎ
                             return setTimeout(() => {
                                 return done(undefined, r);
                             }, 0);
