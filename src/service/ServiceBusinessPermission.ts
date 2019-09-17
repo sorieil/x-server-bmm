@@ -38,6 +38,7 @@ export class ServiceBusinessPermission extends BaseService {
      */
     public _ByAdmin(admin: Admin) {
         const query = this.mysqlManager(Business).findOne({
+            // TODO 원래 엔티티를 통으로 보내주면 알아서 id를 매칭했는데 오늘 체크 해보니 아니다... 두번 체크 해보기
             where: { admin: admin.id },
         });
         return query;
