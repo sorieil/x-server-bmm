@@ -46,7 +46,7 @@ export const auth = (secretName: secretNameType) => {
                                 const businessEventBridge = new BusinessEventBridge();
                                 businessEventBridge.eventId = eventId;
 
-                                // 디비에서 등록된 이벤트 아이디가 있는지 체크 한다.
+                                // 디비에서 등록된 이벤트 아이디(businessId)가 있는지 체크 한다.
                                 // 비즈니스 아이디를 발급 해준다.
                                 return service.get(businessEventBridge).then(rr => {
                                     if (rr) {
@@ -55,6 +55,9 @@ export const auth = (secretName: secretNameType) => {
                                             return done(undefined, r);
                                         }, 0);
                                     } else {
+                                        // 등록된 business가 없는경우...
+                                        // 이벤트 아이디는 유저가 이벤트에 처음 진입하게 되면
+                                        // 기존 몽고디비 기반 서비스에서 바로 등록이 되고, 
                                         console.log('유효하지 않은 이벤트');
                                         // 유효하지 않은 이벤트라고 표시한다.
                                         return done('noEventId', null);
