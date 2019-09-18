@@ -89,6 +89,7 @@ const apiGets = [
             const service = new ServiceBusinessMeetingRoom();
 
             if (!errors.isEmpty()) {
+                console.log('Meeting room:', errors.array());
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }

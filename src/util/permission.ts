@@ -22,6 +22,7 @@ import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
 export const businessPermission = () => {
     return param('permission').custom((value, { req }) => {
         const admin = new Admin();
+        console.log('======= Check:', req.user.admins[0]);
         admin.id = req.user.admins[0]; // passport 에서 주입한다.
         const query = new ServiceBusinessPermission()._ByAdmin(admin);
         return query.then((r: Business) => {

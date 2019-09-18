@@ -40,6 +40,7 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
             res.status(code).json({
                 resCode: code,
                 message: message,
+                result: [],
             });
         }
     } else if (responseType === 'delete') {
@@ -57,6 +58,7 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
             res.status(code).json({
                 resCode: code,
                 message: message,
+                result: [],
             });
         }
     } else {
