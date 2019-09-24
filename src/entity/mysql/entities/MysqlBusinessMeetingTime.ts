@@ -11,6 +11,12 @@ export class BusinessMeetingTime extends Base {
     @Column('datetime', { nullable: false })
     endDt: Date;
 
+    @Column('char', { length: 5, nullable: true })
+    startTime: string;
+
+    @Column('char', { length: 5, nullable: true })
+    endTime: string;
+
     @Column('int', { default: false })
     intervalTime: number;
 

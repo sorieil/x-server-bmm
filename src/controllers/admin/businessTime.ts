@@ -85,6 +85,8 @@ const apiPost = [
             businessMeetingTime.business = business;
             businessMeetingTime.startDt = startDt;
             businessMeetingTime.endDt = endDt;
+            businessMeetingTime.startTime = body.start_time;
+            businessMeetingTime.endTime = body.end_time;
             businessMeetingTime.intervalTime = intervalTime;
 
             const query = await service.post(businessMeetingTime);
