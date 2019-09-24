@@ -7,7 +7,7 @@ import { User } from '../../entity/mysql/entities/MysqlUser';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
 import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { businessVenderPermission } from '../../util/permission';
+import { adminBusinessVenderPermission } from '../../util/permission';
 
 const apiGets = [
     async (req: Request, res: Response) => {
@@ -82,7 +82,7 @@ const apiPost = [
 ];
 
 const apiDelete = [
-    [businessVenderPermission.apply(this)],
+    [adminBusinessVenderPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);

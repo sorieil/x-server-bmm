@@ -3,35 +3,53 @@ import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMe
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult } from 'express-validator';
-import { businessPermission } from '../../util/permission';
+import { businessAdminPermission } from '../../util/permission';
 import { ServiceBusinessTime } from '../../service/ServiceBusinessTime';
 import moment from 'moment';
-
+/**
+ * @description
+ * 실행할 날짜와 시작 시간과 끝나는 시간, 미팅 타임등을 넣으면, 타임 테이블이 생선된다,
+ * 생성과 수정이 같은 API 에서 일뤄진다.
+ */
 const apiPost = [
     [
-        businessPermission.apply(this),
+        businessAdminPermission.apply(this),
         check('interval_time')
             .not()
             .isEmpty()
             .isNumeric(),
-        // check('start_date').custom((value, { req }) => {
-        //     const date = moment(value, 'YYYY-MM-DD').isValid();
-        //     if (!date) {
-        //         return Promise.reject('Invalid date');
-        //     }
-        // }),
-        // check('end_date').custom((value, { req }) => {
-        //     const date = moment(value, 'YYYY-MM-DD').isValid();
-        //     if (!date) {
-        //         return Promise.reject('Invalid date');
-        //     }
-        // }),
-        check('start_date')
-            .not()
-            .isEmpty(),
-        check('end_date')
-            .not()
-            .isEmpty(),
+        check('start_date').custom((value, { req }) => {
+            const date = moment(value, 'YYYY-MM-DD', true).isValid();
+            console.log('date:', date);
+            if (!date) {
+                return Promise.reject('start_date Invalid date');
+            }
+            return true;
+        }),
+        check('end_date').custom((value, { req }) => {
+            const date = moment(value, 'YYYY-MM-DD', true).isValid();
+            console.log('date:', date);
+            if (!date) {
+                return Promise.reject('start_date Invalid date');
+            }
+            return true;
+        }),
+        check('start_time').custom((value, { req }) => {
+            const date = moment(value, 'HH:mm', true).isValid();
+            console.log('date:', date);
+            if (!date) {
+                return Promise.reject('start_time Invalid date');
+            }
+            return true;
+        }),
+        check('end_time').custom((value, { req }) => {
+            const date = moment(value, 'HH:mm', true).isValid();
+            console.log('date:', date);
+            if (!date) {
+                return Promise.reject('end_time Invalid date');
+            }
+            return true;
+        }),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -39,6 +57,7 @@ const apiPost = [
             const method: RequestRole = req.method.toString() as any;
 
             if (!errors.isEmpty()) {
+                console.log('Finish:', errors.array());
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
@@ -50,6 +69,8 @@ const apiPost = [
             const queryBusinessMeetingTime = await service.get(business);
             if (queryBusinessMeetingTime) {
                 businessMeetingTime.id = queryBusinessMeetingTime.id;
+
+                // 생성과 수정이 같은 소스이긴 하지만, 메소드 구별은 해준다. 혼란을 막기 위해서
                 if (method === 'POST') {
                     responseJson(res, [], method, 'success');
                     return;
@@ -58,6 +79,8 @@ const apiPost = [
             const startDt = body.start_date;
             const endDt = body.end_date;
             const intervalTime = body.interval_time;
+            const startTime = moment(body.start_time, 'HH:mm');
+            const endTime = moment(body.end_time, 'HH:mm');
 
             businessMeetingTime.business = business;
             businessMeetingTime.startDt = startDt;
@@ -68,39 +91,55 @@ const apiPost = [
 
             const generateTimeList: Array<any> = await new Promise(resolve => {
                 const end = moment(endDt)
-                    .hour(0)
-                    .hour(0)
-                    .minute(0);
-                const start = moment(startDt)
-                    .hour(0)
-                    .hour(0)
-                    .minute(0);
+                    .hour(Number(endTime.format('HH')))
+                    .minute(Number(endTime.format('mm')));
+                let start = moment(startDt)
+                    .hour(Number(startTime.format('HH')))
+                    .minute(Number(startTime.format('mm')));
                 let interval = Number(intervalTime);
-                const diffDays = moment.duration(end.diff(start));
-                console.log('diff days:', diffDays.days());
-                const daysBucket: Array<any> = [];
 
-                const timeIntervalRange = Math.floor(1440 / intervalTime);
-                for (let i = 0; diffDays.days() + 1 > i; i++) {
+                const diffDays = moment.duration(end.diff(start));
+                // console.log('diff days:', diffDays.days());
+                const daysBucket: Array<any> = [];
+                const startDividedTime = Number(startTime.format('HH')) * 60 + Number(startTime.format('mm'));
+                const endDividedTime = Number(endTime.format('HH')) * 60 + Number(endTime.format('mm'));
+                const timeRange = endDividedTime - startDividedTime;
+                console.log(Number(startTime.format('HH')), Number(startTime.format('mm')));
+                console.log('timeRange:', timeRange);
+
+                const timeIntervalRange = Math.floor(timeRange / interval);
+                for (let i = 0; diffDays.days() >= i; i++) {
+                    console.log(start.format('YYYY-MM-DD HH:mm'));
                     const childBucket = [];
                     for (let j = timeIntervalRange; j > 0; j--) {
-                        const dividedTime = start
-                            .add(intervalTime, 'm')
-                            .format('HH:mm')
-                            .toString();
-                        childBucket.push({
-                            time: dividedTime,
-                            status: 'no',
-                        });
-                    }
-                    if (i === 0) {
-                        start.add(-1, 'days');
+                        console.log('j:', j);
+                        // TODO 여기에서 스타트 타임과 엔딩 타임도 넣어줘야 한다.
+                        if (j === timeIntervalRange) {
+                            const dividedTime = start.format('HH:mm').toString();
+                            childBucket.push({
+                                time: dividedTime,
+                                status: 'no',
+                            });
+                        } else {
+                            const dividedTime = start
+                                .add(interval, 'm')
+                                .format('HH:mm')
+                                .toString();
+                            childBucket.push({
+                                time: dividedTime,
+                                status: 'no',
+                            });
+                        }
                     }
                     daysBucket.push({ date: start.format('YYYY[-]MM[-]DD'), time: childBucket });
+                    start
+                        .add(1, 'days')
+                        .hour(Number(startTime.format('HH')))
+                        .minute(Number(startTime.format('mm')));
                 }
                 resolve(daysBucket);
             });
-            console.log('time lists:', generateTimeList);
+            // console.log('time lists:', generateTimeList);
 
             responseJson(res, generateTimeList, method, 'success');
         } catch (error) {
@@ -110,7 +149,7 @@ const apiPost = [
 ];
 
 const apiGet = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         const method: RequestRole = req.method.toString() as any;
         const errors = validationResult(req);

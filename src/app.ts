@@ -25,6 +25,7 @@ import businessVender from './controllers/admin/businessVender';
 import businessVenderFieldChildNode from './controllers/admin/businessVenderFieldChildNode';
 import userFavorite from './controllers/user/userFavorite';
 import userBusinessTime from './controllers/user/userBusinessTime';
+import userVenderFilter from './controllers/user/userVenderFilter';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -47,13 +48,20 @@ connections(process.env)
         app.set('port', process.env.PORT || 3003);
         if (process.env.NODE_ENV === 'production') {
             app.use(Sentry.Handlers.requestHandler());
-            app.use(
-                cors({
-                    origin: '*',
-                    optionsSuccessStatus: 200,
-                }),
-            );
+            // app.use(
+            //     cors({
+            //         origin: '*',
+            //         optionsSuccessStatus: 200,
+            //     }),
+            // );
         }
+
+        app.use(
+            cors({
+                origin: '*',
+                optionsSuccessStatus: 200,
+            }),
+        );
 
         app.use(compression());
         app.use(bodyParser.json({ limit: '50mb' }));
@@ -139,6 +147,7 @@ connections(process.env)
 
         // Temperature token
         app.post('/api/v1/token', ...api.generateToken);
+        app.get('/api/v1/token-verify', ...api.tokenVerify);
 
         // == user ================================================================================
         const clientCheck = auth('xsync-user').isAuthenticate;
@@ -168,6 +177,9 @@ connections(process.env)
         // Vender Time
         app.get('/api/v1/user/time', clientCheck, ...userBusinessTime.apiGets);
         app.get('/api/v1/user/time/:date', clientCheck, ...userBusinessTime.apiGet);
+
+        // Vender filter lists
+        app.get('/api/v1/user/filter', clientCheck, ...userVenderFilter.apiGets);
 
         /**
          * Error Handler. Provides full stack - remove for production

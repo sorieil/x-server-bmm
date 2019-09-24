@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ServiceBusiness } from '../../service/ServiceBusiness';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { businessPermission } from '../../util/permission';
+import { businessAdminPermission } from '../../util/permission';
 import { validationResult } from 'express-validator';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { BusinessEventBridge } from '../../entity/mysql/entities/MysqlBusinessEventBridge';
@@ -69,7 +69,7 @@ const apiPost = [
 ];
 
 const apiDelete = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         const method: RequestRole = req.method.toString() as any;
         const errors = validationResult(req);

@@ -113,7 +113,7 @@ const apiGets = [
                     .sort((a: number, b: number) => a - b)
                     .join();
             }
-
+            // 키워드가 있다면, keyword 변수에 선언해준다.
             if (req.query.keyword) keyword = req.query.keyword;
             business.id = req.user.business.id;
             const query = await service._getByBusiness(business, keyword, filter);

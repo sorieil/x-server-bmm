@@ -6,14 +6,14 @@ import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { BusinessMeetingRoom } from '../../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { check, validationResult, param } from 'express-validator';
 import { ServiceBusinessMeetingRoom } from '../../service/ServiceBusinessMeetingRoom';
-import { businessPermission, businessMeetingRoomByIdPermission } from '../../util/permission';
+import { businessAdminPermission, adminBusinessMeetingRoomByIdPermission } from '../../util/permission';
 
 /**
  * Post/update Business meeting room
  */
 const apiPost = [
     [
-        businessPermission.apply(this),
+        businessAdminPermission.apply(this),
         param('meetingRoomId')
             .optional()
             .isNumeric(),
@@ -81,7 +81,7 @@ const apiPost = [
  * Get business meeting room lists
  */
 const apiGets = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -106,7 +106,7 @@ const apiGets = [
  * Get business meeting room lists
  */
 const apiGet = [
-    [businessMeetingRoomByIdPermission.apply(this)],
+    [adminBusinessMeetingRoomByIdPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -131,7 +131,7 @@ const apiGet = [
  * Delete business meeting room
  */
 const apiDelete = [
-    [businessMeetingRoomByIdPermission.apply(this)],
+    [adminBusinessMeetingRoomByIdPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;

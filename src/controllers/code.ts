@@ -21,11 +21,11 @@ const apiGet = [
 
             const service = new ServiceCode();
             const code = new Code();
-            code.category = req.params.category;
+            code.category = req.query.category;
             let query;
 
             // 지정 카테고리가 있는 경우
-            if (req.params.category) {
+            if (req.query.category) {
                 query = await service.get(code);
             } else {
                 // 지정 카테고리가 없는 경우

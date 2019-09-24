@@ -64,7 +64,7 @@ export const responseJson = (res: Response, data: Array<any>, requestType: Reque
     } else {
         res.status(400).json({
             resCode: 400,
-            message: 'Input data is invalid',
+            message: data,
         });
     }
 };

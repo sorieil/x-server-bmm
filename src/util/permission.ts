@@ -19,15 +19,14 @@ import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
  *
  * @target admin
  */
-export const businessPermission = () => {
+export const businessAdminPermission = () => {
     return param('permission').custom((value, { req }) => {
         const admin = new Admin();
-        console.log('======= Check:', req.user.admins[0]);
         admin.id = req.user.admins[0]; // passport 에서 주입한다.
         const query = new ServiceBusinessPermission()._ByAdmin(admin);
-        return query.then((r: Business) => {
-            if (r) {
-                Object.assign(req.user, { business: r });
+        return query.then((businessResult: Business) => {
+            if (businessResult) {
+                Object.assign(req.user, { business: businessResult });
             } else {
                 return Promise.reject('You don`t have permission or first insert business information..');
             }
@@ -40,16 +39,16 @@ export const businessPermission = () => {
  * 로그인 정보로 유저의 정보를 불어오는 함수이다.
  * @target user
  */
-export const userPermission = () => {
-    return param('permission').custom((value, { req }) => {
+export const userGetLoginData = () => {
+    return param('loginData').custom((value, { req }) => {
         const login = new Login();
         login.id = req.user.id; // passport 에서 주입 한다.
         const query = new ServiceUserPermission()._byLogin(login);
-        return query.then((r: User) => {
-            if (r) {
-                Object.assign(req.user, { user: r });
+        return query.then((userResult: User) => {
+            if (userResult) {
+                Object.assign(req.user, { user: userResult });
             } else {
-                return Promise.reject('You don`t have permission or first insert user information..');
+                return Promise.reject('You don`t have login data or first insert login data.');
             }
         });
     });
@@ -58,12 +57,12 @@ export const userPermission = () => {
 /**
  * @description
  * 유저의 business 아이디는 이미 xsync 2.0 에서 이벤트 가입이 되어 있기 때문에 그 이벤트 아이디 기준으로 business 아이디를
- * 로그인 하면서 연결을 하는데 만약 연결이 안되어 있다면, 새로 연결 해서 디비에 등록되어 있다.
+ * 로그인 하면서 연결을 하는데 만약 연결이 안되어 있다면, 새로 연결 해서 디비에 등록한다.
  * 이 함수는 벤더의 아이디로 유저가 벤더의 아이디로 실제 비즈니스가 벤더를 소유 하는지 체크 하는 함수다.
  *
  * @target admin
  */
-export const businessVenderPermission = () =>
+export const adminBusinessVenderPermission = () =>
     param('venderId').custom((value, { req }) => {
         const businessVender = new BusinessVender();
         const service = new ServiceUserPermission();
@@ -82,9 +81,9 @@ export const businessVenderPermission = () =>
             business.id = req.user.business.id;
             const query = await service._getWithBusinessVender(businessVender, business);
             resolve(query);
-        }).then(r => {
-            if (r) {
-                Object.assign(req.user, { vender: r });
+        }).then(result => {
+            if (result) {
+                Object.assign(req.user, { vender: result });
             } else {
                 return Promise.reject('This is no vender id.');
             }
@@ -96,7 +95,7 @@ export const businessVenderPermission = () =>
  *
  * @target admin
  */
-export const businessMeetingRoomByIdPermission = () =>
+export const adminBusinessMeetingRoomByIdPermission = () =>
     param('meetingRoomId').custom((value, { req }) => {
         const meetingRoom = new BusinessMeetingRoom();
         const business = new Business();
@@ -104,15 +103,15 @@ export const businessMeetingRoomByIdPermission = () =>
         admin.id = req.user.admins[0].id;
 
         const businessQuery = new ServiceBusinessPermission()._ByAdmin(admin);
-        return businessQuery.then((r: Business) => {
-            Object.assign(req.user, { Business: r });
-            if (r) {
+        return businessQuery.then((businessResult: Business) => {
+            Object.assign(req.user, { Business: businessResult });
+            if (businessResult) {
                 meetingRoom.id = Number(value);
-                business.id = r.id;
+                business.id = businessResult.id;
                 const meetingRoomQuery = new ServiceBusinessMeetingRoom().getWidthBusiness(meetingRoom, business);
-                return meetingRoomQuery.then((r1: BusinessMeetingRoom) => {
-                    if (r1) {
-                        return Object.assign(req.user, { meetingRoom: r1 });
+                return meetingRoomQuery.then((businessMeetingRoomResult: BusinessMeetingRoom) => {
+                    if (businessMeetingRoomResult) {
+                        return Object.assign(req.user, { meetingRoom: businessMeetingRoomResult });
                     } else {
                         return Promise.reject('You are not authorized or already deleted');
                     }
@@ -123,14 +122,21 @@ export const businessMeetingRoomByIdPermission = () =>
         });
     });
 
-// 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
+/**
+ * @deprecated
+ * 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
+ *
+ * @target user
+ */
 export const checkBuyerInformation = () =>
     param('userId').custom((value, { req }) => {
         const service = new ServiceUserBuyerPermission();
         const user = req.user;
 
+        // 여기에서 굳이 프로미스를 사용한 이유는 통일성을 가져가기 위해서이다.
         return new Promise(async resolve => {
             const query = await service._getByUser(user);
+            // 여기에서 또 다른 로직이 들어 갈 수 있는 여지를 코드 스타일이다.
             resolve(query);
         }).then(r => {
             if (r) {

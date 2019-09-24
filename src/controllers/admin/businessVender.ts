@@ -4,7 +4,7 @@ import { BusinessVender } from './../../entity/mysql/entities/MysqlBusinessVende
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
-import { businessPermission } from '../../util/permission';
+import { businessAdminPermission } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
@@ -48,13 +48,13 @@ const businessVenderPermission = () =>
             const query = await service._getWithBusiness(businessVender, business);
 
             resolve(query);
-        }).then(r => {
-            if (r === null) {
+        }).then(result => {
+            if (result === null) {
                 return Promise.reject('You are not authorized or have no data.');
             }
 
-            if (r) {
-                Object.assign(req.user, { vender: r });
+            if (result) {
+                Object.assign(req.user, { vender: result });
             } else {
                 return Promise.reject('You are not authorized or have no data.');
             }
@@ -103,7 +103,7 @@ const apiGet = [
 
 const apiGetField = [
     [
-        businessPermission.apply(this),
+        businessAdminPermission.apply(this),
         param('informationTypeId')
             .not()
             .isEmpty(),
@@ -159,7 +159,7 @@ const apiGetField = [
 ];
 
 const apiGets = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;
@@ -253,7 +253,7 @@ const apiGetInformationType = [
  * 밴더 값 입력 / 수정
  */
 const apiPost = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const method: RequestRole = req.method.toString() as any;
@@ -295,7 +295,6 @@ const apiPost = [
             const query: BusinessVenderFieldValue[] = [];
 
             for (let field in body) {
-                console.log('body:', field, body);
                 const businessVenderFieldValue = new BusinessVenderFieldValue();
                 const businessVenderField = new BusinessVenderField();
                 businessVenderField.id = body[field].id; // field 아이

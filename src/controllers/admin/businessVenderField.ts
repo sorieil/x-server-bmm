@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
-import { businessPermission } from '../../util/permission';
+import { businessAdminPermission } from '../../util/permission';
 import ServiceBusinessVenderField, { BusinessVenderFieldType } from '../../service/ServiceBusinessVenderField';
 import { BusinessVenderField } from '../../entity/mysql/entities/MysqlBusinessVenderField';
 import ServiceBusinessVenderInformationChildNode from '../../service/ServiceBusinessVenderFieldChildNode';
@@ -87,7 +87,7 @@ const businessVenderChildPermission = () =>
         }
     });
 const apiInit = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -168,7 +168,7 @@ const apiInit = [
 ];
 const apiPost = [
     [
-        businessPermission.apply(this),
+        businessAdminPermission.apply(this),
         check('name')
             .not()
             .isEmpty(),
@@ -308,7 +308,7 @@ const apiPatch = [
 ];
 
 const apiGets = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
@@ -397,7 +397,7 @@ const apiGet = [
 ];
 
 const apiDeleteAll = [
-    [businessPermission.apply(this)],
+    [businessAdminPermission.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
