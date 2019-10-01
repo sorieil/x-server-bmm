@@ -34,7 +34,6 @@ export class ServiceBusinessTime extends BaseService {
                 business: business,
             },
         });
-
         return query;
     }
 }

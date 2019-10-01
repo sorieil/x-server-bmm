@@ -76,26 +76,27 @@ const apiPost = [
                     return;
                 }
             }
-            const startDt = body.start_date;
-            const endDt = body.end_date;
+            const startDate = body.start_date;
+            const endDate = body.end_date;
             const intervalTime = body.interval_time;
             const startTime = moment(body.start_time, 'HH:mm');
             const endTime = moment(body.end_time, 'HH:mm');
 
             businessMeetingTime.business = business;
-            businessMeetingTime.startDt = startDt;
-            businessMeetingTime.endDt = endDt;
+            businessMeetingTime.startDate = startDate;
+            businessMeetingTime.endDate = endDate;
             businessMeetingTime.startTime = body.start_time;
             businessMeetingTime.endTime = body.end_time;
             businessMeetingTime.intervalTime = intervalTime;
+            // TODO 여기에서 미팅룸 갯수 만큼 카운트를 해준다. 그래서 예약기 되면, 마이너스 카운트를 해준다. 그리고 그 방들의 정ㅂ
 
             const query = await service.post(businessMeetingTime);
 
             const generateTimeList: Array<any> = await new Promise(resolve => {
-                const end = moment(endDt)
+                const end = moment(endDate)
                     .hour(Number(endTime.format('HH')))
                     .minute(Number(endTime.format('mm')));
-                let start = moment(startDt)
+                let start = moment(startDate)
                     .hour(Number(startTime.format('HH')))
                     .minute(Number(startTime.format('mm')));
                 let interval = Number(intervalTime);
@@ -164,10 +165,13 @@ const apiGet = [
         const service = new ServiceBusinessTime();
         const business = new Business();
         business.id = req.user.business.id;
-        console.log('business:', business);
         const query = await service.get(business);
 
-        responseJson(res, [query], method, 'success');
+        if (query) {
+            responseJson(res, [query], method, 'success');
+        } else {
+            responseJson(res, [], method, 'success');
+        }
     },
 ];
 

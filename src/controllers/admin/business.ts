@@ -36,7 +36,7 @@ const apiPost = [
             const service = new ServiceBusiness();
             const admin = new Admin();
             admin.id = req.user.admins[0].id;
-            console.log('admin:', admin);
+            // console.log('admin:', admin);
             const queryBusiness = await service.get(admin);
             if (queryBusiness) {
                 business.id = queryBusiness.id;

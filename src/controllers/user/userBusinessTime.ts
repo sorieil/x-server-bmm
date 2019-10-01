@@ -43,9 +43,8 @@ const apiGets = [
         const service = new ServiceBusinessTime();
         const business = new Business();
         business.id = req.user.business.id; // passport 에서 주입한다.
-        console.log('business:', business);
         const query = await service.get(business);
-
+        console.log('Why did you print null?');
         responseJson(res, [query], method, 'success');
     },
 ];

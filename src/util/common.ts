@@ -1,6 +1,7 @@
 import { RequestRole } from './common';
 import { Response } from 'express';
 import logger from './logger';
+import { isArray } from 'util';
 export type RequestRole = 'POST' | 'GET' | 'PATCH' | 'DELETE';
 type ResponseRole = 'success' | 'invalid' | 'delete';
 export const responseRole = {
@@ -27,7 +28,7 @@ export const responseRole = {
 };
 export const responseJson = (res: Response, data: Array<any>, requestType: RequestRole, responseType: ResponseRole) => {
     if (responseType === 'success') {
-        if (data.length > 0) {
+        if (data.length > 0 && isArray(data)) {
             const code = responseRole[requestType].success;
             res.status(code).json({
                 resCode: code,

@@ -6,15 +6,15 @@ import { Business } from './MysqlBusiness';
 @Entity()
 export class BusinessMeetingTime extends Base {
     @Column('datetime', { nullable: false })
-    startDt: Date;
+    startDate: Date;
 
     @Column('datetime', { nullable: false })
-    endDt: Date;
+    endDate: Date;
 
-    @Column('char', { length: 5, nullable: true })
+    @Column('char', { length: 5, nullable: false, default: '00:00' })
     startTime: string;
 
-    @Column('char', { length: 5, nullable: true })
+    @Column('char', { length: 5, nullable: false, default: '00:00' })
     endTime: string;
 
     @Column('int', { default: false })

@@ -142,8 +142,6 @@ const apiDelete = [
                 return;
             }
 
-            console.log('business:', req.user.business);
-            console.log('meetingRoom:', req.user.meetingRoom);
             const businessMeetingRoom = (new BusinessMeetingRoom().id = req.user.meetingRoom.id);
             const query = await service.delete(businessMeetingRoom);
             responseJson(res, [query], method, 'delete');

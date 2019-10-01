@@ -125,7 +125,7 @@ const apiGets = [
         const query = await service.getByBusiness(business);
         Object.assign(query, { timeLists: query.businessMeetingTimeLists });
         delete query.businessMeetingTimeLists;
-
+        console.log('log:', query);
         responseJson(res, [query], method, 'success');
     },
 ];

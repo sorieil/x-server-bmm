@@ -138,9 +138,9 @@ export const checkBuyerInformation = () =>
             const query = await service._getByUser(user);
             // 여기에서 또 다른 로직이 들어 갈 수 있는 여지를 코드 스타일이다.
             resolve(query);
-        }).then(r => {
-            if (r) {
-                Object.assign(req.user, { buyer: r });
+        }).then(result => {
+            if (result) {
+                Object.assign(req.user, { buyer: result });
             } else {
                 return Promise.reject('Please enter buyer information first.');
             }
