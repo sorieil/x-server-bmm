@@ -1,3 +1,4 @@
+import { ServiceBusinessTimeList } from './../../service/ServiceBusinessTimeList';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMeetingTime';
 import { Request, Response } from 'express';
@@ -14,39 +15,35 @@ import moment from 'moment';
 const apiPost = [
     [
         businessAdminPermission.apply(this),
-        check('interval_time')
+        check('intervalTime')
             .not()
             .isEmpty()
             .isNumeric(),
-        check('start_date').custom((value, { req }) => {
-            const date = moment(value, 'YYYY-MM-DD', true).isValid();
-            console.log('date:', date);
+        check('startDate').custom((value, { req }) => {
+            const date = moment(value).isValid();
             if (!date) {
-                return Promise.reject('start_date Invalid date');
+                return Promise.reject('startDate Invalid date');
             }
             return true;
         }),
-        check('end_date').custom((value, { req }) => {
-            const date = moment(value, 'YYYY-MM-DD', true).isValid();
-            console.log('date:', date);
+        check('endDate').custom((value, { req }) => {
+            const date = moment(value).isValid();
             if (!date) {
-                return Promise.reject('start_date Invalid date');
+                return Promise.reject('endDate Invalid date');
             }
             return true;
         }),
-        check('start_time').custom((value, { req }) => {
+        check('startTime').custom((value, { req }) => {
             const date = moment(value, 'HH:mm', true).isValid();
-            console.log('date:', date);
             if (!date) {
-                return Promise.reject('start_time Invalid date');
+                return Promise.reject('startTime Invalid date');
             }
             return true;
         }),
-        check('end_time').custom((value, { req }) => {
+        check('endTime').custom((value, { req }) => {
             const date = moment(value, 'HH:mm', true).isValid();
-            console.log('date:', date);
             if (!date) {
-                return Promise.reject('end_time Invalid date');
+                return Promise.reject('endTime Invalid date');
             }
             return true;
         }),
@@ -57,7 +54,6 @@ const apiPost = [
             const method: RequestRole = req.method.toString() as any;
 
             if (!errors.isEmpty()) {
-                console.log('Finish:', errors.array());
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
@@ -67,30 +63,30 @@ const apiPost = [
             const body = req.body;
             business.id = req.user.business.id;
             const queryBusinessMeetingTime = await service.get(business);
+
             if (queryBusinessMeetingTime) {
                 businessMeetingTime.id = queryBusinessMeetingTime.id;
 
                 // 생성과 수정이 같은 소스이긴 하지만, 메소드 구별은 해준다. 혼란을 막기 위해서
-                if (method === 'POST') {
-                    responseJson(res, [], method, 'success');
-                    return;
-                }
+                // if (method === 'POST') {
+                //     responseJson(res, [], method, 'success');
+                //     return;
+                // }
             }
-            const startDate = body.start_date;
-            const endDate = body.end_date;
-            const intervalTime = body.interval_time;
-            const startTime = moment(body.start_time, 'HH:mm');
-            const endTime = moment(body.end_time, 'HH:mm');
+
+            const startDate = body.startDate;
+            const endDate = body.endDate;
+            const intervalTime = body.intervalTime;
+            const startTime = moment(body.startTime, 'HH:mm');
+            const endTime = moment(body.endTime, 'HH:mm');
 
             businessMeetingTime.business = business;
             businessMeetingTime.startDate = startDate;
             businessMeetingTime.endDate = endDate;
-            businessMeetingTime.startTime = body.start_time;
-            businessMeetingTime.endTime = body.end_time;
+            businessMeetingTime.startTime = body.startTime;
+            businessMeetingTime.endTime = body.endTime;
             businessMeetingTime.intervalTime = intervalTime;
             // TODO 여기에서 미팅룸 갯수 만큼 카운트를 해준다. 그래서 예약기 되면, 마이너스 카운트를 해준다. 그리고 그 방들의 정ㅂ
-
-            const query = await service.post(businessMeetingTime);
 
             const generateTimeList: Array<any> = await new Promise(resolve => {
                 const end = moment(endDate)
@@ -102,20 +98,14 @@ const apiPost = [
                 let interval = Number(intervalTime);
 
                 const diffDays = moment.duration(end.diff(start));
-                // console.log('diff days:', diffDays.days());
                 const daysBucket: Array<any> = [];
                 const startDividedTime = Number(startTime.format('HH')) * 60 + Number(startTime.format('mm'));
                 const endDividedTime = Number(endTime.format('HH')) * 60 + Number(endTime.format('mm'));
                 const timeRange = endDividedTime - startDividedTime;
-                console.log(Number(startTime.format('HH')), Number(startTime.format('mm')));
-                console.log('timeRange:', timeRange);
-
                 const timeIntervalRange = Math.floor(timeRange / interval);
                 for (let i = 0; diffDays.days() >= i; i++) {
-                    console.log(start.format('YYYY-MM-DD HH:mm'));
                     const childBucket = [];
                     for (let j = timeIntervalRange; j > 0; j--) {
-                        console.log('j:', j);
                         // TODO 여기에서 스타트 타임과 엔딩 타임도 넣어줘야 한다.
                         if (j === timeIntervalRange) {
                             const dividedTime = start.format('HH:mm').toString();
@@ -134,7 +124,7 @@ const apiPost = [
                             });
                         }
                     }
-                    daysBucket.push({ date: start.format('YYYY[-]MM[-]DD'), time: childBucket });
+                    daysBucket.push({ date: start.format('YYYY[-]MM[-]DD'), times: childBucket });
                     start
                         .add(1, 'days')
                         .hour(Number(startTime.format('HH')))
@@ -142,7 +132,12 @@ const apiPost = [
                 }
                 resolve(daysBucket);
             });
-            // console.log('time lists:', generateTimeList);
+
+            const serviceBusinessTimeList = new ServiceBusinessTimeList();
+            // 저장되어 있던 타임 블럭들을 삭제 해준다.
+            await serviceBusinessTimeList.deleteAllMeetingTimeList(businessMeetingTime);
+            // 기간 정보 저장
+            await service.post(businessMeetingTime);
 
             responseJson(res, generateTimeList, method, 'success');
         } catch (error) {

@@ -38,7 +38,7 @@ const businessVenderPermission = () =>
             return Promise.reject('You don`t have permission or first insert business default data.');
         }
         if (r) {
-            Object.assign(req.user, { vender: r });
+            Object.assign(req.user, { venderField: r });
         } else {
             return Promise.reject('You don`t have permission or first insert vender fields..');
         }
@@ -226,7 +226,7 @@ const apiPost = [
                 await serviceChild.post(paramChildNode);
             }
 
-            await Object.assign(query, { serviceChild: await serviceChild.gets(businessVenderField) });
+            await Object.assign(query, { fieldChildNodes: await serviceChild.gets(businessVenderField) });
             query.informationType = query.informationType.id as any;
             query.fieldType = query.fieldType.id as any;
 
@@ -240,6 +240,7 @@ const apiPost = [
 const apiPatch = [
     [
         businessVenderPermission.apply(this),
+        // fieldId 는 퍼미션에서 체크 한다.
         check('fieldChildNodes')
             .optional()
             .isArray(),
@@ -267,7 +268,7 @@ const apiPatch = [
             const fieldType = new Code();
             fieldType.id = body.fieldType;
 
-            businessVenderField.id = req.user.vender.id;
+            businessVenderField.id = req.user.venderField.id;
             businessVenderField.name = body.name;
             businessVenderField.require = body.require;
             businessVenderField.informationType = body.informationType;
@@ -277,7 +278,8 @@ const apiPatch = [
             if (typeof body.fieldChildNodes !== 'undefined') {
                 if (body.fieldChildNodes.length > 0) {
                     // 만약 자식이 줄어 들었다면, 업데이트에 포함이 되지 않은 자식 같은 경우는 삭제 해줘야 한다.
-                    const deleteTargetQuery = await serviceChild.get(businessVenderField);
+                    // const deleteTargetQuery = await serviceChild.get(businessVenderField);
+                    // console.log('deleteTargetQuery:', deleteTargetQuery);
                     // 아이디가 없는 경우는 새로운 입력이기 대문에 아이디를 넣어준다.
                     const paramChildNode = await body.fieldChildNodes.map((v: BusinessVenderFieldChildNode) => {
                         const schema = new BusinessVenderFieldChildNode();
@@ -288,6 +290,7 @@ const apiPatch = [
                         delete v.updatedAt;
                         return Object.assign(schema, v);
                     });
+                    console.log('paramChildNode:', paramChildNode);
                     await serviceChild.post(paramChildNode);
                 }
             }
@@ -334,30 +337,35 @@ const apiGets = [
                 return v;
             });
 
-            const companyInformation = query.filter((v: any) => {
-                return v.informationType === 4;
-            });
+            console.log('query:', query);
+            if (query.length > 0) {
+                const companyInformation = query.filter((v: any) => {
+                    return v.informationType === 4;
+                });
 
-            const informationType = query.filter((v: any) => {
-                return v.informationType === 5;
-            });
+                const informationType = query.filter((v: any) => {
+                    return v.informationType === 5;
+                });
 
-            const manager = query.filter((v: any) => {
-                return v.informationType === 6;
-            });
+                const manager = query.filter((v: any) => {
+                    return v.informationType === 6;
+                });
 
-            responseJson(
-                res,
-                [
-                    {
-                        companyInformation: companyInformation,
-                        informationType: informationType,
-                        manager: manager,
-                    },
-                ],
-                method,
-                'success',
-            );
+                responseJson(
+                    res,
+                    [
+                        {
+                            companyInformation: companyInformation,
+                            informationType: informationType,
+                            manager: manager,
+                        },
+                    ],
+                    method,
+                    'success',
+                );
+            } else {
+                responseJson(res, [], method, 'success');
+            }
         } catch (error) {
             tryCatch(res, error);
         }

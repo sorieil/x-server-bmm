@@ -26,16 +26,18 @@ const businessVenderInformationPermission = () =>
 
         return new Promise(async resolve => {
             const businessQuery = await new ServiceBusinessPermission()._ByAdmin(admin);
-
+            console.log('businessQuery:', businessQuery);
             if (!businessQuery) {
                 resolve(null);
             }
 
             business.id = businessQuery.id;
             const fieldQuery = await service.get(business);
-            if (!fieldQuery) {
+            if (!fieldQuery || fieldQuery.length === 0) {
                 resolve(null);
             }
+
+            console.log('field child permission:', fieldQuery);
 
             businessVenderField.id = fieldQuery[0].id;
             const venderFieldChildNodeQuery = await childService.getByBusinessVenderField(

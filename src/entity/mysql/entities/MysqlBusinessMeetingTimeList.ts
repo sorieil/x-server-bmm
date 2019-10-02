@@ -19,6 +19,9 @@ export class BusinessMeetingTimeList extends Base {
     @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
     use: StatusTypeRole;
 
+    // @Column('tinyint', { nullable: false, default: 0 })
+    // reservationCount: number;
+
     @Column('tinyint', { nullable: false, default: 0 })
     @ManyToOne(type => BusinessMeetingTime, businessMeetingTime => businessMeetingTime.businessMeetingTimeLists, {
         onDelete: 'CASCADE',
