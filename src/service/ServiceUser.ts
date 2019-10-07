@@ -1,8 +1,8 @@
 import { BaseService } from './BaseService';
 export default class ServiceUser extends BaseService {
-    constructor() {
-        super();
-    }
+  constructor() {
+    super();
+  }
 
-    // public async get()
+  // public async get()
 }

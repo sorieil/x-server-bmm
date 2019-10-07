@@ -5,19 +5,21 @@ import { Login } from './MysqlLogin';
 
 @Entity()
 export class MongoBridge extends Base {
-    @Column('varchar', { nullable: false })
-    mongodbID: string;
+  @Column('varchar', { nullable: false })
+  mongodbID: string;
 
-    @OneToOne(type => AdminLogin, adminLogin => adminLogin.mongoBridge, { onDelete: 'CASCADE' })
-    @JoinColumn()
-    adminLogin: AdminLogin;
+  @OneToOne(type => AdminLogin, adminLogin => adminLogin.mongoBridge, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  adminLogin: AdminLogin;
 
-    @OneToOne(type => Login, login => login.mongoBridge, { onDelete: 'CASCADE' })
-    @JoinColumn()
-    login: Login;
+  @OneToOne(type => Login, login => login.mongoBridge, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  login: Login;
 
-    @BeforeUpdate()
-    updateDateUpdate() {
-        this.updatedAt = new Date();
-    }
+  @BeforeUpdate()
+  updateDateUpdate() {
+    this.updatedAt = new Date();
+  }
 }

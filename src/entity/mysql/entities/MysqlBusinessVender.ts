@@ -1,26 +1,44 @@
 import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
 import { Business } from './MysqlBusiness';
 import { Base } from './MysqlBase';
-import { Entity, ManyToOne, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessVenderFieldValue } from './MysqlBusinessVenderFieldValue';
 import SearchVender from './MysqlSearchVender';
 
 @Entity()
 export class BusinessVender extends Base {
-    @ManyToOne(type => Business, business => business.businessVenders, { onDelete: 'CASCADE' })
-    business: Business;
+  @ManyToOne(type => Business, business => business.businessVenders, {
+    onDelete: 'CASCADE',
+  })
+  business: Business;
 
-    @OneToOne(type => BusinessCode, businessCode => businessCode.businessVender, { onDelete: 'CASCADE' })
-    @JoinColumn()
-    businessCode: BusinessCode;
+  @OneToOne(type => BusinessCode, businessCode => businessCode.businessVender, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  businessCode: BusinessCode;
 
-    @OneToMany(type => BusinessVenderFieldValue, businessVenderFieldValue => businessVenderFieldValue.businessVender)
-    businessVenderFieldValues: BusinessVenderFieldValue[];
+  @OneToMany(
+    type => BusinessVenderFieldValue,
+    businessVenderFieldValue => businessVenderFieldValue.businessVender,
+  )
+  businessVenderFieldValues: BusinessVenderFieldValue[];
 
-    @ManyToMany(type => BusinessVenderFavorite, businessVenderFavorite => businessVenderFavorite.businessVenders)
-    businessVenderFavorities: BusinessVenderFavorite[];
+  @ManyToMany(
+    type => BusinessVenderFavorite,
+    businessVenderFavorite => businessVenderFavorite.businessVenders,
+  )
+  businessVenderFavorities: BusinessVenderFavorite[];
 
-    @OneToOne(type => SearchVender, searchVender => searchVender.businessVender)
-    searchVender: SearchVender;
+  @OneToOne(type => SearchVender, searchVender => searchVender.businessVender)
+  searchVender: SearchVender;
 }

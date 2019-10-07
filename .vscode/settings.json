@@ -6,7 +6,7 @@
         "**/dist": true,
         "**/coverge": true
     },
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "javascript.format.enable": false,
     "typescript.referencesCodeLens.enabled": true,
     "tslint.ignoreDefinitionFiles": false,
