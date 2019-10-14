@@ -1,6 +1,4 @@
 import { BaseService } from './BaseService';
-import { BusinessVenderField } from '../entity/mysql/entities/MysqlBusinessVenderField';
-import { ServiceBusiness } from './ServiceBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 export default class ServiceCode extends BaseService {
   constructor() {
@@ -17,9 +15,9 @@ export default class ServiceCode extends BaseService {
         category: code.category,
       },
       relations: [
-        'businessVenderFieldInformationTypes',
-        'businessVenderFieldInformationTypes.businessVenderFieldChildNodes',
-        'businessVenderFieldInformationTypes.fieldType',
+        'businessVendorFieldInformationTypes',
+        'businessVendorFieldInformationTypes.businessVendorFieldChildNodes',
+        'businessVendorFieldInformationTypes.fieldType',
       ],
     });
     return query;

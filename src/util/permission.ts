@@ -1,14 +1,14 @@
-import { param, header, check, query } from 'express-validator';
+import { param } from 'express-validator';
 import { ServiceBusinessPermission } from '../service/ServiceBusinessPermission';
 import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
 import ServiceUserPermission from '../service/ServiceUserPermission';
 import { User } from '../entity/mysql/entities/MysqlUser';
-import { BusinessVender } from '../entity/mysql/entities/MysqlBusinessVender';
 import { BusinessMeetingRoom } from '../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { ServiceBusinessMeetingRoom } from '../service/ServiceBusinessMeetingRoom';
 import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessvendor';
 
 /**
  * @description
@@ -66,9 +66,9 @@ export const userGetLoginData = () => {
  *
  * @target admin
  */
-export const adminBusinessVenderPermission = () =>
-  param('venderId').custom((value, { req }) => {
-    const businessVender = new BusinessVender();
+export const adminBusinessVendorPermission = () =>
+  param('vendorId').custom((value, { req }) => {
+    const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
     const business = new Business();
 
@@ -76,23 +76,23 @@ export const adminBusinessVenderPermission = () =>
       return Promise.reject('Invalid insert data.');
     }
 
-    businessVender.id = value;
+    businessVendor.id = value;
     return new Promise(async resolve => {
       // 비즈니스 퍼미션과 다르게 유저는 비즈니스 아이디가 특정되어 있기 때문에,
       // 관리자 처럼 비즈니스 보유 여부를 체크 할 필요가 없다.
       // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
       business.id = req.user.business.id;
-      const query = await service._getWithBusinessVender(
-        businessVender,
+      const query = await service._getWithBusinessVendor(
+        businessVendor,
         business,
       );
       resolve(query);
     }).then(result => {
       if (result) {
-        Object.assign(req.user, { vender: result });
+        Object.assign(req.user, { vendor: result });
       } else {
-        return Promise.reject('This is no vender id.');
+        return Promise.reject('This is no vendor id.');
       }
     });
   });

@@ -1,31 +1,31 @@
 import { Request, Response } from 'express';
 import { responseJson, RequestRole } from '../../util/common';
 import { validationResult, body } from 'express-validator';
-import ServiceUserVender from '../../service/ServiceUserVender';
-import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
+import ServiceUserVendor from '../../service/ServiceUserVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
 import ServiceUserManager from '../../service/ServiceUserManager';
 
 const apiGet = [
   [
-    body('venderCode').custom((value, { req }) => {
-      const service = new ServiceUserVender();
-      const businessVender = new BusinessVender();
+    body('vendorCode').custom((value, { req }) => {
+      const service = new ServiceUserVendor();
+      const businessVendor = new BusinessVendor();
       const businessCode = new BusinessCode();
       if (!value) return Promise.reject('Invalid insert data.');
 
       return new Promise(async resolve => {
-        businessVender.id = req.params.venderId;
+        businessVendor.id = req.params.vendorId;
         businessCode.code = value;
-        businessVender.businessCode = businessCode;
-        const query = service.verityVenderCode(businessVender);
+        businessVendor.businessCode = businessCode;
+        const query = service.verityVendorCode(businessVendor);
 
         resolve(query);
       }).then(r => {
         if (r) {
-          Object.assign(req.user, { vender: r });
+          Object.assign(req.user, { vendor: r });
         } else {
-          return Promise.reject('This is no venderId or invalid vender code.');
+          return Promise.reject('This is no vendorId or invalid vendor code.');
         }
       });
     }),
@@ -41,9 +41,9 @@ const apiGet = [
     const name = req.body.name;
 
     const service = new ServiceUserManager();
-    const businessVender = new BusinessVender();
-    businessVender.id = req.user.vender.id;
-    const query = await service._getByNameWithVender(name, businessVender);
+    const businessVendor = new BusinessVendor();
+    businessVendor.id = req.user.vendor.id;
+    const query = await service._getByNameWithVendor(name, businessVendor);
 
     // 입력으로(post) 나온 값중에서 담당자의 항목을 유지해서 데이터를 뽑아줘야 함.
     // 수정시(patch)에는 value 의 id 값 기준으로 수정을 해주면되고,

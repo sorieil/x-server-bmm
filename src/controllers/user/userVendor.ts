@@ -1,18 +1,18 @@
-import { BusinessCode } from './../../entity/mysql/entities/MysqlBusinessCode';
-import { BusinessVenderFieldType } from './../../service/ServiceBusinessVenderField';
-import { BusinessVenderFavorite } from './../../entity/mysql/entities/MysqlBusinessVenderFavorite';
+import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
+import { BusinessVendorFieldType } from './../../service/ServiceBusinessVendorField';
+import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlbusinessVendorFavorite';
 import { Login } from '../../entity/mysql/entities/MysqlLogin';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult, param, check, body } from 'express-validator';
 import { Request, Response } from 'express';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import ServiceUserVender from '../../service/ServiceUserVender';
-import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
+import ServiceUserVendor from '../../service/ServiceUserVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
 
-const userVenderPermission = () =>
-  param('venderId').custom((value, { req }) => {
-    const businessVender = new BusinessVender();
+const userVendorPermission = () =>
+  param('vendorId').custom((value, { req }) => {
+    const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
     const business = new Business();
 
@@ -20,23 +20,23 @@ const userVenderPermission = () =>
       return Promise.reject('Invalid insert data.');
     }
 
-    businessVender.id = value;
+    businessVendor.id = value;
     return new Promise(async resolve => {
       // 비즈니스 퍼미션과 다르게 유저는 비즈니스 아이디가 특정되어 있기 때문에,
       // 관리자 처럼 비즈니스 보유 여부를 체크 할 필요가 없다.
       // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
       business.id = req.user.business.id;
-      const query = await service._getWithBusinessVender(
-        businessVender,
+      const query = await service._getWithBusinessVendor(
+        businessVendor,
         business,
       );
       resolve(query);
     }).then(r => {
       if (r) {
-        Object.assign(req.user, { vender: r });
+        Object.assign(req.user, { vendor: r });
       } else {
-        return Promise.reject('This is no vender id.');
+        return Promise.reject('This is no vendor id.');
       }
     });
   });
@@ -49,7 +49,7 @@ const userVenderPermission = () =>
  *
  */
 const apiGet = [
-  [userVenderPermission.apply(this)],
+  [userVendorPermission.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -60,15 +60,15 @@ const apiGet = [
         return;
       }
 
-      const service = new ServiceUserVender();
-      const businessVender = req.user.vender;
-      const query = await service.get(businessVender);
+      const service = new ServiceUserVendor();
+      const businessVendor = req.user.vendor;
+      const query = await service.get(businessVendor);
 
       console.log('get query:', query);
 
       delete query.createdAt;
       delete query.updatedAt;
-      query.businessVenderFieldValues.map((j: any) => {
+      query.businessVendorFieldValues.map((j: any) => {
         delete j.createdAt;
         delete j.updatedAt;
         j.value = j.text || j.textarea || j.idx;
@@ -105,7 +105,7 @@ const apiGets = [
         return;
       }
 
-      const service = new ServiceUserVender();
+      const service = new ServiceUserVendor();
       const business = new Business();
       let filter = '';
       let keyword = '';
@@ -125,8 +125,8 @@ const apiGets = [
         delete v.updatedAt;
         delete v.filter;
         v.keyword = '#' + v.keyword.replace(/,/gi, ' #');
-        v.businessVender.businessVenderFieldValues.map((j: any) => {
-          if (j.businessVenderField.name === '기업명') {
+        v.businessVendor.businessVendorFieldValues.map((j: any) => {
+          if (j.businessVendorField.name === '기업명') {
             v.companyName = j.text;
           }
 
@@ -141,21 +141,21 @@ const apiGets = [
           return j;
         });
 
-        delete v.businessVender.business;
+        delete v.businessVendor.business;
 
         // Favorite check
-        const userCheck = v.businessVender.businessVenderFavorities.filter(
+        const userCheck = v.businessVendor.businessVendorFavorities.filter(
           (u: any) => {
             return u.user.id === req.user.id;
           },
         );
 
         if (userCheck.length > 0 && userCheck) {
-          v.businessVenderFavorite = true;
+          v.businessVendorFavorite = true;
         } else {
           v.favorite = false;
         }
-        delete v.businessVender.businessVenderFavorities;
+        delete v.businessVendor.businessVendorFavorities;
         return v;
       });
 
@@ -166,26 +166,26 @@ const apiGets = [
   },
 ];
 
-const apiPostVerifyVenderCode = [
+const apiPostVerifyVendorCode = [
   [
-    userVenderPermission.apply(this),
-    body('venderCode').custom((value, { req }) => {
-      const service = new ServiceUserVender();
-      const businessVender = new BusinessVender();
+    userVendorPermission.apply(this),
+    body('vendorCode').custom((value, { req }) => {
+      const service = new ServiceUserVendor();
+      const businessVendor = new BusinessVendor();
       const businessCode = new BusinessCode();
       if (!value) return Promise.reject('Invalid insert data.');
 
       return new Promise(async resolve => {
-        businessVender.id = req.params.venderId;
+        businessVendor.id = req.params.vendorId;
         businessCode.code = value;
-        businessVender.businessCode = businessCode;
-        const query = service.verityVenderCode(businessVender);
+        businessVendor.businessCode = businessCode;
+        const query = service.verityVendorCode(businessVendor);
         resolve(query);
       }).then(r => {
         if (r) {
-          Object.assign(req.user, { vender: r });
+          Object.assign(req.user, { vendor: r });
         } else {
-          return Promise.reject('This is no venderId or invalid vender code.');
+          return Promise.reject('This is no vendorId or invalid vendor code.');
         }
       });
     }),
@@ -200,11 +200,11 @@ const apiPostVerifyVenderCode = [
         return;
       }
 
-      const query = req.user.vender;
+      const query = req.user.vendor;
 
       delete query.createdAt;
       delete query.updatedAt;
-      query.businessVenderFieldValues.map((j: any) => {
+      query.businessVendorFieldValues.map((j: any) => {
         delete j.createdAt;
         delete j.updatedAt;
         j.value = j.text || j.textarea || j.idx;
@@ -221,4 +221,4 @@ const apiPostVerifyVenderCode = [
     }
   },
 ];
-export default { apiGet, apiGets, apiPostVerifyVenderCode };
+export default { apiGet, apiGets, apiPostVerifyVendorCode };

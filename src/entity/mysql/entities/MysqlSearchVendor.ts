@@ -1,9 +1,9 @@
-import { BusinessVender } from './MysqlBusinessVender';
+import { BusinessVendor } from './MysqlBusinessVendor';
 import { Base } from './MysqlBase';
 import { Column, OneToOne, JoinColumn, Entity } from 'typeorm';
 
 @Entity()
-export default class SearchVender extends Base {
+export default class SearchVendor extends Base {
   @Column('varchar', { nullable: true })
   filter: string;
 
@@ -11,10 +11,10 @@ export default class SearchVender extends Base {
   keyword: string;
 
   @OneToOne(
-    type => BusinessVender,
-    businessVender => businessVender.searchVender,
+    type => BusinessVendor,
+    businessVendor => businessVendor.searchVendor,
     { onDelete: 'CASCADE' },
   )
   @JoinColumn()
-  businessVender: BusinessVender;
+  businessVendor: BusinessVendor;
 }

@@ -1,7 +1,15 @@
-import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
+import { BusinessVendorFieldManagerValueGroup } from './MysqlbusinessVendorFieldManagerValueGroup';
+import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  OneToOne,
+  JoinTable,
+} from 'typeorm';
 import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
 import UserManager from './MysqlUserManager';
@@ -45,18 +53,19 @@ export class User extends Base {
 
   // 유저가 보유한 즐겨 찾기 밴더
   @OneToMany(
-    type => BusinessVenderFavorite,
+    type => BusinessVendorFavorite,
     businessFavorite => businessFavorite.user,
   )
-  businessFavorites: BusinessVenderFavorite[];
-
-  // 밴더에서 등록한 담당자와 유저의 데이터 연결
-  @OneToMany(type => UserManager, userManager => userManager.user, {
-    nullable: true,
-  })
-  userManagers: UserManager[];
+  businessFavorites: BusinessVendorFavorite[];
 
   // 유저가 바이어로 등록되어 있다면, 바이어로 연결
   @OneToOne(type => UserBuyer, userBuyer => userBuyer.user, { nullable: true })
   userBuyer: UserBuyer;
+
+  @OneToOne(
+    type => BusinessVendorFieldManagerValueGroup,
+    businessVendorFieldManagerValueGroup =>
+      businessVendorFieldManagerValueGroup.user,
+  )
+  businessVendorFieldManagerValueGroup: BusinessVendorFieldManagerValueGroup;
 }

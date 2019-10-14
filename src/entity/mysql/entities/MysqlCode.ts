@@ -1,8 +1,9 @@
 import { Base } from './MysqlBase';
-import { Entity, Column, OneToMany, ManyToMany } from 'typeorm';
-import { BusinessVenderFieldValue } from './MysqlBusinessVenderFieldValue';
-import { BusinessVenderField } from './MysqlBusinessVenderField';
+import { Entity, Column, OneToMany } from 'typeorm';
 import UserManager from './MysqlUserManager';
+import { BusinessVendorField } from './MysqlBusinessVendorField';
+import { BusinessVendorFieldValue } from './MysqlBusinessVendorFieldValue';
+import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
 
 @Entity()
 export class Code extends Base {
@@ -54,23 +55,29 @@ export class Code extends Base {
     | null;
 
   @OneToMany(
-    type => BusinessVenderFieldValue,
-    businessVenderField => businessVenderField.code,
+    type => BusinessVendorFieldValue,
+    businessVendorField => businessVendorField.code,
   )
-  businessVenderFieldValues: BusinessVenderFieldValue[];
+  businessVendorFieldValues: BusinessVendorFieldValue[];
+
+  @OneToMany(
+    type => BusinessVendorFieldManagerValue,
+    businessVendorManagerField => businessVendorManagerField.code,
+  )
+  businessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
 
   @OneToMany(type => UserManager, userManager => userManager.code)
   userManager: UserManager[];
 
   @OneToMany(
-    type => BusinessVenderField,
-    businessVenderField => businessVenderField.informationType,
+    type => BusinessVendorField,
+    businessVendorField => businessVendorField.informationType,
   )
-  businessVenderFieldInformationTypes: BusinessVenderField[];
+  businessVendorFieldInformationTypes: BusinessVendorField[];
 
   @OneToMany(
-    type => BusinessVenderField,
-    businessVenderField => businessVenderField.fieldType,
+    type => BusinessVendorField,
+    businessVendorField => businessVendorField.fieldType,
   )
-  businessVenderFieldTypes: BusinessVenderField[];
+  businessVendorFieldTypes: BusinessVendorField[];
 }

@@ -1,6 +1,7 @@
 {
-    "recommendations": [
-        "esbenp.prettier-vscode",
-        "tombonnike.vscode-status-bar-format-toggle"
-    ]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "tombonnike.vscode-status-bar-format-toggle",
+    "dbaeumer.vscode-eslint"
+  ]
 }

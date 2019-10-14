@@ -1,0 +1,592 @@
+{
+	"info": {
+		"_postman_id": "51103694-e917-4420-8baa-7930cd2b74b2",
+		"name": "BMM-User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "vendor",
+			"item": [
+				{
+					"name": "LISTS",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/vendor?keyword=재혁&filter=32,33",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vendor"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "재혁"
+								},
+								{
+									"key": "filter",
+									"value": "32,33"
+								}
+							]
+						},
+						"description": "### 밴더 리스트\n> 등록된 벤더의 정보들을 가져옵니다.    즐겨찾기 여부도 함께 가져옵니다.\n- {{server}}/api/v1/user/vendor: 전체 리스트\n- {{server}}/api/v1/user/vendor?keyword=재혁&filter=32,33: 검색\n\n> ___아직 페이징은 없습니다.___"
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT vendor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDZjNzdmMzQ2Njk5MTc5ZTlmMGJjZDQiLCJpZCI6Impoa2ltQHhzeW5jLmNvIiwibmFtZSI6IlN0ZXZlIiwibGV2ZWwiOiJlQWRtaW4iLCJldmVudElkIjoiNWQ2Yzc4MWEwYzJkNTk0YWZiMzc5ZWZlIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuY29udGFpbmVyLm9iMG0zM2w1ZWdncmFuNWEiLCJpYXQiOjE1Njg3MTk3ODYsImV4cCI6MTAwMDAxNTY4NzE5Nzg1fQ.GJgthz9n0EbTCf3kyYUZy35i_2btutbtf_lePBQ_6Vo",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/vendor/118",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vendor",
+								"118"
+							]
+						},
+						"description": "### 벤더를 조회 합니다.\n- {{vendor_id}}: {{server}}/api/v1/user/vendor 에서 조회한값"
+					},
+					"response": []
+				},
+				{
+					"name": "VERTIFY vendor CODE",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"vendorCode\": \"KHM3\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/v1/user/vendor/118/verify-vendor-code",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"vendor",
+								"118",
+								"verify-vendor-code"
+							]
+						},
+						"description": "### 밴더의 아아디값과 코드 값을 인증한다.\n> 관리자에서 등록된 벤더의 임의키 값을 검색후 담당자를 등록할때 인증하는 API 입니다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 밴더\n> 밴더의 검색, 리스트관련 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fb79f53d-cfeb-49ce-8082-7b311428b3bd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8e84fb8c-99c0-4199-b294-191fd9453d4c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "vendorFilter",
+			"item": [
+				{
+					"name": "LISTS",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/filter",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"filter"
+							]
+						},
+						"description": "### 필터로 가능한 필드를 불러온다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 밴더에서 필터링이 가틍한 필드와 자식들을 출력한다.",
+			"auth": {
+				"type": "noauth"
+			}
+		},
+		{
+			"name": "Fovorite",
+			"item": [
+				{
+					"name": "INSERT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"key": "Authorization",
+								"type": "text",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/favorite/{{vendor_id}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"favorite",
+								"{{vendor_id}}"
+							]
+						},
+						"description": "### 즐겨찾기 추가\n> 특별히 바디가 없습니다. POST 로 보내면 바로 추가 되고, DELETE를 보내면 삭제 입니다."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/favorite/{{vendor_id}}",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"favorite",
+								"{{vendor_id}}"
+							]
+						},
+						"description": "### 삭제\n> 수정이 별도로 필요하지 않고, 바로 삭제하시면 됩니다."
+					},
+					"response": []
+				},
+				{
+					"name": "GET",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/favorite",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"favorite"
+							]
+						},
+						"description": "### 즐겨찾기 조회\n> 유저가 즐겨찾기한 벤더 리스트"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Meeting Reservation",
+			"item": [
+				{
+					"name": "INSERT",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhMjYxZGZhNDE5NzdjNGM3MDU3YjAwOCIsImxldmVsIjoiYWRtaW4iLCJpYXQiOjE1NjI4NTY3NjcsImV4cCI6MTY2Mjg1Njc2Nn0.pXYOp4hG0qQSB0Uvf_fstDF_5RNnOdMv65Mko1zNiEM",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": ""
+						},
+						"description": "미팅룸을 예약합니다."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": ""
+						},
+						"description": "### 예약을 취소 한다."
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						},
+						"description": "### 예약을 수정한다."
+					},
+					"response": []
+				},
+				{
+					"name": "SELECT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						},
+						"description": "### 예약을 조회한다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 미팅 예약\n> 미팅룸 예약에 관한 API 입니다."
+		},
+		{
+			"name": "Manager",
+			"item": [
+				{
+					"name": "INSERT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						},
+						"description": "### 매니저로 등록 한다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 매니저 관련 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e4043328-97a7-437d-bed4-a13569e9c36d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0719c7b6-7af7-4206-9521-77b273e9e16a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Time",
+			"item": [
+				{
+					"name": "SELECT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ",
+								"description": "기존 사용하던 유저 토큰에서 'JWT ' 를 붙이시면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/user/time/2019-01-01",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"time",
+								"2019-01-01"
+							]
+						},
+						"description": "### 밴더의 미팅 시간 정보를 가져온다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 미팅 시간에 대한 API 입니다.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "782dbbf9-e8bd-4c00-9cf3-deb61c1556a7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6c97e29a-006a-4dd7-8c9e-130241a231dd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "SELECT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						},
+						"description": "### 유저의 기본정보를 가져온다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 유저의 정보를 가져온다.",
+			"auth": {
+				"type": "noauth"
+			}
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Verity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDZjNzdmMzQ2Njk5MTc5ZTlmMGJjZDQiLCJpZCI6Impoa2ltQHhzeW5jLmNvIiwibmFtZSI6IlN0ZXZlIiwibGV2ZWwiOiJlQWRtaW4iLCJldmVudElkIjoiNWQ2Yzc4MWEwYzJkNTk0YWZiMzc5ZWZlIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuY29udGFpbmVyLm9iMG0zM2w1ZWdncmFuNWEiLCJpYXQiOjE1Njg3MTk3ODYsImV4cCI6MTAwMDAxNTY4NzE5Nzg1fQ.GJgthz9n0EbTCf3kyYUZy35i_2btutbtf_lePBQ_6Vo",
+								"description": "기존 발급 받은 토큰에 'JWT ' 을 붙여서 해더에 넣으면 됩니다.",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/token-verify",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"token-verify"
+							]
+						},
+						"description": "### 토큰 인증\n> 단순이 토큰을 해더에 보내서 정상적인 토큰인지 확인하고, 결과 값으로는 토큰을 보내눈다."
+					},
+					"response": []
+				}
+			],
+			"description": "### 토큰관련 API",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d5de4b39-60ba-487a-b725-28807057c2c4",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('Authorization', 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDZjNzdmMzQ2Njk5MTc5ZTlmMGJjZDQiLCJpZCI6Impoa2ltQHhzeW5jLmNvIiwibmFtZSI6IlN0ZXZlIiwibGV2ZWwiOiJlQWRtaW4iLCJldmVudElkIjoiNWQ2Yzc4MWEwYzJkNTk0YWZiMzc5ZWZlIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuY29udGFpbmVyLm9iMG0zM2w1ZWdncmFuNWEiLCJpYXQiOjE1Njg3MTk3ODYsImV4cCI6MTAwMDAxNTY4NzE5Nzg1fQ.GJgthz9n0EbTCf3kyYUZy35i_2btutbtf_lePBQ_6Vo')",
+							"pm.environment.set('Content-Type', 'application/json')"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0d766cbc-7be4-40e9-b016-27b4f80c6e30",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "606642a0-c3d3-4a4f-b778-8d044dff0216",
+				"type": "text/javascript",
+				"exec": [
+					"pm.environment.set('Authorization', 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJldmVudElkIjoiNWMyZGJjMTYwNzZmNjMxZDY4NWJjZTFjIiwiZXZlbnROYW1lIjoieFN5bmMgMi4wIFRlc3QgUHVibGljMTIzIiwicGFja2FnZU5hbWUiOiJjb20ueHN5bmMuZXZlbnQyIiwiZXZlbnRVcGRhdGVWZXJzaW9uIjo2MSwiX2lkIjoiNWNkYTMwNDQ1NWY1MjUyMWFjZTdiOGY3IiwiZW1haWwiOiJqZW9ud2dAeHN5bmMuY28iLCJuYW1lIjoiSmVsbHkiLCJsZXZlbCI6ImVVc2VyIiwiaWF0IjoxNTY0MTQzMzA2LCJleHAiOjEwMDAwMTU2NDE0MzMwNX0.5EL0qMkn7L4-MBVMf16PWASMqUrXDixJr9hnIDPJ0dQ')",
+					"pm.environment.set('Content-Type', 'application/json')"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "14f324a9-36b2-4836-b0ed-588aee0261b8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,13 +1,13 @@
-import { BusinessVenderFavorite } from '../../entity/mysql/entities/MysqlBusinessVenderFavorite';
+import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlbusinessVendorFavorite';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult, check, param } from 'express-validator';
 import { Request, Response } from 'express';
-import ServiceBusinessVenderFavorite from '../../service/ServiceBusinessVenderFavorite';
+import ServiceBusinessVendorFavorite from '../../service/ServiceBusinessVendorFavorite';
 import { User } from '../../entity/mysql/entities/MysqlUser';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
-import { BusinessVender } from '../../entity/mysql/entities/MysqlBusinessVender';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { adminBusinessVenderPermission } from '../../util/permission';
+import { adminBusinessVendorPermission } from '../../util/permission';
 
 const apiGets = [
   async (req: Request, res: Response) => {
@@ -20,17 +20,17 @@ const apiGets = [
         return;
       }
 
-      const service = new ServiceBusinessVenderFavorite();
+      const service = new ServiceBusinessVendorFavorite();
       const user = new User();
       const business = new Business();
       user.id = req.user.users[0].id;
       business.id = req.user.business.id;
-      const query = await service._getByUserWithBusinessVender(user, business);
+      const query = await service._getByUserWithBusinessVendor(user, business);
       query.map(v => {
-        v.businessVenders.map(m => {
-          m.businessVenderFieldValues = m.businessVenderFieldValues.filter(
+        v.businessVendors.map(m => {
+          m.businessVendorFieldValues = m.businessVendorFieldValues.filter(
             f => {
-              return f.businessVenderField.name === '기업명';
+              return f.businessVendorField.name === '기업명';
             },
           );
           return m;
@@ -54,28 +54,28 @@ const apiPost = [
         return;
       }
 
-      const service = new ServiceBusinessVenderFavorite();
+      const service = new ServiceBusinessVendorFavorite();
       const user = new User();
-      const businessVender = new BusinessVender();
+      const businessVendor = new BusinessVendor();
       const business = new Business();
-      const businessVenderFavorite = new BusinessVenderFavorite();
+      const businessVendorFavorite = new BusinessVendorFavorite();
       user.id = req.user.users[0].id;
       business.id = req.user.business.id;
-      businessVender.id = Number(req.params.venderId);
+      businessVendor.id = Number(req.params.vendorId);
 
-      businessVenderFavorite.user = user;
-      businessVenderFavorite.businessVenders = [businessVender];
-      businessVenderFavorite.businesses = [business];
-      console.log('business vender favorite: \n', businessVenderFavorite);
+      businessVendorFavorite.user = user;
+      businessVendorFavorite.businessVendors = [businessVendor];
+      businessVendorFavorite.businesses = [business];
+      console.log('business vendor favorite: \n', businessVendorFavorite);
 
-      const duplicateCheck = await service._getByWhere(businessVenderFavorite);
+      const duplicateCheck = await service._getByWhere(businessVendorFavorite);
       console.log('duplicateCheck ===== ', duplicateCheck);
       // 이미 등록되어 있는것이 있으면, 등록되어 있다고 표시 해줘야 한다.
       if (duplicateCheck) {
         responseJson(res, [{ message: 'Already exist.' }], method, 'success');
         return;
       }
-      const query = await service.post(businessVenderFavorite);
+      const query = await service.post(businessVendorFavorite);
       responseJson(res, [query], method, 'success');
     } catch (error) {
       tryCatch(res, error);
@@ -84,7 +84,7 @@ const apiPost = [
 ];
 
 const apiDelete = [
-  [adminBusinessVenderPermission.apply(this)],
+  [adminBusinessVendorPermission.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -95,19 +95,19 @@ const apiDelete = [
         return;
       }
 
-      const service = new ServiceBusinessVenderFavorite();
+      const service = new ServiceBusinessVendorFavorite();
       const user = new User();
-      const businessVender = new BusinessVender();
+      const businessVendor = new BusinessVendor();
       const business = new Business();
-      const businessVenderFavorite = new BusinessVenderFavorite();
+      const businessVendorFavorite = new BusinessVendorFavorite();
       user.id = req.user.id;
       business.id = req.user.business.id;
-      businessVender.id = req.params.venderId;
+      businessVendor.id = req.params.vendorId;
 
-      businessVenderFavorite.user = user;
-      businessVenderFavorite.businessVenders = [businessVender];
-      businessVenderFavorite.businesses = [business];
-      const query = await service._deleteByWhere(businessVenderFavorite);
+      businessVendorFavorite.user = user;
+      businessVendorFavorite.businessVendors = [businessVendor];
+      businessVendorFavorite.businesses = [business];
+      const query = await service._deleteByWhere(businessVendorFavorite);
       responseJson(res, [query], method, 'delete');
     } catch (error) {
       tryCatch(res, error);

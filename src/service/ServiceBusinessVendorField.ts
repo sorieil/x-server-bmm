@@ -1,23 +1,21 @@
 import { BaseService } from './BaseService';
-import { BusinessVenderField } from '../entity/mysql/entities/MysqlBusinessVenderField';
-import { ServiceBusiness } from './ServiceBusiness';
+import { BusinessVendorField } from '../entity/mysql/entities/MysqlbusinessVendorField';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
-import { Code } from '../entity/mysql/entities/MysqlCode';
 import { StatusTypeRole } from '../entity/mysql/entities/MysqlBase';
-export interface BusinessVenderFieldType {
+export interface BusinessVendorFieldType {
   name: string;
   require: StatusTypeRole;
   informationType: number;
   fieldType: number;
 }
-export default class ServiceBusinessVenderField extends BaseService {
+export default class ServiceBusinessVendorField extends BaseService {
   constructor() {
     super();
   }
 
-  public async postArray(venderInformation: BusinessVenderField[]) {
-    const query = await this.mysqlManager(BusinessVenderField).save(
-      venderInformation,
+  public async postArray(vendorInformation: BusinessVendorField[]) {
+    const query = await this.mysqlManager(BusinessVendorField).save(
+      vendorInformation,
     );
     await query.map((v: any) => {
       delete v.business;
@@ -28,44 +26,44 @@ export default class ServiceBusinessVenderField extends BaseService {
     return query;
   }
 
-  public async post(venderInformation: BusinessVenderField) {
-    const query = await this.mysqlManager(BusinessVenderField).save(
-      venderInformation,
+  public async post(vendorInformation: BusinessVendorField) {
+    const query = await this.mysqlManager(BusinessVendorField).save(
+      vendorInformation,
     );
     delete query.business;
     return query;
   }
 
   public async get(business: Business) {
-    const query = this.mysqlManager(BusinessVenderField).find({
+    const query = this.mysqlManager(BusinessVendorField).find({
       where: {
         business: business,
       },
       relations: [
         'informationType',
         'fieldType',
-        'businessVenderFieldChildNodes',
+        'businessVendorFieldChildNodes',
       ],
     });
     return query;
   }
   /**
    * 비즈니스 정보와 아이디 값으로 데이터르 불러오거나 검증 할 수 있다.
-   * @param {BusinessVenderField} businessVenderField
+   * @param {BusinessVendorField} businessVendorField
    * @param {Business} business
    * @returns
    */
   public async getWithBusiness(
-    businessVenderField: BusinessVenderField,
+    businessVendorField: BusinessVendorField,
     business: Business,
   ) {
-    const query = this.mysqlManager(BusinessVenderField).findOne({
+    const query = this.mysqlManager(BusinessVendorField).findOne({
       where: {
         business: business,
-        id: businessVenderField.id,
+        id: businessVendorField.id,
       },
       relations: [
-        'businessVenderFieldChildNodes',
+        'businessVendorFieldChildNodes',
         'informationType',
         'fieldType',
       ],
@@ -75,22 +73,22 @@ export default class ServiceBusinessVenderField extends BaseService {
   }
 
   public async deleteAll(business: Business) {
-    const query = this.mysqlManager(BusinessVenderField).delete({
+    const query = this.mysqlManager(BusinessVendorField).delete({
       business: business,
     });
 
     return query;
   }
 
-  public async delete(venderInformation: BusinessVenderField) {
-    const query = this.mysqlManager(BusinessVenderField).delete(
-      venderInformation,
+  public async delete(vendorInformation: BusinessVendorField) {
+    const query = this.mysqlManager(BusinessVendorField).delete(
+      vendorInformation,
     );
     return query;
   }
 
-  public async checkDuplicate(field: BusinessVenderFieldType) {
-    const query = this.mysqlManager(BusinessVenderField).findOne({
+  public async checkDuplicate(field: BusinessVendorFieldType) {
+    const query = this.mysqlManager(BusinessVendorField).findOne({
       where: {
         name: field.name,
         informationType: field.informationType,

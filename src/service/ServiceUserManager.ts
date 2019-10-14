@@ -1,7 +1,7 @@
-import { BusinessVenderFieldValue } from './../entity/mysql/entities/MysqlBusinessVenderFieldValue';
+import { BusinessVendorFieldValue } from './../entity/mysql/entities/MysqlbusinessVendorFieldValue';
 import { BaseService } from './BaseService';
 import { Code } from '../entity/mysql/entities/MysqlCode';
-import { BusinessVender } from '../entity/mysql/entities/MysqlBusinessVender';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
 export default class ServiceUserManager extends BaseService {
   constructor() {
     super();
@@ -10,16 +10,16 @@ export default class ServiceUserManager extends BaseService {
   /**
    * 유저의 이름으로 관리자 페이지에서 입력한 밴더의 담당자 조회
    * @param name 담당자명
-   * @param businessVender 벤더의 아이디
+   * @param businessVendor 벤더의 아이디
    */
-  public async _getByNameWithVender(
+  public async _getByNameWithVendor(
     name: string,
-    businessVender: BusinessVender,
+    businessVendor: BusinessVendor,
   ) {
-    const query = this.mysqlManager(BusinessVenderFieldValue).find({
+    const query = this.mysqlManager(BusinessVendorFieldValue).find({
       where: {
         text: name,
-        businessVender: BusinessVender,
+        businessVendor: businessVendor,
       },
     });
 

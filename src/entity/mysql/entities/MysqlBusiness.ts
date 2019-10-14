@@ -1,9 +1,9 @@
-import { BusinessVenderFavorite } from './MysqlBusinessVenderFavorite';
+import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { BusinessDetail } from './MysqlBusinessDetail';
-import { BusinessVender } from './MysqlBusinessVender';
+import { BusinessVendor } from './MysqlBusinessVendor';
 import { Base, StatusTypeRole } from './MysqlBase';
 import {
   Entity,
@@ -15,7 +15,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Admin } from './MysqlAdmin';
-import { BusinessVenderField } from './MysqlBusinessVenderField';
+import { BusinessVendorField } from './MysqlBusinessVendorField';
 import { BusinessEventBridge } from './MysqlBusinessEventBridge';
 
 @Entity()
@@ -38,13 +38,13 @@ export class Business extends Base {
   )
   details: BusinessDetail[];
   @OneToMany(
-    type => BusinessVender,
-    businessVender => businessVender.business,
+    type => BusinessVendor,
+    businessVendor => businessVendor.business,
     {
       cascade: true,
     },
   )
-  businessVenders: BusinessVender[];
+  businessVendors: BusinessVendor[];
   @OneToMany(
     type => BusinessMeetingRoom,
     businessMeetingRoom => businessMeetingRoom.business,
@@ -64,17 +64,17 @@ export class Business extends Base {
   businessMeetingTimes: BusinessMeetingTime[];
 
   @OneToMany(
-    type => BusinessVenderField,
-    businessVenderField => businessVenderField.business,
+    type => BusinessVendorField,
+    businessVendorField => businessVendorField.business,
   )
-  businessVenderFields: BusinessVenderField[];
+  businessVendorFields: BusinessVendorField[];
 
   @OneToOne(type => BusinessEventBridge, eventBridge => eventBridge.business)
   businessEventBridge: BusinessEventBridge;
 
   @ManyToMany(
-    type => BusinessVenderFavorite,
-    businessVenderFavorite => businessVenderFavorite.businessVenders,
+    type => BusinessVendorFavorite,
+    businessVendorFavorite => businessVendorFavorite.businessVendors,
   )
-  businessVenderFavorities: BusinessVenderFavorite[];
+  businessVendorFavorities: BusinessVendorFavorite[];
 }

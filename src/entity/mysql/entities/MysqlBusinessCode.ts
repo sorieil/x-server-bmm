@@ -1,4 +1,4 @@
-import { BusinessVender } from './MysqlBusinessVender';
+import { BusinessVendor } from './MysqlBusinessVendor';
 import { Base, StatusTypeRole } from './MysqlBase';
 import {
   Entity,
@@ -20,8 +20,8 @@ export class BusinessCode extends Base {
   use: StatusTypeRole;
 
   @OneToOne(
-    type => BusinessVender,
-    businessVender => businessVender.businessCode,
+    type => BusinessVendor,
+    businessVendor => businessVendor.businessCode,
   )
-  businessVender: BusinessVender;
+  businessVendor: BusinessVendor;
 }
