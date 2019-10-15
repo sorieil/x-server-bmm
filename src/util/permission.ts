@@ -8,7 +8,7 @@ import { User } from '../entity/mysql/entities/MysqlUser';
 import { BusinessMeetingRoom } from '../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { ServiceBusinessMeetingRoom } from '../service/ServiceBusinessMeetingRoom';
 import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessvendor';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 
 /**
  * @description

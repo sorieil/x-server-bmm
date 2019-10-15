@@ -6,7 +6,7 @@ import ServiceBusinessVendorField, {
   BusinessVendorFieldType,
 } from '../../service/ServiceBusinessVendorField';
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
-import ServiceBusinessvendorInformationChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
+import ServiceBusinessVendorInformationChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
@@ -116,7 +116,7 @@ const apiInit = [
       }
 
       const service = new ServiceBusinessVendorField();
-      const serviceChild = new ServiceBusinessvendorInformationChildNode();
+      const serviceChild = new ServiceBusinessVendorInformationChildNode();
 
       const business = new Business();
       business.id = req.user.business.id;
@@ -221,7 +221,7 @@ const apiPost = [
 
       // 서비스로드
       const service = new ServiceBusinessVendorField();
-      const serviceChild = new ServiceBusinessvendorInformationChildNode();
+      const serviceChild = new ServiceBusinessVendorInformationChildNode();
       const businessVendorField = new BusinessVendorField();
       const body = req.body;
 
@@ -285,7 +285,7 @@ const apiPatch = [
       }
 
       const service = new ServiceBusinessVendorField();
-      const serviceChild = new ServiceBusinessvendorInformationChildNode();
+      const serviceChild = new ServiceBusinessVendorInformationChildNode();
       const businessVendorField = new BusinessVendorField();
       const body = req.body;
       delete businessVendorField.business;
