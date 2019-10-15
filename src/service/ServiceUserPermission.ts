@@ -1,7 +1,7 @@
 import { BaseService } from './BaseService';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
 import { User } from '../entity/mysql/entities/MysqlUser';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 export default class ServiceUserPermission extends BaseService {
   constructor() {

@@ -219,7 +219,7 @@ connections(process.env)
 
     // Business vendor manager
     app.get(
-      '/api/v1/business-vendor/:vendorId/manager/:groupId',
+      '/api/v1/business-vendor/:vendorId/manager/:managerId',
       adminCheck,
       ...businessVendorManager.apiGet,
     );
@@ -237,13 +237,13 @@ connections(process.env)
     );
 
     app.patch(
-      '/api/v1/business-vendor/:vendorId/manager/:groupId',
+      '/api/v1/business-vendor/:vendorId/manager/:managerId',
       adminCheck,
       ...businessVendorManager.apiPost,
     );
 
     app.delete(
-      '/api/v1/business-vendor/:vendorId/manager/:groupId',
+      '/api/v1/business-vendor/:vendorId/manager/:managerId',
       adminCheck,
       ...businessVendorManager.apiDelete,
     );

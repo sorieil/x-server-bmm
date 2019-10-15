@@ -1,7 +1,7 @@
 import { query } from 'express-validator';
-import { BusinessVendorField } from '../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { BaseService } from './BaseService';
-import { BusinessVendorFieldChildNode } from '../entity/mysql/entities/MysqlbusinessVendorFieldChildNode';
+import { BusinessVendorFieldChildNode } from '../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 export default class ServiceBusinessVendorFieldChildNode extends BaseService {
   constructor() {
     super();

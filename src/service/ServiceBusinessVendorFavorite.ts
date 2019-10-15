@@ -1,4 +1,4 @@
-import { BusinessVendorFavorite } from '../entity/mysql/entities/MysqlbusinessVendorFavorite';
+import { BusinessVendorFavorite } from '../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { BaseService } from './BaseService';
 import { User } from '../entity/mysql/entities/MysqlUser';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';

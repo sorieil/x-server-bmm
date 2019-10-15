@@ -4,7 +4,7 @@ import { check, validationResult, param } from 'express-validator';
 import ServiceBusinessVendorField, {
   BusinessVendorFieldType,
 } from '../../service/ServiceBusinessVendorField';
-import { BusinessVendorField } from '../../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import ServicebusinessVendorInformationChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';

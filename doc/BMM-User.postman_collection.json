@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "vendor",
+			"name": "Vendor",
 			"item": [
 				{
 					"name": "LISTS",
@@ -55,7 +55,7 @@
 					"response": []
 				},
 				{
-					"name": "SELECT vendor",
+					"name": "SELECT VENDER",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -84,12 +84,12 @@
 								"118"
 							]
 						},
-						"description": "### 벤더를 조회 합니다.\n- {{vendor_id}}: {{server}}/api/v1/user/vendor 에서 조회한값"
+						"description": "### 벤더를 조회 합니다.\n- {{vender_id}}: {{server}}/api/v1/user/vendor 에서 조회한값"
 					},
 					"response": []
 				},
 				{
-					"name": "VERTIFY vendor CODE",
+					"name": "VITRIFY VENDER CODE",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -107,7 +107,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"vendorCode\": \"KHM3\"\n}"
+							"raw": "{\n\t\"venderCode\": \"KHM3\"\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/user/vendor/118/verify-vendor-code",
@@ -156,7 +156,7 @@
 			]
 		},
 		{
-			"name": "vendorFilter",
+			"name": "VenderFilter",
 			"item": [
 				{
 					"name": "LISTS",
@@ -198,7 +198,7 @@
 			}
 		},
 		{
-			"name": "Fovorite",
+			"name": "Favorite",
 			"item": [
 				{
 					"name": "INSERT",
@@ -221,7 +221,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{server}}/api/v1/user/favorite/{{vendor_id}}",
+							"raw": "{{server}}/api/v1/user/favorite/{{vender_id}}",
 							"host": [
 								"{{server}}"
 							],
@@ -230,7 +230,7 @@
 								"v1",
 								"user",
 								"favorite",
-								"{{vendor_id}}"
+								"{{vender_id}}"
 							]
 						},
 						"description": "### 즐겨찾기 추가\n> 특별히 바디가 없습니다. POST 로 보내면 바로 추가 되고, DELETE를 보내면 삭제 입니다."
@@ -255,7 +255,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{server}}/api/v1/user/favorite/{{vendor_id}}",
+							"raw": "{{server}}/api/v1/user/favorite/{{vender_id}}",
 							"host": [
 								"{{server}}"
 							],
@@ -264,7 +264,7 @@
 								"v1",
 								"user",
 								"favorite",
-								"{{vendor_id}}"
+								"{{vender_id}}"
 							]
 						},
 						"description": "### 삭제\n> 수정이 별도로 필요하지 않고, 바로 삭제하시면 됩니다."

@@ -1,4 +1,3 @@
-import { BusinessVendorFieldManagerValueGroup } from './MysqlbusinessVendorFieldManagerValueGroup';
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
@@ -14,6 +13,7 @@ import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
 import UserManager from './MysqlUserManager';
 import UserBuyer from './MysqlUserBuyer';
+import { BusinessVenderManager } from './MysqlBusinessVendorManager';
 /**
  * 로그인 정보가 아님 오해 하지 마세요~ 로그인 정보는 따로 있고, 이 부분은 하나의 로그인이 여러개의 유저 타입을 소유 할 수 있기 때문에
  * 구조를 나눠 놓은 것입니다.
@@ -63,9 +63,8 @@ export class User extends Base {
   userBuyer: UserBuyer;
 
   @OneToOne(
-    type => BusinessVendorFieldManagerValueGroup,
-    businessVendorFieldManagerValueGroup =>
-      businessVendorFieldManagerValueGroup.user,
+    type => BusinessVenderManager,
+    businessVenderManager => businessVenderManager.user,
   )
-  businessVendorFieldManagerValueGroup: BusinessVendorFieldManagerValueGroup;
+  businessVenderManager: BusinessVenderManager;
 }

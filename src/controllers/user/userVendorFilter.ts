@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult } from 'express-validator';
-import ServicebusinessVendorField from '../../service/ServicebusinessVendorField';
+import ServiceBusinessVendorField from '../../service/ServiceBusinessVendorField';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 
 /**
@@ -19,7 +19,7 @@ const apiGets = [
         return;
       }
 
-      const service = new ServicebusinessVendorField();
+      const service = new ServiceBusinessVendorField();
       const business = new Business();
       business.id = req.user.business.id;
 

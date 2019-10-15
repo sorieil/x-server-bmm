@@ -1,7 +1,7 @@
 import { BusinessCode } from '../entity/mysql/entities/MysqlBusinessCode';
-import { BusinessVendorFavorite } from '../entity/mysql/entities/MysqlbusinessVendorFavorite';
+import { BusinessVendorFavorite } from '../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { BaseService } from './BaseService';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { In, Like } from 'typeorm';
 import SearchVendor from '../entity/mysql/entities/MysqlSearchVendor';

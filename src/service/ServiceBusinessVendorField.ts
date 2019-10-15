@@ -1,5 +1,5 @@
 import { BaseService } from './BaseService';
-import { BusinessVendorField } from '../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { StatusTypeRole } from '../entity/mysql/entities/MysqlBase';
 export interface BusinessVendorFieldType {

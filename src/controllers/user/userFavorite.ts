@@ -1,11 +1,11 @@
-import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlbusinessVendorFavorite';
+import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult, check, param } from 'express-validator';
 import { Request, Response } from 'express';
 import ServiceBusinessVendorFavorite from '../../service/ServiceBusinessVendorFavorite';
 import { User } from '../../entity/mysql/entities/MysqlUser';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { adminBusinessVendorPermission } from '../../util/permission';
 

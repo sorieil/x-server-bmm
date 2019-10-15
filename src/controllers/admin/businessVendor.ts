@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlbusinessVendorFieldValue';
-import { BusinessVendor } from './../../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
+import { BusinessVendor } from './../../entity/mysql/entities/MysqlBusinessVendor';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
 import { businessAdminPermission } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
-import { BusinessVendorField } from '../../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
@@ -274,7 +274,9 @@ const apiPost = [
       const serviceBusinessCode = new ServiceBusinessCode();
       const business = new Business();
       const body = req.body.data;
-      const managers = req.body.managers;
+
+      console.log('===========================');
+      console.log(body);
 
       // 사용하지 않는 코드를 가져온다.
       const businessCodeQuery = await new ServiceBusinessCode().getNotUseOneCode();

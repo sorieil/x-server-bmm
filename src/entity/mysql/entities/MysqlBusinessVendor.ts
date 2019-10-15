@@ -1,4 +1,4 @@
-import { BusinessVendorFieldManagerValueGroup } from './MysqlBusinessVendorFieldManagerValueGroup';
+import { BusinessVenderManager } from './MysqlBusinessVendorManager';
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { Business } from './MysqlBusiness';
 import { Base } from './MysqlBase';
@@ -44,9 +44,9 @@ export class BusinessVendor extends Base {
   searchVendor: SearchVendor;
 
   @OneToOne(
-    type => BusinessVendorFieldManagerValueGroup,
-    BusinessVendorFieldManagerValueGroup =>
-      BusinessVendorFieldManagerValueGroup.businessVendor,
+    type => BusinessVenderManager,
+    businessVendorFieldManagerValueGroup =>
+      businessVendorFieldManagerValueGroup.businessVendor,
   )
-  businessVendorFieldManagerValueGroup: BusinessVendorFieldManagerValueGroup;
+  businessVenderManager: BusinessVenderManager;
 }

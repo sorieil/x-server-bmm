@@ -1,16 +1,16 @@
-import { BusinessVendorFieldManagerValueGroup } from '../../entity/mysql/entities/MysqlbusinessVendorFieldManagerValueGroup';
+import { BusinessVenderManager } from '../../entity/mysql/entities/MysqlBusinessVendorManager';
 import { Request, Response } from 'express';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
 import { businessAdminPermission } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
-import { BusinessVendorField } from '../../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
-import { BusinessVendorFieldManagerValue } from '../../entity/mysql/entities/MysqlbusinessVendorFieldManagerValue';
+import { BusinessVendorFieldManagerValue } from '../../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
 import ServiceBusinessVendorManager from '../../service/ServiceBusinessVendorManager';
 
 // Post {{server}}/api/v1/business-vendor/{{vendorId}}/manager
@@ -283,7 +283,7 @@ const apiPost = [
 
       const businessVendor = new BusinessVendor();
       const service = new ServiceBusinessVendorManager();
-      const vendorGroup = new BusinessVendorFieldManagerValueGroup();
+      const vendorGroup = new BusinessVenderManager();
       const business = new Business();
       const body = req.body.data;
       const vendorId = req.params.vendorId;
@@ -336,7 +336,7 @@ const apiPost = [
 
         // 벤더의 아이디와, 필드의 아이디를 저장해준다.
         businessVendorFieldManagerValue.businessVendorField = businessVendorField; // 필드의 아아디 값 지정
-        businessVendorFieldManagerValue.businessVendorFieldManagerValueGroup = vendorGroup;
+        businessVendorFieldManagerValue.businessVenderManager = vendorGroup;
         query.push(businessVendorFieldManagerValue);
       }
 
@@ -472,7 +472,7 @@ const apiDelete = [
 
     const service = new ServiceBusinessVendorManager();
     const businessVendor = new BusinessVendor();
-    const businessVendorFieldManagerValueGroup = new BusinessVendorFieldManagerValueGroup();
+    const businessVendorFieldManagerValueGroup = new BusinessVenderManager();
     businessVendor.id = req.user.vendor.id;
     businessVendorFieldManagerValueGroup.id = req.params.groupId;
     const query = await service.delete(

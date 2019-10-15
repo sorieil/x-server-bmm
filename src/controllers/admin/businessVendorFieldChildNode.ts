@@ -4,10 +4,10 @@ import { param, validationResult } from 'express-validator';
 import ServiceBusinessVendorField from '../../service/ServiceBusinessVendorField';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
-import { BusinessVendorField } from '../../entity/mysql/entities/MysqlbusinessVendorField';
+import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import ServiceBusinessVendorFieldChildNode from '../../service/ServicebusinessVendorFieldChildNode';
 import { responseJson, RequestRole } from '../../util/common';
-import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlbusinessVendorFieldChildNode';
+import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 const businessVendorInformationPermission = () =>
   param('fieldChildNodeId').custom((value, { req }) => {
     if (!value) {

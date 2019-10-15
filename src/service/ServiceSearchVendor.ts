@@ -1,6 +1,6 @@
 import { BusinessCode } from '../entity/mysql/entities/MysqlBusinessCode';
 import { BaseService } from './BaseService';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import SearchVendor from '../entity/mysql/entities/MysqlSearchVendor';
 import business from '../controllers/admin/business';
 
@@ -16,7 +16,7 @@ export default class ServiceSearchVendor extends BaseService {
    */
   public async _updateBySelectBusinessVendor(businessVendor: BusinessVendor) {
     try {
-      // console.log('businessVendor: \n', businessVendor);
+      console.log('businessVendor: \n', businessVendor);
 
       // 저장된 벤더의 정보를 가져온다.
       const businessVendorQuery = await this.mysqlManager(
@@ -39,7 +39,7 @@ export default class ServiceSearchVendor extends BaseService {
         },
       });
 
-      if (!SearchVendor) searchVendor = new SearchVendor();
+      if (!searchVendor) searchVendor = new SearchVendor();
       // 키워드를 스트링으로 직열화 해준다.
       const keyword = businessVendorQuery.businessVendorFieldValues.reduce(
         (a: string, c: any) => {
@@ -63,6 +63,7 @@ export default class ServiceSearchVendor extends BaseService {
         },
         [],
       );
+      const vm = this;
 
       //setTimeout 은 맨 나중에 실행되는 블록이다.
       const query = setTimeout(async () => {
@@ -73,7 +74,7 @@ export default class ServiceSearchVendor extends BaseService {
           .join();
         searchVendor.businessVendor = businessVendor;
         console.log('Final process');
-        return await this.mysqlManager(SearchVendor).save(searchVendor);
+        return await vm.mysqlManager(SearchVendor).save(searchVendor);
       }, 0);
 
       return query;

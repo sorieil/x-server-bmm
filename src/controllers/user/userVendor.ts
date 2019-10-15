@@ -1,13 +1,13 @@
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
 import { BusinessVendorFieldType } from './../../service/ServiceBusinessVendorField';
-import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlbusinessVendorFavorite';
+import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { Login } from '../../entity/mysql/entities/MysqlLogin';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult, param, check, body } from 'express-validator';
 import { Request, Response } from 'express';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import ServiceUserVendor from '../../service/ServiceUserVendor';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import ServiceUserPermission from '../../service/ServiceUserPermission';
 
 const userVendorPermission = () =>

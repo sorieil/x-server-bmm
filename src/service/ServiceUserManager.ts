@@ -1,7 +1,7 @@
-import { BusinessVendorFieldValue } from './../entity/mysql/entities/MysqlbusinessVendorFieldValue';
+import { BusinessVendorFieldValue } from './../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BaseService } from './BaseService';
 import { Code } from '../entity/mysql/entities/MysqlCode';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 export default class ServiceUserManager extends BaseService {
   constructor() {
     super();

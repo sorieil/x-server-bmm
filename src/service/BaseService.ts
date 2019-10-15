@@ -1,11 +1,5 @@
 import { connectionType, connectionMysql, connectionMongoDB } from '../util/db';
-import {
-  Repository,
-  getManager,
-  getRepository,
-  ObjectType,
-  getMongoManager,
-} from 'typeorm';
+import { Repository, getManager, ObjectType, getMongoManager } from 'typeorm';
 import logger from '../util/logger';
 import { ExceptionHandler } from 'winston';
 

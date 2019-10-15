@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { responseJson, RequestRole } from '../../util/common';
 import { validationResult, body } from 'express-validator';
 import ServiceUserVendor from '../../service/ServiceUserVendor';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
 import ServiceUserManager from '../../service/ServiceUserManager';
 

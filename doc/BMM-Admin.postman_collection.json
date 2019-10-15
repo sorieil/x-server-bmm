@@ -768,7 +768,7 @@
 			}
 		},
 		{
-			"name": "Business vendor Field",
+			"name": "Business Vendor Field",
 			"item": [
 				{
 					"name": "INIT",
@@ -827,7 +827,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"제품소개\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1\"\n        },\n        {\n            \"text\": \"옵션2\"\n        }\n    ]\n}"
+							"raw": "{\n    \"name\": \"제품소개\",\n    \"require\": \"no\",\n    \"informationType\": {\n    \t\"id\": \"5\"\n    },\n    \"fieldType\": {\n    \t\"id\": 3\n    },\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션1\"\n        },\n        {\n            \"text\": \"옵션2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/business-vendor-field",
@@ -901,7 +901,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"제품/서비스(수정)\",\n    \"require\": \"no\",\n    \"informationType\": \"5\",\n    \"fieldType\": \"3\",\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션3(수정-1)\",\n            \"sort\": 0,\n            \"id\": 31\n        },\n        {\n            \"text\": \"옵션6(신규)\",\n            \"sort\": 0\n        }\n    ],\n    \"id\": 173,\n    \"sort\": 0\n}"
+							"raw": "{\n    \"name\": \"제품/서비스(수정)\",\n    \"require\": \"no\",\n   \"informationType\": {\n    \t\"id\": \"5\"\n    },\n    \"fieldType\": {\n    \t\"id\": 3\n    },\n    \"fieldChildNodes\": [\n        {\n            \"text\": \"옵션3(수정-1)\",\n            \"sort\": 0,\n            \"id\": 31\n        },\n        {\n            \"text\": \"옵션6(신규)\",\n            \"sort\": 0\n        }\n    ],\n    \"id\": 173,\n    \"sort\": 0\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/business-vendor-field/173",
@@ -915,7 +915,7 @@
 								"173"
 							]
 						},
-						"description": "### 밴더 인포메이션 목록 조회\n\n#### url\n- {{information_id}}: __[POST/GET] api/v1/business_vendor_information_field/{{information_field_id}} 의 id__ 값"
+						"description": "### 밴더 인포메이션 목록 조회\n\n#### url\n- {{information_id}}: __[POST/GET] api/v1/business_vender_information_field/{{information_field_id}} 의 id__ 값"
 					},
 					"response": []
 				},
@@ -940,7 +940,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{server}}/api/v1/business-vendor-field/{{vendor_infomation_id}}",
+							"raw": "{{server}}/api/v1/business-vendor-field/{{vendor_information_id}}",
 							"host": [
 								"{{server}}"
 							],
@@ -948,10 +948,10 @@
 								"api",
 								"v1",
 								"business-vendor-field",
-								"{{vendor_infomation_id}}"
+								"{{vendor_information_id}}"
 							]
 						},
-						"description": "### 벤더의 인포메이션의 필드 삭제\n- {{vendor_infomation_id}}: 밴더 인포메이션 아이디"
+						"description": "### 벤더의 인포메이션의 필드 삭제\n- {{vendor_information_id}}: 밴더 인포메이션 아이디"
 					},
 					"response": []
 				},
@@ -1061,10 +1061,10 @@
 			]
 		},
 		{
-			"name": "Business vendor",
+			"name": "Business Vendor",
 			"item": [
 				{
-					"name": "SELECT vendor",
+					"name": "SELECT VENDER",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -1095,7 +1095,7 @@
 								"61"
 							]
 						},
-						"description": "### 벤더별 인포메이션 타입 별 조회\n> 벤더의 아이디로 기업정보, 참여 정보, 담당자 등..\n##### url\n- {{vendor_id}}: __[POST/GET] api/v1/business_vendor id__ 값"
+						"description": "### 벤더별 인포메이션 타입 별 조회\n> 벤더의 아이디로 기업정보, 참여 정보, 담당자 등..\n##### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender id__ 값"
 					},
 					"response": []
 				},
@@ -1157,7 +1157,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"data\": [\n        {\n            \"id\": 169,\n            \"value\": \"김재혁기업\"\n        },\n        {\n            \"id\": 170,\n            \"value\": \"김재혁\"\n        },\n        {\n            \"id\": 171,\n            \"value\": \"2001-01-02\"\n        },\n        {\n        \t\"id\": 172,\n        \t\"value\": 32\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 31\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 33\n        },\n        {\n        \t\"id\": 174,\n        \t\"value\": \"관심분야의 모든 것들\"\n        },\n        {\n        \t\"id\": 175,\n        \t\"value\": \"우리의 제품은 정말로 좋고 최고의 작품입니다. 앞으로 당신이 사용할 우리의 제품은 다시는 볼 수 없을 것입니다.\"\n        },\n        {\n        \t\"id\": 176,\n        \t\"value\": \"김재혁 (입력)\"\n        },\n        {\n        \t\"id\": 177,\n        \t\"value\": \"010-2790-9418\"\n        },\n        {\n        \t\"id\": 178,\n        \t\"value\": \"jhkim@xsync.co\"\n        }\n    ]\n}"
+							"raw": "{\n    \"data\": [\n        {\n            \"id\": 169,\n            \"value\": \"김재혁기업\"\n        },\n        {\n            \"id\": 170,\n            \"value\": \"김재혁\"\n        },\n        {\n            \"id\": 171,\n            \"value\": \"2001-01-02\"\n        },\n        {\n        \t\"id\": 172,\n        \t\"value\": 32\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 31\n        },\n        {\n        \t\"id\": 173,\n        \t\"value\": 33\n        },\n        {\n        \t\"id\": 174,\n        \t\"value\": \"관심분야의 모든 것들\"\n        },\n        {\n        \t\"id\": 175,\n        \t\"value\": \"우리의 제품은 정말로 좋고 최고의 작품입니다. 앞으로 당신이 사용할 우리의 제품은 다시는 볼 수 없을 것입니다.\"\n        },\n        {\n        \t\"id\": 176,\n        \t\"value\": \"김재혁 (입력)\"\n        },\n        {\n        \t\"id\": 177,\n        \t\"value\": \"010-2790-9418\"\n        },\n        {\n        \t\"id\": 178,\n        \t\"value\": \"jhkim@xsync.co\"\n        }\n    ],\n    \"managers\": []\n}"
 						},
 						"url": {
 							"raw": "{{server}}/api/v1/business-vendor",
@@ -1170,7 +1170,7 @@
 								"business-vendor"
 							]
 						},
-						"description": "### 밴더 추가\n> 밴더들을 추가 합니다.\n\n#### 사전작업\n- 비즈니스 기본 정보를 추가 하셔야 됩니다. __[POST] api/v1/business__   \n- __/api/v1/business_vendor_field 에서 필드의 아이디를 가져올 수 있습니다.__\n- ___체크박스 값의 경우 키 값에 173-1 식의 방식으로 넣어주시면 됩니다.___"
+						"description": "### 밴더 추가\n> 밴더들을 추가 합니다.\n\n#### 사전작업\n- 비즈니스 기본 정보를 추가 하셔야 됩니다. __[POST] api/v1/business__   \n- __/api/v1/business_vender_field 에서 필드의 아이디를 가져올 수 있습니다.__\n- ___체크박스 값의 경우 키 값에 173-1 식의 방식으로 넣어주시면 됩니다.___"
 					},
 					"response": [
 						{
@@ -1196,7 +1196,7 @@
 									"raw": "{\n    \"name\": \"Company name\",\n    \"ceoName\": \"CEO name\",\n    \"establishmentDate\": \"2019-02-02\"\n}"
 								},
 								"url": {
-									"raw": "localhost:8989/api/v1/business_vendor",
+									"raw": "localhost:8989/api/v1/business_vender",
 									"host": [
 										"localhost"
 									],
@@ -1204,7 +1204,7 @@
 									"path": [
 										"api",
 										"v1",
-										"business_vendor"
+										"business_vender"
 									]
 								}
 							},
@@ -1251,7 +1251,7 @@
 								"61"
 							]
 						},
-						"description": "### 비즈니스 밴더 업데이트\n###### url\n- {{vendor_id}}: __[POST/GET] api/v1/business_vendor 의 결과 id__\n\n###### body\n- businessCategory: __[GET] /api/v1/code_table/business_category 의 코드 id__ \n- serviceCategory: __[GET] /api/v1/code_table/service_category 의 코드 id__"
+						"description": "### 비즈니스 밴더 업데이트\n###### url\n- {{vender_id}}: __[POST/GET] api/v1/business_vender 의 결과 id__\n\n###### body\n- businessCategory: __[GET] /api/v1/code_table/business_category 의 코드 id__ \n- serviceCategory: __[GET] /api/v1/code_table/service_category 의 코드 id__"
 					},
 					"response": []
 				},
@@ -1286,7 +1286,7 @@
 								"30"
 							]
 						},
-						"description": "### 비즈니스 밴더 삭제\n#### url\n- {{vendor_id}} : __[POST/GET] api/v1/business_vendor__ 의 __id__ 값"
+						"description": "### 비즈니스 밴더 삭제\n#### url\n- {{vender_id}} : __[POST/GET] api/v1/business_vender__ 의 __id__ 값"
 					},
 					"response": []
 				}
@@ -1319,7 +1319,7 @@
 			]
 		},
 		{
-			"name": "Business vendor Code",
+			"name": "Business Vendor Code",
 			"item": [
 				{
 					"name": "SELECT",

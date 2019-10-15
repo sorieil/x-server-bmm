@@ -1,12 +1,12 @@
-import { BusinessVendorFieldValue } from '../entity/mysql/entities/MysqlbusinessVendorFieldValue';
-import { BusinessVendorField } from '../entity/mysql/entities/MysqlbusinessVendorField';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlbusinessVendor';
+import { BusinessVendorFieldValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldValue';
+import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
+import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import { BaseService } from './BaseService';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 import ServiceSearchVendor from './ServiceSearchVendor';
-import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlbusinessVendorFieldManagerValue';
-import { BusinessVendorFieldManagerValueGroup } from '../entity/mysql/entities/MysqlbusinessVendorFieldManagerValueGroup';
+import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
+import { BusinessVenderManager } from '../entity/mysql/entities/MysqlBusinessVendorManager';
 
 export default class ServiceBusinessVendorManager extends BaseService {
   constructor() {
@@ -50,9 +50,7 @@ export default class ServiceBusinessVendorManager extends BaseService {
   }
 
   public async _getWithBusinessVendor(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(
-      BusinessVendorFieldManagerValueGroup,
-    ).findOne({
+    const query = this.mysqlManager(BusinessVenderManager).findOne({
       relations: [
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.idx',
@@ -144,11 +142,9 @@ export default class ServiceBusinessVendorManager extends BaseService {
    */
   public async delete(
     businessVendor: BusinessVendor,
-    businessVendorFieldManagerValueGroup: BusinessVendorFieldManagerValueGroup,
+    businessVendorFieldManagerValueGroup: BusinessVenderManager,
   ) {
-    const query = this.mysqlManager(
-      BusinessVendorFieldManagerValueGroup,
-    ).delete({
+    const query = this.mysqlManager(BusinessVenderManager).delete({
       businessVendor: businessVendor,
       id: businessVendorFieldManagerValueGroup.id,
     });
