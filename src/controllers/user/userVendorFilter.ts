@@ -34,13 +34,14 @@ const apiGets = [
         return v;
       });
 
-      await query.filter((v: any) => {
-        return v.columnType === 'idx';
+      const filterQuery = await query.filter((v: any) => {
+        console.log(v.fieldChildNodes);
+        return v.fieldChildNodes.length > 0;
       });
 
-      console.log(query);
+      console.log(filterQuery);
 
-      responseJson(res, query, method, 'success');
+      responseJson(res, filterQuery, method, 'success');
     } catch (error) {
       tryCatch(res, error);
     }
