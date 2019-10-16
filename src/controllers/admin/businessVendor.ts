@@ -390,7 +390,6 @@ const apiPatch = [
     const businessVendor = new BusinessVendor();
     const body: {
       id: number;
-      businessVendorField: number;
       value: string;
     }[] = req.body.data;
 
@@ -420,7 +419,7 @@ const apiPatch = [
       } else {
         responseJson(
           res,
-          [{ message: `${body[i].businessVendorField} dose net exist.` }],
+          [{ message: `${body[i].id} dose not exist.` }],
           method,
           'invalid',
         );
@@ -431,7 +430,7 @@ const apiPatch = [
     }
 
     // setTimeout에 0 초로 두면, setTimeout이 프로세스상 제일 마지막에 파싱되기 때문에 모든 스크립트가 파싱되고나서 실행된다.
-    await setTimeout(async () => {
+    setTimeout(async () => {
       const query = await service._postVendorFieldValue(
         businessVendorValueQuery,
       );
@@ -441,10 +440,10 @@ const apiPatch = [
         delete v.text;
         delete v.textarea;
         delete v.idx;
-        v.businessVendorField.informationType =
-          v.businessVendorField.informationType.id;
-        v.businessVendorField.fieldType =
-          v.businessVendorField.fieldType.columnType;
+        // v.businessVendorField.informationType =
+        //   v.businessVendorField.informationType.id;
+        // v.businessVendorField.fieldType =
+        //   v.businessVendorField.fieldType.columnType;
         return v;
       });
       responseJson(res, query, method, 'success');
