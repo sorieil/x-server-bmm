@@ -173,6 +173,7 @@ const apiPostVerifyVendorCode = [
       const service = new ServiceUserVendor();
       const businessVendor = new BusinessVendor();
       const businessCode = new BusinessCode();
+      console.log('vendor code: ', value);
       if (!value) return Promise.reject('Invalid insert data.');
 
       return new Promise(async resolve => {
