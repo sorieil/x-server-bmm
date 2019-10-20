@@ -1,3 +1,4 @@
+import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
@@ -13,6 +14,7 @@ import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVe
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { businessAdminPermission } from '../../util/permission';
+import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 
 const businessVendorPermission = () =>
   param('fieldId').custom(async (value, { req }) => {
@@ -240,17 +242,43 @@ const apiPost = [
       businessVendorField.fieldType = fieldType;
 
       const query = await service.post(businessVendorField);
+      const businessVendorFieldValue = new BusinessVendorFieldValue();
 
-      const paramChildNode = body.fieldChildNodes.map(
-        (v: BusinessVendorFieldChildNode) => {
-          const schema = new BusinessVendorFieldChildNode();
-          v.businessVendorField = query;
-          return Object.assign(schema, v);
-        },
-      );
+      businessVendorFieldValue.businessVendorField = query;
 
-      if (paramChildNode.length > 0) {
-        await serviceChild.post(paramChildNode);
+      if (query.fieldType.columnType === 'text') {
+        businessVendorFieldValue.text = null;
+      } else if (query.fieldType.columnType === 'textarea') {
+        businessVendorFieldValue.textarea = null;
+      } else {
+        businessVendorFieldValue.idx = null;
+      }
+
+      // 밴더가 추가 된 후에 모든 밴더들에게 필드를 추가해준다.
+      const serviceBusinessVendor = new ServiceBusinessVendor();
+      const vendors = await serviceBusinessVendor.gets(business);
+      const vendorBucket: BusinessVendorFieldValue[] = [];
+
+      for (const vendor of vendors) {
+        businessVendorFieldValue.businessVendor = vendor;
+        vendorBucket.push(businessVendorFieldValue);
+      }
+
+      await serviceBusinessVendor._postVendorFieldValue(vendorBucket);
+
+      console.log('Add vendor field', body.fieldChildNodes);
+      if (typeof body.fieldChildNodes !== 'undefined') {
+        const paramChildNode = body.fieldChildNodes.map(
+          (v: BusinessVendorFieldChildNode) => {
+            const schema = new BusinessVendorFieldChildNode();
+            v.businessVendorField = query;
+            return Object.assign(schema, v);
+          },
+        );
+
+        if (paramChildNode.length > 0) {
+          await serviceChild.post(paramChildNode);
+        }
       }
 
       await Object.assign(query, {

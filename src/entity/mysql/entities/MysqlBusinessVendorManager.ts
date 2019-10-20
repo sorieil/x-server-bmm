@@ -1,7 +1,7 @@
 import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
-import { Entity, OneToMany, OneToOne, JoinTable } from 'typeorm';
+import { Entity, OneToMany, OneToOne, JoinTable, ManyToOne } from 'typeorm';
 import { User } from './MysqlUser';
 import { BusinessVendor } from './MysqlBusinessVendor';
 
@@ -17,11 +17,10 @@ export class BusinessVenderManager extends Base {
   )
   businessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
 
-  @OneToOne(
+  @ManyToOne(
     type => BusinessVendor,
-    businessVendor => businessVendor.businessVenderManager,
+    businessVendor => businessVendor.businessVenderManagers,
   )
-  @JoinTable()
   businessVendor: BusinessVendor;
   // 나중에 매너저로 된다면, 여기에 유저의 아이디가 들어 가야 한다. 그래서 매칭을 시켜준다.
   // 유저의 아이디가 들어 간다면, 매니저 매칭 완료

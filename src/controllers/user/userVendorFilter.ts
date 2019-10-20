@@ -35,11 +35,9 @@ const apiGets = [
       });
 
       const filterQuery = await query.filter((v: any) => {
-        console.log(v.fieldChildNodes);
+        // console.log(v.fieldChildNodes);
         return v.fieldChildNodes.length > 0;
       });
-
-      console.log(filterQuery);
 
       responseJson(res, filterQuery, method, 'success');
     } catch (error) {

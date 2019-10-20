@@ -1,10 +1,11 @@
 import { connectionType, connectionMysql, connectionMongoDB } from '../util/db';
 import { Repository, getManager, ObjectType, getMongoManager } from 'typeorm';
 import logger from '../util/logger';
-import { ExceptionHandler } from 'winston';
 
 export class BaseService {
   public connectionName: connectionType = 'mysqlDB';
+
+  public queryRunner = getManager('mysqlDB').connection.createQueryRunner();
   public mysqlManager = <Entity>(entity: ObjectType<Entity>) => {
     try {
       return getManager(connectionMysql).getRepository(entity);
@@ -24,19 +25,13 @@ export class BaseService {
 
   public mysqlConnection = getManager(connectionMysql);
 
-  public async transInsertQuery(query: string) {
-    const queryRunner = getManager(
-      this.connectionName,
-    ).connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    return await queryRunner
-      .query(query)
-      .then(async () => {
-        await queryRunner.commitTransaction();
-        await queryRunner.release();
-      })
-      .catch(() => queryRunner.rollbackTransaction());
+  constructor() {
+    // new Promise(async resolve => {
+    // await this.queryRunner.connect();
+    //   resolve(true);
+    // }).then(r => {
+    //   return r;
+    // });
   }
 
   /**

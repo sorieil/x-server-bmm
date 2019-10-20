@@ -13,9 +13,6 @@ import { UserPermission } from './MysqlUserPermission';
 import { User } from './MysqlUser';
 @Entity()
 export class Login extends Base {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column('varchar', { nullable: true })
   email: string;
 

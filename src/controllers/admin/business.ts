@@ -17,7 +17,11 @@ const apiGet = [
       // admin 으로 비지니스 정보를 조회 하기 때문에 권한 검증은 필요 없음.
       const query = await new ServiceBusiness().get(req.user.admins[0]);
       const method: RequestRole = req.method.toString() as any;
-      responseJson(res, [query], method, 'success');
+      if (query) {
+        responseJson(res, [query], method, 'success');
+      } else {
+        responseJson(res, [], method, 'success');
+      }
     } catch (error) {
       tryCatch(res, error);
     }

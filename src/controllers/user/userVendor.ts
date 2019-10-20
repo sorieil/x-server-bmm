@@ -64,7 +64,7 @@ const apiGet = [
       const businessVendor = req.user.vendor;
       const query = await service.get(businessVendor);
 
-      console.log('get query:', query);
+      // console.log('get query:', query);
 
       delete query.createdAt;
       delete query.updatedAt;
@@ -173,7 +173,7 @@ const apiPostVerifyVendorCode = [
       const service = new ServiceUserVendor();
       const businessVendor = new BusinessVendor();
       const businessCode = new BusinessCode();
-      console.log('vendor code: ', value);
+      // console.log('vendor code: ', value);
       if (!value) return Promise.reject('Invalid insert data.');
 
       return new Promise(async resolve => {

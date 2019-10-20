@@ -12,9 +12,6 @@ import {
 import { Admin } from './MysqlAdmin';
 @Entity()
 export class AdminLogin extends Base {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column('varchar', { nullable: false })
   email: string;
 

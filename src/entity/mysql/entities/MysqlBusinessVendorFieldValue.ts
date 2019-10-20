@@ -41,6 +41,7 @@ export class BusinessVendorFieldValue extends Base {
     businessVendorField => businessVendorField.businessVendorFieldValues,
     {
       nullable: false,
+      onDelete: 'CASCADE',
     },
   )
   businessVendorField: BusinessVendorField;

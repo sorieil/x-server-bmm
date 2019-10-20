@@ -43,10 +43,10 @@ export class BusinessVendor extends Base {
   @OneToOne(type => SearchVendor, searchVendor => searchVendor.businessVendor)
   searchVendor: SearchVendor;
 
-  @OneToOne(
+  @OneToMany(
     type => BusinessVenderManager,
     businessVendorFieldManagerValueGroup =>
       businessVendorFieldManagerValueGroup.businessVendor,
   )
-  businessVenderManager: BusinessVenderManager;
+  businessVenderManagers: BusinessVenderManager[];
 }

@@ -41,7 +41,7 @@ export default class ServiceUserVendor extends BaseService {
       });
     }
     const query = queryBuilder.getMany();
-    console.log('before query: \n', await query);
+    // console.log('before query: \n', await query);
     return query;
   }
 

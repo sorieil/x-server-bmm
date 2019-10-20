@@ -96,7 +96,13 @@ const apiGet = [
         return j;
       });
 
-      responseJson(res, [query], method, 'success');
+      console.log('query: ', query);
+
+      if (query) {
+        responseJson(res, [query], method, 'success');
+      } else {
+        responseJson(res, [], method, 'success');
+      }
     } catch (error) {
       tryCatch(res, error);
     }
@@ -387,39 +393,59 @@ const apiPatch = [
     }
 
     const service = new ServiceBusinessVendor();
-    const businessVendor = new BusinessVendor();
+    // const businessVendor = new BusinessVendor();
     const body: {
       id: number;
       value: string;
     }[] = req.body.data;
 
+    // console.log('body => \n', body);
+
     // 밴더 인증후 밴더 아이디 지정
     const vendor = req.user.vendor;
-    businessVendor.id = vendor.id;
+    // businessVendor.id = vendor.id;
+
+    console.log('vender id:', vendor.id);
 
     const businessVendorValueQuery: BusinessVendorFieldValue[] = [];
-    for (let i = 0; body.length > i; i++) {
+    for (const item of body) {
+      if (!item.value) {
+        console.log('계속 value:', item.value);
+        continue;
+      }
+
+      console.log('item: ', item);
+
       const businessVendorValue = new BusinessVendorFieldValue();
-      businessVendorValue.id = body[i].id;
+      businessVendorValue.id = item.id;
+      businessVendorValue.businessVendor = vendor;
       const businessVendorFieldValueQuery = await service._getByVendorFieldValue(
         businessVendorValue,
       );
+
+      console.log(
+        `${businessVendorFieldValueQuery.businessVendorField.name}: 
+        ${businessVendorFieldValueQuery.businessVendorField.fieldType.columnType}`,
+      );
+
       const fieldType =
         businessVendorFieldValueQuery.businessVendorField.fieldType;
+
+      // 옵데이트를 해야 하는데 만약 데이터가 없다면,, 추가 해줘야 한다.
 
       // 타입체크를 해서 타입에 따른 필드에 입력해준다.
       if (fieldType) {
         if (fieldType.columnType === 'text') {
-          businessVendorFieldValueQuery.text = body[i].value;
+          businessVendorFieldValueQuery.text = item.value;
         } else if (fieldType.columnType === 'textarea') {
-          businessVendorFieldValueQuery.textarea = body[i].value;
+          businessVendorFieldValueQuery.textarea = item.value;
         } else {
-          businessVendorFieldValueQuery.idx = Number(body[i].value) as any;
+          businessVendorFieldValueQuery.idx = Number(item.value) as any;
         }
       } else {
         responseJson(
           res,
-          [{ message: `${body[i].id} dose not exist.` }],
+          [{ message: `${item.id} dose not exist.` }],
           method,
           'invalid',
         );
