@@ -27,6 +27,7 @@ import userFavorite from './controllers/user/userFavorite';
 import userBusinessTime from './controllers/user/userBusinessTime';
 import userVendorFilter from './controllers/user/userVendorFilter';
 import businessVendorManager from './controllers/admin/businessVendorManager';
+import userVendorField from './controllers/user/userVendorField';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -286,24 +287,24 @@ connections(process.env)
 
     // Meeting reservation
     app.get(
-      '/api/v1/user/meeting-reservation/blockId',
+      '/api/v1/user/meeting-reservation/:blockId',
       clientCheck,
       ...userFavorite.apiGets,
     );
     app.patch(
-      '/api/v1/user/meeting-reservation/blockId',
+      '/api/v1/user/meeting-reservation/:blockId',
       clientCheck,
       ...userFavorite.apiGets,
     );
     app.delete(
-      '/api/v1/user/meeting-reservation/blockId',
+      '/api/v1/user/meeting-reservation/:blockId',
       clientCheck,
       ...userFavorite.apiGets,
     );
 
     // Meeting Lists
     app.get(
-      '/api/v1/user/meeting-reservation/blockId',
+      '/api/v1/user/meeting-reservation/:blockId',
       clientCheck,
       ...userFavorite.apiGets,
     );
@@ -314,6 +315,9 @@ connections(process.env)
 
     // Vendor filter lists
     app.get('/api/v1/user/filter', clientCheck, ...userVendorFilter.apiGets);
+
+    // Vendor field
+    app.get('/api/v1/user/field', clientCheck, ...userVendorField.apiGets);
 
     /**
      * Error Handler. Provides full stack - remove for production

@@ -56,7 +56,7 @@ export class BusinessVendorFieldValue extends Base {
     type => BusinessVendorFieldChildNode,
     businessVendorFieldChildNode =>
       businessVendorFieldChildNode.businessVendorFieldValues,
-    { nullable: true },
+    { nullable: true, onDelete: 'CASCADE' },
   )
   idx: BusinessVendorFieldChildNode;
 

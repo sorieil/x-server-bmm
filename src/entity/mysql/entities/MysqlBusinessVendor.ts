@@ -1,3 +1,4 @@
+import { User } from './MysqlUser';
 import { BusinessVenderManager } from './MysqlBusinessVendorManager';
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { Business } from './MysqlBusiness';
@@ -49,4 +50,7 @@ export class BusinessVendor extends Base {
       businessVendorFieldManagerValueGroup.businessVendor,
   )
   businessVenderManagers: BusinessVenderManager[];
+
+  @OneToMany(type => User, user => user.businessVendor)
+  user: User;
 }

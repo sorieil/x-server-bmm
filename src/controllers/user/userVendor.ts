@@ -153,8 +153,12 @@ const apiGets = [
         if (userCheck.length > 0 && userCheck) {
           v.businessVendorFavorite = true;
         } else {
-          v.favorite = false;
+          v.businessVendorFavorite = false;
         }
+
+        v.businessVendorMeeting = false;
+
+        // 여기에 예약 관련 필드도 삽입
         delete v.businessVendor.businessVendorFavorities;
         return v;
       });

@@ -1,3 +1,4 @@
+import { BusinessVendorFieldChildNode } from './../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { Request, Response } from 'express';
 import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BusinessVendor } from './../../entity/mysql/entities/MysqlBusinessVendor';
@@ -404,45 +405,51 @@ const apiPatch = [
     // 밴더 인증후 밴더 아이디 지정
     const vendor = req.user.vendor;
     // businessVendor.id = vendor.id;
+    // console.log('vender id:', vendor.id);
+    console.log('========= BODY ========== \n', body);
 
-    console.log('vender id:', vendor.id);
-
-    const businessVendorValueQuery: BusinessVendorFieldValue[] = [];
+    const businessVendorValueBucket: BusinessVendorFieldValue[] = [];
     for (const item of body) {
       if (!item.value) {
         console.log('계속 value:', item.value);
         continue;
       }
 
-      console.log('item: ', item);
+      console.log('item id : ', item);
 
       const businessVendorValue = new BusinessVendorFieldValue();
+
+      // 저장할 데이터 테이블과 맵핑
       businessVendorValue.id = item.id;
-      businessVendorValue.businessVendor = vendor;
+      businessVendorValue.businessVendor = vendor.id; // 미들웨어에서 가져옴
+
+      // 기존 데이터 가져옴
       const businessVendorFieldValueQuery = await service._getByVendorFieldValue(
         businessVendorValue,
       );
 
-      console.log(
-        `${businessVendorFieldValueQuery.businessVendorField.name}: 
-        ${businessVendorFieldValueQuery.businessVendorField.fieldType.columnType}`,
-      );
-
+      // 기존 데이터에서 필드 타입 가져옴
       const fieldType =
         businessVendorFieldValueQuery.businessVendorField.fieldType;
 
       // 옵데이트를 해야 하는데 만약 데이터가 없다면,, 추가 해줘야 한다.
-
-      // 타입체크를 해서 타입에 따른 필드에 입력해준다.
+      console.log(
+        `================= FIELD TYPE: ${fieldType.columnType} => ${item.value} field id: ${businessVendorFieldValueQuery.businessVendorField.id} ================ \n `,
+      );
+      // 타입체크를 해서 타입에 따른 필드에 데이터를 세팅해준다.
       if (fieldType) {
         if (fieldType.columnType === 'text') {
           businessVendorFieldValueQuery.text = item.value;
         } else if (fieldType.columnType === 'textarea') {
           businessVendorFieldValueQuery.textarea = item.value;
         } else {
-          businessVendorFieldValueQuery.idx = Number(item.value) as any;
+          // 값이 셀렉트 값인경우
+          const businessVendorFieldChildNode = new BusinessVendorFieldChildNode();
+          businessVendorFieldChildNode.id = Number(item.value);
+          businessVendorFieldValueQuery.idx = businessVendorFieldChildNode;
         }
       } else {
+        // 조회를 했는데 데이터가 없는 경우 오류 출력
         responseJson(
           res,
           [{ message: `${item.id} dose not exist.` }],
@@ -451,14 +458,15 @@ const apiPatch = [
         );
         return;
       }
-
-      businessVendorValueQuery.push(businessVendorFieldValueQuery);
+      //
+      businessVendorValueBucket.push(businessVendorFieldValueQuery);
     }
 
     // setTimeout에 0 초로 두면, setTimeout이 프로세스상 제일 마지막에 파싱되기 때문에 모든 스크립트가 파싱되고나서 실행된다.
     setTimeout(async () => {
+      // 배열로 저장한다.
       const query = await service._postVendorFieldValue(
-        businessVendorValueQuery,
+        businessVendorValueBucket,
       );
       query.map((v: any) => {
         delete v.businessVendor;
@@ -466,10 +474,6 @@ const apiPatch = [
         delete v.text;
         delete v.textarea;
         delete v.idx;
-        // v.businessVendorField.informationType =
-        //   v.businessVendorField.informationType.id;
-        // v.businessVendorField.fieldType =
-        //   v.businessVendorField.fieldType.columnType;
         return v;
       });
       responseJson(res, query, method, 'success');

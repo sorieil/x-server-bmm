@@ -39,7 +39,7 @@ export const auth = (secretName: secretNameType) => {
         }
         // 토큰의 상태가 유저인지 관리자인지 체크 한다.
         // 관리자 모드와, 앱/웹 모드를 구분 짓는다.
-        console.log('Token level:', level);
+        // console.log('Token level:', level);
         if (level === 'eUser') {
           // 유저 모드
           const user = serviceAccount.getUserId(jwt_payload._id);

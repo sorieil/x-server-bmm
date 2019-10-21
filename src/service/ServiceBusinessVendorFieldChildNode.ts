@@ -7,7 +7,7 @@ export default class ServiceBusinessVendorFieldChildNode extends BaseService {
     super();
   }
 
-  public async post(childNode: BusinessVendorFieldChildNode) {
+  public async post(childNode: BusinessVendorFieldChildNode[]) {
     const query = this.mysqlManager(BusinessVendorFieldChildNode).save(
       childNode,
     );

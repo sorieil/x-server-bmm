@@ -53,7 +53,7 @@ export default class ServiceBusinessVendorField extends BaseService {
    * @param {Business} business
    * @returns
    */
-  public async getWithBusiness(
+  public async _getWithBusiness(
     businessVendorField: BusinessVendorField,
     business: Business,
   ) {

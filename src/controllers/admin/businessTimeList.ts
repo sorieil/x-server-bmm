@@ -87,7 +87,6 @@ const apiPost = [
           }
 
           const target = aa[cursor];
-          console.log('equal:', target.date, cc.dateBlock);
           if (target.date === cc.dateBlock) {
             target.times.push({
               status: cc.use,
@@ -197,7 +196,6 @@ const apiGets = [
         }
 
         const target = aa[cursor];
-        console.log('equal:', target.date, cc.dateBlock);
         if (target.date === cc.dateBlock) {
           target.times.push({
             status: cc.use,
@@ -225,7 +223,6 @@ const apiGets = [
     Object.assign(query, { timeLists: times });
     delete query.businessMeetingTimeLists;
 
-    console.log('log:', query);
     responseJson(res, [query], method, 'success');
   },
 ];

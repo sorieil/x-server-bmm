@@ -131,7 +131,7 @@ export default class ServiceAccount extends BaseService {
     });
 
     if (bridgeQuery) {
-      console.log('업데이트');
+      // console.log('업데이트');
       mongoBridge.id = bridgeQuery.id;
       adminLogin.id = bridgeQuery.adminLogin.id;
       const adminQuery = await this.queryRunner.manager.findOne(Admin, {
@@ -141,7 +141,7 @@ export default class ServiceAccount extends BaseService {
       });
       admin.id = adminQuery.id;
     } else {
-      console.log('추가', bridgeQuery);
+      // console.log('추가', bridgeQuery);
     }
 
     try {

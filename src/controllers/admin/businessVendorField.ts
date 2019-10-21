@@ -1,3 +1,4 @@
+import { BusinessVendorFieldChildNode } from './../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
@@ -12,9 +13,9 @@ import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
-import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { businessAdminPermission } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 
 const businessVendorPermission = () =>
   param('fieldId').custom(async (value, { req }) => {
@@ -37,7 +38,7 @@ const businessVendorPermission = () =>
         resolve(null);
       }
       business.id = businessQuery.id;
-      const query = await service.getWithBusiness(
+      const query = await service._getWithBusiness(
         businessVendorField,
         business,
       );
@@ -49,7 +50,7 @@ const businessVendorPermission = () =>
       );
     }
     if (r) {
-      Object.assign(req.user, { vendorField: r });
+      Object.assign(req.user, { business: business, vendorField: r });
     } else {
       return Promise.reject(
         'You don`t have permission or first insert vendor fields..',
@@ -154,9 +155,6 @@ const apiInit = [
       }).then(async (process: object[]) => {
         const result = await Promise.all(process);
         const exists = result.filter(v => typeof v !== 'undefined');
-        console.log(
-          `exists: ${exists.length} , initFields: ${initFields.length}`,
-        );
         if (exists.length === initFields.length) {
           responseJson(
             res,
@@ -230,6 +228,8 @@ const apiPost = [
       const business = new Business();
       business.id = req.user.business.id;
 
+      console.log('business:', req.user.business.id);
+
       const informationType = new Code();
       informationType.id = body.informationType.id;
       const fieldType = new Code();
@@ -237,38 +237,15 @@ const apiPost = [
 
       businessVendorField.name = body.name;
       businessVendorField.business = business;
-      businessVendorField.require = body.require;
-      businessVendorField.informationType = informationType;
+      businessVendorField.require = body.require; // id:number
+      businessVendorField.informationType = informationType; // id:number
       businessVendorField.fieldType = fieldType;
 
       const query = await service.post(businessVendorField);
-      const businessVendorFieldValue = new BusinessVendorFieldValue();
-
-      businessVendorFieldValue.businessVendorField = query;
-
-      if (query.fieldType.columnType === 'text') {
-        businessVendorFieldValue.text = null;
-      } else if (query.fieldType.columnType === 'textarea') {
-        businessVendorFieldValue.textarea = null;
-      } else {
-        businessVendorFieldValue.idx = null;
-      }
-
-      // 밴더가 추가 된 후에 모든 밴더들에게 필드를 추가해준다.
-      const serviceBusinessVendor = new ServiceBusinessVendor();
-      const vendors = await serviceBusinessVendor.gets(business);
-      const vendorBucket: BusinessVendorFieldValue[] = [];
-
-      for (const vendor of vendors) {
-        businessVendorFieldValue.businessVendor = vendor;
-        vendorBucket.push(businessVendorFieldValue);
-      }
-
-      await serviceBusinessVendor._postVendorFieldValue(vendorBucket);
-
-      console.log('Add vendor field', body.fieldChildNodes);
+      let savedFieldChildNodes: BusinessVendorFieldChildNode[] = null;
+      // 추가된 필드가 자식이 있는 경우 실행
       if (typeof body.fieldChildNodes !== 'undefined') {
-        const paramChildNode = body.fieldChildNodes.map(
+        const paramChildNode: BusinessVendorFieldChildNode[] = body.fieldChildNodes.map(
           (v: BusinessVendorFieldChildNode) => {
             const schema = new BusinessVendorFieldChildNode();
             v.businessVendorField = query;
@@ -277,17 +254,46 @@ const apiPost = [
         );
 
         if (paramChildNode.length > 0) {
-          await serviceChild.post(paramChildNode);
+          savedFieldChildNodes = await serviceChild.post(paramChildNode);
         }
       }
 
-      await Object.assign(query, {
-        fieldChildNodes: await serviceChild.gets(businessVendorField),
-      });
-      query.informationType = query.informationType.id as any;
-      query.fieldType = query.fieldType.id as any;
+      // console.log('check box child :', savedFieldChildNodes[0].id);
 
-      responseJson(res, [query], method, 'success');
+      // 밴더가 추가 된 후에 모든 밴더들에게 필드를 추가해준다.
+
+      // 추가된 필드를 추가할 밴더 리스트 가져오기
+      const serviceBusinessVendor = new ServiceBusinessVendor();
+      const vendors = await serviceBusinessVendor.gets(business);
+      const fieldTypeQuery = await service._getWithBusiness(query, business);
+      // console.log('vendors => ', vendors.length);
+      const vendorBucket: BusinessVendorFieldValue[] = [];
+      for (const vendor of vendors) {
+        const businessVendorFieldValue = new BusinessVendorFieldValue();
+        businessVendorFieldValue.businessVendorField = fieldTypeQuery;
+        // console.log(
+        //   'query.fieldType.columnType:',
+        //   fieldTypeQuery.fieldType.columnType,
+        // );
+        if (fieldTypeQuery.fieldType.columnType === 'text') {
+          businessVendorFieldValue.text = 'Input value';
+        } else if (fieldTypeQuery.fieldType.columnType === 'textarea') {
+          businessVendorFieldValue.textarea = 'Input value';
+        } else {
+          if (savedFieldChildNodes.length > 0) {
+            businessVendorFieldValue.idx = savedFieldChildNodes[0];
+          } else {
+            businessVendorFieldValue.idx = null;
+          }
+        }
+        // console.log('vendor:', vendor);
+        businessVendorFieldValue.businessVendor = vendor;
+        vendorBucket.push(businessVendorFieldValue);
+      }
+
+      await serviceBusinessVendor._postVendorFieldValue(vendorBucket);
+
+      responseJson(res, [fieldTypeQuery], method, 'success');
     } catch (error) {
       tryCatch(res, error);
     }
@@ -316,20 +322,26 @@ const apiPatch = [
       const serviceChild = new ServiceBusinessVendorInformationChildNode();
       const businessVendorField = new BusinessVendorField();
       const body = req.body;
-      delete businessVendorField.business;
-      delete businessVendorField.createdAt;
-      delete businessVendorField.updatedAt;
+      const business = req.user.business;
+      let savedFieldChildNodes: BusinessVendorFieldChildNode[] = null;
 
-      const informationType = new Code();
-      informationType.id = body.informationType.id;
-      const fieldType = new Code();
-      fieldType.id = body.fieldType.id;
+      // console.log('body:', body);
 
       businessVendorField.id = req.user.vendorField.id;
       businessVendorField.name = body.name;
       businessVendorField.require = body.require;
       businessVendorField.informationType = body.informationType;
       businessVendorField.fieldType = body.fieldType;
+      const fieldTypeQuery = await service._getWithBusiness(
+        businessVendorField,
+        business,
+      );
+
+      console.log(
+        `${req.user.vendorField.fieldType.id} === ${body.fieldType.id}`,
+      );
+
+      // console.log('fieldTypeQuery:', fieldTypeQuery, body);
 
       // select box를 선택한 경우
       if (typeof body.fieldChildNodes !== 'undefined') {
@@ -338,7 +350,7 @@ const apiPatch = [
           // const deleteTargetQuery = await serviceChild.get(businessVendorField);
           // console.log('deleteTargetQuery:', deleteTargetQuery);
           // 아이디가 없는 경우는 새로운 입력이기 대문에 아이디를 넣어준다.
-          const paramChildNode = await body.fieldChildNodes.map(
+          const paramChildNode: BusinessVendorFieldChildNode[] = await body.fieldChildNodes.map(
             (v: BusinessVendorFieldChildNode) => {
               const schema = new BusinessVendorFieldChildNode();
               if (!v.hasOwnProperty('id')) {
@@ -349,8 +361,8 @@ const apiPatch = [
               return Object.assign(schema, v);
             },
           );
-          console.log('paramChildNode:', paramChildNode);
-          await serviceChild.post(paramChildNode);
+          // console.log('paramChildNode:', paramChildNode);
+          savedFieldChildNodes = await serviceChild.post(paramChildNode);
         }
       }
 
@@ -362,6 +374,49 @@ const apiPatch = [
         Object.assign(query, {
           fieldChildNodes: await serviceChild.gets(businessVendorField),
         });
+      }
+
+      // 추가된 필드를 추가할 밴더 리스트 가져오기
+      const serviceBusinessVendor = new ServiceBusinessVendor();
+      const vendors = await serviceBusinessVendor.gets(business);
+      // 일반에서 체크 박스로 변경된 경우 값을 초기화 해준다.
+
+      if (fieldTypeQuery.fieldType.id !== 3 && body.fieldType.id === 3) {
+        console.log('텍스트에서 변경 체크 박스로 변경');
+        const vendorBucket: BusinessVendorFieldValue[] = [];
+
+        // 생성된 밴더 별로 모두 추가 해준다.
+        for (const vendor of vendors) {
+          const businessVendorFieldValue = new BusinessVendorFieldValue();
+          businessVendorFieldValue.businessVendorField = query;
+          businessVendorFieldValue.idx = savedFieldChildNodes[0];
+          businessVendorFieldValue.text = null;
+          businessVendorFieldValue.textarea = null;
+          businessVendorFieldValue.businessVendor = vendor;
+          vendorBucket.push(businessVendorFieldValue);
+        }
+
+        await serviceBusinessVendor._postVendorFieldValue(vendorBucket);
+      } else if (
+        (body.fieldType.id === 1 || body.fieldType.id === 2) &&
+        fieldTypeQuery.fieldType.id === 3
+      ) {
+        console.log('체크 박스에서 일반 텍스트로 변경');
+        const vendorBucket: BusinessVendorFieldValue[] = [];
+        for (const vendor of vendors) {
+          const businessVendorFieldValue = new BusinessVendorFieldValue();
+          businessVendorFieldValue.businessVendorField = query;
+          businessVendorFieldValue.idx = null;
+          businessVendorFieldValue.businessVendor = vendor;
+
+          if (body.fieldType.columnType === 'text') {
+            businessVendorFieldValue.text = 'Input value';
+          } else if (body.fieldType.columnType === 'textarea') {
+            businessVendorFieldValue.textarea = 'Input value';
+          }
+          vendorBucket.push(businessVendorFieldValue);
+        }
+        await serviceBusinessVendor._postVendorFieldValue(vendorBucket);
       }
 
       responseJson(res, [query], method, 'success');
@@ -549,7 +604,7 @@ const apiDeleteChildNode = [
       businessVendorFieldChildNode,
     );
 
-    console.log('vendorFieldChildNodeQuery:', vendorFieldChildNodeQuery);
+    // console.log('vendorFieldChildNodeQuery:', vendorFieldChildNodeQuery);
 
     if (!vendorFieldChildNodeQuery) {
       responseJson(

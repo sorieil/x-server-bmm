@@ -16,7 +16,7 @@ export default class ServiceSearchVendor extends BaseService {
    */
   public async _updateBySelectBusinessVendor(businessVendor: BusinessVendor) {
     try {
-      console.log('businessVendor: \n', businessVendor);
+      // console.log('businessVendor: \n', businessVendor);
 
       // 저장된 벤더의 정보를 가져온다.
       const businessVendorQuery = await this.mysqlManager(
@@ -44,7 +44,7 @@ export default class ServiceSearchVendor extends BaseService {
       const keyword = businessVendorQuery.businessVendorFieldValues.reduce(
         (a: string, c: any) => {
           let tempValue = c.text || c.textarea;
-          console.log('Type of a keyword: ', typeof a, a);
+          // console.log('Type of a keyword: ', typeof a, a);
           if (!tempValue) return a;
           if (a) tempValue = ',' + tempValue;
           return a + tempValue;
@@ -56,7 +56,7 @@ export default class ServiceSearchVendor extends BaseService {
       const filter = businessVendorQuery.businessVendorFieldValues.reduce(
         (a: Array<any>, c: any) => {
           const tempValue = c.idx ? c.idx.id : null;
-          console.log('Type of a filter: ', typeof a, a);
+          // console.log('Type of a filter: ', typeof a, a);
           if (!tempValue) return a;
           a.push(tempValue);
           return a;
@@ -67,13 +67,13 @@ export default class ServiceSearchVendor extends BaseService {
 
       //setTimeout 은 맨 나중에 실행되는 블록이다.
       const query = setTimeout(async () => {
-        console.log('filter:', filter);
+        // console.log('filter:', filter);
         searchVendor.keyword = keyword;
         searchVendor.filter = filter
           .sort((a: number, b: number) => a - b)
           .join();
         searchVendor.businessVendor = businessVendor;
-        console.log('Final process');
+        // console.log('Final process');
         return await vm.mysqlManager(SearchVendor).save(searchVendor);
       }, 0);
 
