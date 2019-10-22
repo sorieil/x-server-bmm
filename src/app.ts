@@ -28,6 +28,7 @@ import userBusinessTime from './controllers/user/userBusinessTime';
 import userVendorFilter from './controllers/user/userVendorFilter';
 import businessVendorManager from './controllers/admin/businessVendorManager';
 import userVendorField from './controllers/user/userVendorField';
+import userBusiness from './controllers/user/userBusiness';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -266,6 +267,13 @@ connections(process.env)
     // Vendor
     app.get('/api/v1/user/vendor', clientCheck, ...userVendor.apiGets);
     app.get('/api/v1/user/vendor/:vendorId', clientCheck, ...userVendor.apiGet);
+    app.post('/api/v1/user/vendor', clientCheck, ...userVendor.apiPost);
+    app.patch(
+      '/api/v1/user/vendor/:vendorId',
+      clientCheck,
+      ...userVendor.apiPatch,
+    );
+    // Vendor code
     app.post(
       '/api/v1/user/vendor/:vendorId/verify-vendor-code',
       clientCheck,
@@ -318,6 +326,9 @@ connections(process.env)
 
     // Vendor field
     app.get('/api/v1/user/field', clientCheck, ...userVendorField.apiGets);
+
+    // Business
+    app.get('/api/v1/user/business', clientCheck, ...userBusiness.apiGet);
 
     /**
      * Error Handler. Provides full stack - remove for production

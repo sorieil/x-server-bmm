@@ -37,7 +37,7 @@ export class ServiceBusiness extends BaseService {
    * Business.id 값으로 비즈니스 정보를 불러온다.
    * @param id Business.id
    */
-  public async getById(id: number) {
+  public async _getById(id: number) {
     const query = await this.mysqlManager(Business).find({
       where: {
         id: id,
@@ -51,7 +51,7 @@ export class ServiceBusiness extends BaseService {
    * Business.id 값으로 Admin 과 조인해서 소유권이 있는지 체크 한다.
    * @param id Business.id
    */
-  public async permissionBusiness(id: number) {
+  public async _permissionBusiness(id: number) {
     const query = this.mysqlManager(Business).find({
       where: {
         id: id,

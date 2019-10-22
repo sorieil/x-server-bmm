@@ -37,7 +37,6 @@ export default class ServiceBusinessVendorManager extends BaseService {
   public async get(businessVendor: BusinessVendor) {
     const query = this.mysqlManager(BusinessVendor).findOne({
       relations: [
-        'businessCode',
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.idx',
         'businessVendorFieldManagerValues.businessVendorField',

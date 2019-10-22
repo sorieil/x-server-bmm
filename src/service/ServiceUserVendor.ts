@@ -72,9 +72,9 @@ export default class ServiceUserVendor extends BaseService {
       .leftJoinAndSelect('field.informationType', 'informationType')
       .leftJoinAndSelect('field.fieldType', 'fieldType')
       .where('vendor.id = :vendorId', { vendorId: businessVendor.id })
-      .andWhere('code.code = :vendorCode', {
-        vendorCode: businessVendor.businessCode.code,
-      })
+      // .andWhere('code.code = :vendorCode', {
+      //   vendorCode: businessVendor.businessCode.code,
+      // })
       .andWhere('code.use = "yes"')
       .getOne();
     return query;

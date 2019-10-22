@@ -2,18 +2,8 @@ import { BusinessVendorFieldChildNode } from './MysqlBusinessVendorFieldChildNod
 import { BusinessVendorField } from './MysqlBusinessVendorField';
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  OneToOne,
-  JoinColumn,
-  OneToMany,
-  ManyToMany,
-} from 'typeorm';
-import { BusinessVendor } from './MysqlBusinessVendor';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { Code } from './MysqlCode';
-import UserManager from './MysqlUserManager';
 import { BusinessVenderManager } from './MysqlBusinessVendorManager';
 
 @Entity()
