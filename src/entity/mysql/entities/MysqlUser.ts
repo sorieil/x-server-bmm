@@ -1,13 +1,18 @@
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, OneToMany, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  OneToOne,
+  JoinTable,
+} from 'typeorm';
 import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
 import UserBuyer from './MysqlUserBuyer';
-import { BusinessVenderManager } from './MysqlBusinessVendorManager';
-import businessVendor from '../../../controllers/admin/businessVendor';
-import { BusinessVendor } from './MysqlBusinessVendor';
+import { BusinessVendorManager } from './MysqlBusinessVendorManager';
 /**
  * 로그인 정보가 아님 오해 하지 마세요~ 로그인 정보는 따로 있고, 이 부분은 하나의 로그인이 여러개의 유저 타입을 소유 할 수 있기 때문에
  * 구조를 나눠 놓은 것입니다.
@@ -57,14 +62,19 @@ export class User extends Base {
   userBuyer: UserBuyer;
 
   @OneToOne(
-    type => BusinessVenderManager,
-    businessVenderManager => businessVenderManager.user,
+    type => BusinessVendorManager,
+    businessVendorManager => businessVendorManager.user,
   )
-  businessVenderManager: BusinessVenderManager;
+  businessVenderManager: BusinessVendorManager;
 
   // 밴더 아이디가 있으면, 매니저 없으면(null) 바이어
-  @ManyToOne(type => BusinessVendor, businessVendor => businessVendor.user, {
-    nullable: true,
-  })
-  businessVendor: BusinessVendor;
+  @OneToOne(
+    type => BusinessVendorManager,
+    businessVendorManager => businessVendorManager.user,
+    {
+      nullable: true,
+    },
+  )
+  @JoinTable()
+  businessVendorManager: BusinessVendorManager;
 }

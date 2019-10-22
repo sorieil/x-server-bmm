@@ -1,5 +1,5 @@
 import { User } from './MysqlUser';
-import { BusinessVenderManager } from './MysqlBusinessVendorManager';
+import { BusinessVendorManager } from './MysqlBusinessVendorManager';
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { Business } from './MysqlBusiness';
 import { Base } from './MysqlBase';
@@ -45,12 +45,8 @@ export class BusinessVendor extends Base {
   searchVendor: SearchVendor;
 
   @OneToMany(
-    type => BusinessVenderManager,
-    businessVendorFieldManagerValueGroup =>
-      businessVendorFieldManagerValueGroup.businessVendor,
+    type => BusinessVendorManager,
+    businessVendorManager => businessVendorManager.businessVendor,
   )
-  businessVenderManagers: BusinessVenderManager[];
-
-  @OneToMany(type => User, user => user.businessVendor)
-  user: User;
+  businessVendorManagers: BusinessVendorManager[];
 }

@@ -314,10 +314,11 @@ const apiPost = [
 
       const query: BusinessVendorFieldValue[] = [];
 
-      for (let field in body) {
+      for (let field of body) {
+        console.log('field------------------------>', field);
         const businessVendorFieldValue = new BusinessVendorFieldValue();
         const businessVendorField = new BusinessVendorField();
-        businessVendorField.id = body[field].id; // field 아이
+        businessVendorField.id = field.id; // field 아이
 
         const fieldTypeQuery = await service.checkFieldType(
           businessVendorField,
@@ -343,11 +344,11 @@ const apiPost = [
         }
 
         if (fieldTypeQuery.fieldType.columnType === 'text') {
-          businessVendorFieldValue.text = body[field].value;
+          businessVendorFieldValue.text = field.value;
         } else if (fieldTypeQuery.fieldType.columnType === 'textarea') {
-          businessVendorFieldValue.textarea = body[field].value;
+          businessVendorFieldValue.textarea = field.value;
         } else {
-          businessVendorFieldValue.idx = Number(body[field].value) as any;
+          businessVendorFieldValue.idx = Number(field.value) as any;
         }
         businessVendorFieldValue.businessVendorField = businessVendorField; // 필드의 아아디 값 지정
         businessVendorFieldValue.businessVendor = businessVendor;

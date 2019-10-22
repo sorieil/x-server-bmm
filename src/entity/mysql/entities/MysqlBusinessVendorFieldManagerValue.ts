@@ -4,7 +4,7 @@ import { Base } from './MysqlBase';
 import 'reflect-metadata';
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { Code } from './MysqlCode';
-import { BusinessVenderManager } from './MysqlBusinessVendorManager';
+import { BusinessVendorManager } from './MysqlBusinessVendorManager';
 
 @Entity()
 export class BusinessVendorFieldManagerValue extends Base {
@@ -42,10 +42,10 @@ export class BusinessVendorFieldManagerValue extends Base {
 
   // 이 부분은 매니저의 값을 특정지어서 한번에 가져오기 위해서 생성
   @ManyToOne(
-    type => BusinessVenderManager,
-    businessVendorFieldManagerValueGroup =>
-      businessVendorFieldManagerValueGroup.businessVendorFieldManagerValues,
+    type => BusinessVendorManager,
+    businessVenderManager =>
+      businessVenderManager.businessVendorFieldManagerValues,
     { onDelete: 'CASCADE' },
   )
-  businessVenderManager: BusinessVenderManager;
+  businessVendorManager: BusinessVendorManager;
 }

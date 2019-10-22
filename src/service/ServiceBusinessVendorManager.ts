@@ -6,7 +6,7 @@ import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 import ServiceSearchVendor from './ServiceSearchVendor';
 import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
-import { BusinessVenderManager } from '../entity/mysql/entities/MysqlBusinessVendorManager';
+import { BusinessVendorManager } from '../entity/mysql/entities/MysqlBusinessVendorManager';
 
 export default class ServiceBusinessVendorManager extends BaseService {
   constructor() {
@@ -49,7 +49,7 @@ export default class ServiceBusinessVendorManager extends BaseService {
   }
 
   public async _getWithBusinessVendor(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVenderManager).findOne({
+    const query = this.mysqlManager(BusinessVendorManager).findOne({
       relations: [
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.idx',
@@ -62,6 +62,11 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
+  /**
+   * 밴더를 소유 했는지 체크가 된다.
+   * @param businessVendor
+   * @param business
+   */
   public async _getWithBusiness(
     businessVendor: BusinessVendor,
     business: Business,
@@ -80,10 +85,15 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
-  public async post(businessVendor: BusinessVendor) {
-    const query = await this.mysqlManager(BusinessVendor).save(businessVendor);
-    const serviceSearchVendor = new ServiceSearchVendor();
-    await serviceSearchVendor._updateBySelectBusinessVendor(businessVendor);
+  public async post(businessVendorManager: BusinessVendorManager) {
+    const query = await this.mysqlManager(BusinessVendorManager).save(
+      businessVendorManager,
+    );
+
+    // 매니저는 수정 할때마다 search를 위해서 해주지만 매니저는 해줄 필요가 없다.
+    // 코드의 이해를 돕기 위해서 주석 처리를 해놓은다.
+    // const serviceSearchVendor = new ServiceSearchVendor();
+    // await serviceSearchVendor._updateBySelectBusinessVendor(businessVendor);
     return query;
   }
 
@@ -141,9 +151,9 @@ export default class ServiceBusinessVendorManager extends BaseService {
    */
   public async delete(
     businessVendor: BusinessVendor,
-    businessVendorFieldManagerValueGroup: BusinessVenderManager,
+    businessVendorFieldManagerValueGroup: BusinessVendorManager,
   ) {
-    const query = this.mysqlManager(BusinessVenderManager).delete({
+    const query = this.mysqlManager(BusinessVendorManager).delete({
       businessVendor: businessVendor,
       id: businessVendorFieldManagerValueGroup.id,
     });

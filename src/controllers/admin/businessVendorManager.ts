@@ -1,4 +1,4 @@
-import { BusinessVenderManager } from '../../entity/mysql/entities/MysqlBusinessVendorManager';
+import { BusinessVendorManager } from '../../entity/mysql/entities/MysqlBusinessVendorManager';
 import { Request, Response } from 'express';
 import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
@@ -31,7 +31,6 @@ const businessVendorPermission = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceBusinessVendorManager();
-    const business = new Business();
 
     if (!value) {
       return Promise.reject('Invalid insert data.');
@@ -42,24 +41,24 @@ const businessVendorPermission = () =>
 
     businessVendor.id = value;
     return new Promise(async resolve => {
+      // 접속관 관지자의 아이디로 비즈니스 아이디를 조회한다.
       const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
         admin,
       );
 
+      // 소유한 비즈니스가 없다면, null
       if (!businessQuery) {
         resolve(null);
       }
 
-      business.id = businessQuery.id;
-
-      const query = await service._getWithBusinessVendor(businessVendor);
+      // 비즈니스 아이디와 입력한 밴더의 아이디를 가지고 조회
+      const query = await service._getWithBusiness(
+        businessVendor,
+        businessQuery,
+      );
 
       resolve(query);
     }).then(result => {
-      if (result === null) {
-        return Promise.reject('You are not authorized or have no data.');
-      }
-
       if (result) {
         Object.assign(req.user, { vendor: result });
       } else {
@@ -283,15 +282,15 @@ const apiPost = [
 
       const businessVendor = new BusinessVendor();
       const service = new ServiceBusinessVendorManager();
-      const vendorGroup = new BusinessVenderManager();
-      const business = new Business();
+      const businessVendorManager = new BusinessVendorManager();
       const body = req.body.data;
       const vendorId = req.params.vendorId;
 
       businessVendor.id = vendorId;
 
       // 없다면 그룹을 등록 시켜주고, 있다면, 그룹을 조회 해서 그룹의 idx 를 가져온다.
-      vendorGroup.id = 0;
+      businessVendorManager.businessVendor = businessVendor;
+      await service.post(businessVendorManager);
 
       const query: BusinessVendorFieldManagerValue[] = [];
 
@@ -336,7 +335,7 @@ const apiPost = [
 
         // 벤더의 아이디와, 필드의 아이디를 저장해준다.
         businessVendorFieldManagerValue.businessVendorField = businessVendorField; // 필드의 아아디 값 지정
-        businessVendorFieldManagerValue.businessVenderManager = vendorGroup;
+        businessVendorFieldManagerValue.businessVendorManager = businessVendorManager;
         query.push(businessVendorFieldManagerValue);
       }
 
@@ -454,10 +453,13 @@ const apiPatch = [
   },
 ];
 
+/**
+ * 매니저 삭제
+ */
 const apiDelete = [
   [
     businessVendorPermission.apply(this),
-    param('groupId')
+    param('managerId')
       .not()
       .isEmpty(),
   ],
@@ -472,13 +474,10 @@ const apiDelete = [
 
     const service = new ServiceBusinessVendorManager();
     const businessVendor = new BusinessVendor();
-    const businessVendorFieldManagerValueGroup = new BusinessVenderManager();
+    const businessVendorManager = new BusinessVendorManager();
     businessVendor.id = req.user.vendor.id;
-    businessVendorFieldManagerValueGroup.id = req.params.groupId;
-    const query = await service.delete(
-      businessVendor,
-      businessVendorFieldManagerValueGroup,
-    );
+    businessVendorManager.id = req.params.managerId;
+    const query = await service.delete(businessVendor, businessVendorManager);
 
     responseJson(res, [query], method, 'delete');
   },
