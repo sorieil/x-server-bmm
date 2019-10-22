@@ -1,3 +1,4 @@
+import { BusinessVendorManager } from './../entity/mysql/entities/MysqlBusinessVendorManager';
 import { BusinessVendorFieldValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
@@ -6,7 +7,6 @@ import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 import ServiceSearchVendor from './ServiceSearchVendor';
 import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
-import { BusinessVendorManager } from '../entity/mysql/entities/MysqlBusinessVendorManager';
 
 export default class ServiceBusinessVendorManager extends BaseService {
   constructor() {
@@ -35,7 +35,7 @@ export default class ServiceBusinessVendorManager extends BaseService {
   }
 
   public async get(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVendor).findOne({
+    const query = this.mysqlManager(BusinessVendorManager).findOne({
       relations: [
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.idx',
@@ -63,7 +63,7 @@ export default class ServiceBusinessVendorManager extends BaseService {
   }
 
   /**
-   * 밴더를 소유 했는지 체크가 된다.
+   * 밴더를 소유 했는지 체크가 된다. 그리고 결과물로
    * @param businessVendor
    * @param business
    */
@@ -97,6 +97,12 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
+  /**
+   * @param businessVendorFieldManagerValue[]
+   * @description
+   * 매니저의 커스텀 필드 값을 배열로 받아서 저장한다.
+   * @returns 배열된 결과물
+   */
   public async _postVendorFieldManagerValue(
     businessVendorFieldManagerValue: BusinessVendorFieldManagerValue[],
   ) {

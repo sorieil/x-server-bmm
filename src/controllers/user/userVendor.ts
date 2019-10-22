@@ -16,7 +16,12 @@ import { BusinessVendorFieldValue } from '../../entity/mysql/entities/MysqlBusin
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 
-const userVendorPermission = () =>
+/**
+ * @requires vendorId
+ * @description
+ * 벤더의 아이디로 유저가 밴더를 소유 했는지
+ */
+const CheckPermissionUserVendor = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
@@ -55,7 +60,7 @@ const userVendorPermission = () =>
  *
  */
 const apiGet = [
-  [userVendorPermission.apply(this)],
+  [CheckPermissionUserVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -178,7 +183,7 @@ const apiGets = [
 
 const apiPostVerifyVendorCode = [
   [
-    userVendorPermission.apply(this),
+    CheckPermissionUserVendor.apply(this),
     body('vendorCode').custom((value, { req }) => {
       const service = new ServiceUserVendor();
       const businessVendor = new BusinessVendor();
@@ -358,7 +363,7 @@ const apiPost = [
 
 const apiPatch = [
   [
-    userVendorPermission.apply(this),
+    CheckPermissionUserVendor.apply(this),
     body('data')
       .not()
       .isEmpty()

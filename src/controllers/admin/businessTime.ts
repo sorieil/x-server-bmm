@@ -4,7 +4,7 @@ import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMe
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult } from 'express-validator';
-import { businessAdminPermission } from '../../util/permission';
+import { CheckPermissionBusinessAdmin } from '../../util/permission';
 import { ServiceBusinessTime } from '../../service/ServiceBusinessTime';
 import moment from 'moment';
 /**
@@ -14,7 +14,7 @@ import moment from 'moment';
  */
 const apiPost = [
   [
-    businessAdminPermission.apply(this),
+    CheckPermissionBusinessAdmin.apply(this),
     check('intervalTime')
       .not()
       .isEmpty()
@@ -154,7 +154,7 @@ const apiPost = [
 ];
 
 const apiGet = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     const method: RequestRole = req.method.toString() as any;
     const errors = validationResult(req);

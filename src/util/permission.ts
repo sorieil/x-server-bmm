@@ -12,6 +12,7 @@ import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 
 /**
  * @description
+ * 관리자의 데이터로 비즈니스를 소유하고 있는지 체크한다. 없으면, BMM 비즈니스 정보를 입력해야 한다.
  * 관리자모드에서 컨테이너>BMM 의 권한을 체크 한다.
  * 로그인을 하게 되면, 기존 몽고디비 Accounts 에서 데이터를 토큰정보 토대로 ObjectID 를 가져오고,
  * 디비에 등록하고, 로그인 정보를 등록하고, 이벤트(비즈니스)를 관련 데이터를 입력하게 되면, 비즈니스 관련
@@ -19,7 +20,7 @@ import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
  *
  * @target admin
  */
-export const businessAdminPermission = () => {
+export const CheckPermissionBusinessAdmin = () => {
   return param('permission').custom((value, { req }) => {
     const admin = new Admin();
     admin.id = req.user.admins[0]; // passport 에서 주입한다.
@@ -38,10 +39,11 @@ export const businessAdminPermission = () => {
 
 /**
  * @description
+ * 로그인 정보가 정상적으로 등록되어있는지 체크도 하면서 유저의 로그인 데이터를 가져오기도 한다.
  * 로그인 정보로 유저의 정보를 불어오는 함수이다.
- * @target user
+ * @target 유저
  */
-export const userGetLoginData = () => {
+export const CheckPermissionGetUserData = () => {
   return param('loginData').custom((value, { req }) => {
     const login = new Login();
     login.id = req.user.id; // passport 에서 주입 한다.
@@ -64,9 +66,10 @@ export const userGetLoginData = () => {
  * 로그인 하면서 연결을 하는데 만약 연결이 안되어 있다면, 새로 연결 해서 디비에 등록한다.
  * 이 함수는 벤더의 아이디로 유저가 벤더의 아이디로 실제 비즈니스가 벤더를 소유 하는지 체크 하는 함수다.
  *
- * @target admin
+ * @target 관리자
+ * @returns vendor
  */
-export const adminBusinessVendorPermission = () =>
+export const CheckPermissionAdminBusinessVendor = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
@@ -99,10 +102,12 @@ export const adminBusinessVendorPermission = () =>
 /**
  * @description
  * 미팅룸을 수정하기 위해서 체크 하는 권한.
+ * 체크후 미팅룸 데이터를 반환한다.
  *
- * @target admin
+ * @target 관리자
+ * @returns meetingRoom
  */
-export const adminBusinessMeetingRoomByIdPermission = () =>
+export const CheckPermissionBusinessMeetingRoomById = () =>
   param('meetingRoomId').custom((value, { req }) => {
     const meetingRoom = new BusinessMeetingRoom();
     const business = new Business();
@@ -143,8 +148,9 @@ export const adminBusinessMeetingRoomByIdPermission = () =>
  * 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
  *
  * @target user
+ * @returns buyer
  */
-export const checkBuyerInformation = () =>
+export const CheckPermissionBuyerInformation = () =>
   param('userId').custom((value, { req }) => {
     const service = new ServiceUserBuyerPermission();
     const user = req.user;

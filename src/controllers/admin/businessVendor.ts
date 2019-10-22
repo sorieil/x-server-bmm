@@ -5,7 +5,7 @@ import { BusinessVendor } from './../../entity/mysql/entities/MysqlBusinessVendo
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
-import { businessAdminPermission } from '../../util/permission';
+import { CheckPermissionBusinessAdmin } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
@@ -13,17 +13,33 @@ import { Code } from '../../entity/mysql/entities/MysqlCode';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 
-const businessVendorFieldTypePermission = () =>
-  param('informationType').custom(async (v, { req }) => {
+/**
+ * @description
+ * 커스텀 필드의 타입이 존재 하는지 체크한다.
+ *
+ * @returns 없는 코드 일경우 리젝을 한다.
+ */
+const CheckExistingBusinessVendorFieldType = () =>
+  param('informationType').custom(async (value, { req }) => {
     const service = new ServiceBusinessVendor();
     const code = new Code();
-    code.id = v;
+    code.id = value;
     const codeQuery = await service._getByCode(code);
     if (!codeQuery) {
-      return Promise.reject(`Does not exist '${v}' informationType key.`);
+      return Promise.reject(`Does not exist '${value}' informationType key.`);
     }
   });
-const businessVendorPermission = () =>
+/**
+ * @requires vendorId
+ *
+ * @description
+ * 벤더의 아이디로 관리자가 소유 하고 있는 밴더 인지 체크하고, 밴더 정보를 리턴한다.
+ *
+ * @target 관리자
+ *
+ * @returns vendor
+ */
+const CheckPermissionBusinessVendor = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceBusinessVendor();
@@ -68,7 +84,7 @@ const businessVendorPermission = () =>
  * 비즈니스의 상태 값을 가져온다. Header, status
  */
 const apiGet = [
-  [businessVendorPermission.apply(this)],
+  [CheckPermissionBusinessVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -112,7 +128,7 @@ const apiGet = [
 
 const apiGetField = [
   [
-    businessAdminPermission.apply(this),
+    CheckPermissionBusinessAdmin.apply(this),
     param('informationTypeId')
       .not()
       .isEmpty(),
@@ -168,7 +184,7 @@ const apiGetField = [
 ];
 
 const apiGets = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -229,8 +245,8 @@ const apiGets = [
 
 const apiGetInformationType = [
   [
-    businessVendorPermission.apply(this),
-    businessVendorFieldTypePermission.apply(this),
+    CheckPermissionBusinessVendor.apply(this),
+    CheckExistingBusinessVendorFieldType.apply(this),
   ],
   async (req: Request, res: Response) => {
     try {
@@ -265,7 +281,7 @@ const apiGetInformationType = [
  * 밴더 값 입력 / 수정
  */
 const apiPost = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -384,7 +400,7 @@ const apiPost = [
 ];
 
 const apiPatch = [
-  [businessVendorPermission.apply(this)],
+  [CheckPermissionBusinessVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -487,7 +503,7 @@ const apiPatch = [
 ];
 
 const apiDelete = [
-  [businessVendorPermission.apply(this)],
+  [CheckPermissionBusinessVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;

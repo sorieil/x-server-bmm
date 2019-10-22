@@ -3,7 +3,7 @@ import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { validationResult, param } from 'express-validator';
-import { userGetLoginData } from '../../util/permission';
+import { CheckPermissionGetUserData } from '../../util/permission';
 import { ServiceBusinessTime } from '../../service/ServiceBusinessTime';
 import moment = require('moment');
 import ServiceUserBusinessTime from '../../service/ServiceUserBusinessTime';
@@ -30,7 +30,7 @@ const apiPost = [
  * 행사기간 동안 미팅이 가능한 시간과 인터벌 시간을 가져온다.
  */
 const apiGets = [
-  [userGetLoginData.apply(this)],
+  [CheckPermissionGetUserData.apply(this)],
   async (req: Request, res: Response) => {
     const method: RequestRole = req.method.toString() as any;
     const errors = validationResult(req);
@@ -56,7 +56,7 @@ const apiGets = [
  */
 const apiGet = [
   [
-    userGetLoginData.apply(this),
+    CheckPermissionGetUserData.apply(this),
     param('date').custom((value, { req }) => {
       const test = moment(value).format('YYYY/MM/DD');
       console.log('test result:', test);

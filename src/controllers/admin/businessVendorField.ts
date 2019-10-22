@@ -13,11 +13,21 @@ import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
-import { businessAdminPermission } from '../../util/permission';
+import { CheckPermissionBusinessAdmin } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 
-const businessVendorPermission = () =>
+/**
+ * @requires fieldId
+ * @description
+ * 필드의 아이디로 소유하고 있는 필드 인지 체크하고, 밴더의 필드의 정보를 리턴하고,
+ * 비즈니스 정보도 같이 리턴한다.
+ *
+ * @target 관리자
+ * @returns business, vendorField
+ *
+ */
+const CheckPermissionBusinessVendor = () =>
   param('fieldId').custom(async (value, { req }) => {
     if (!value) {
       return Promise.reject('Invalid insert data.');
@@ -37,18 +47,15 @@ const businessVendorPermission = () =>
       if (!businessQuery) {
         resolve(null);
       }
+
       business.id = businessQuery.id;
       const query = await service._getWithBusiness(
         businessVendorField,
-        business,
+        businessQuery,
       );
       resolve(query);
     });
-    if (r === null) {
-      return Promise.reject(
-        'You don`t have permission or first insert business default data.',
-      );
-    }
+
     if (r) {
       Object.assign(req.user, { business: business, vendorField: r });
     } else {
@@ -58,7 +65,17 @@ const businessVendorPermission = () =>
     }
   });
 
-const businessVendorChildPermission = () =>
+/**
+ * @requires fieldChildNodeId
+ * @description
+ * 커스텀 필드의 셀렉트 박스의 옵션의 아이디를 받아서 관리자가 권한이있는지 체크를 하고,
+ * 데이터를 반환한다.
+ *
+ * @target 관리자
+ * @returns business, filedChildNode
+ *
+ */
+const CheckPermissionBusinessVendorChild = () =>
   param('fieldChildNodeId').custom(async (value, { req }) => {
     if (!value) {
       return Promise.reject('Invalid insert data.');
@@ -81,8 +98,10 @@ const businessVendorChildPermission = () =>
       if (!businessQuery) {
         resolve(null);
       }
+
       business.id = businessQuery.id;
       const fieldQuery = await service.get(business);
+
       if (!fieldQuery) {
         resolve(null);
       }
@@ -98,8 +117,9 @@ const businessVendorChildPermission = () =>
         'You don`t have permission or first insert business or vendor default data.',
       );
     }
+
     if (r) {
-      Object.assign(req.user, { filedChildNode: r });
+      Object.assign(req.user, { business: business, filedChildNode: r });
     } else {
       return Promise.reject(
         'You don`t have permission or first insert vendor child fields..',
@@ -107,7 +127,7 @@ const businessVendorChildPermission = () =>
     }
   });
 const apiInit = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -192,7 +212,7 @@ const apiInit = [
 ];
 const apiPost = [
   [
-    businessAdminPermission.apply(this),
+    CheckPermissionBusinessAdmin.apply(this),
     check('name')
       .not()
       .isEmpty(),
@@ -302,7 +322,7 @@ const apiPost = [
 
 const apiPatch = [
   [
-    businessVendorPermission.apply(this),
+    CheckPermissionBusinessVendor.apply(this),
     // fieldId 는 퍼미션에서 체크 한다.
     check('fieldChildNodes')
       .optional()
@@ -427,7 +447,7 @@ const apiPatch = [
 ];
 
 const apiGets = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -492,7 +512,7 @@ const apiGets = [
 ];
 
 const apiGet = [
-  [businessVendorPermission.apply(this)],
+  [CheckPermissionBusinessVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -526,7 +546,7 @@ const apiGet = [
 ];
 
 const apiDeleteAll = [
-  [businessAdminPermission.apply(this)],
+  [CheckPermissionBusinessAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -555,7 +575,7 @@ const apiDeleteAll = [
 ];
 
 const apiDelete = [
-  [businessVendorPermission.apply(this)],
+  [CheckPermissionBusinessVendor.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -579,7 +599,7 @@ const apiDelete = [
 
 const apiDeleteChildNode = [
   [
-    businessVendorPermission.apply(this),
+    CheckPermissionBusinessVendor.apply(this),
     param('fieldChildNodeId')
       .not()
       .isEmpty(),
