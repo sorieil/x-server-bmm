@@ -22,9 +22,8 @@ import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
  */
 export const CheckPermissionBusinessAdmin = () => {
   return param('permission').custom((value, { req }) => {
-    const admin = new Admin();
-    admin.id = req.user.admins[0]; // passport 에서 주입한다.
-    const query = new ServiceBusinessPermission()._ByAdmin(admin);
+    const admin = req.user.admins[0]; // passport 에서 주입한다.
+    const query = new ServiceBusinessPermission()._getBusinessByAdmin(admin);
     return query.then((businessResult: Business) => {
       if (businessResult) {
         Object.assign(req.user, { business: businessResult });
@@ -111,10 +110,11 @@ export const CheckPermissionBusinessMeetingRoomById = () =>
   param('meetingRoomId').custom((value, { req }) => {
     const meetingRoom = new BusinessMeetingRoom();
     const business = new Business();
-    const admin = new Admin();
-    admin.id = req.user.admins[0].id;
+    const admin = req.user.admins[0];
 
-    const businessQuery = new ServiceBusinessPermission()._ByAdmin(admin);
+    const businessQuery = new ServiceBusinessPermission()._getBusinessByAdmin(
+      admin,
+    );
     return businessQuery.then((businessResult: Business) => {
       Object.assign(req.user, { Business: businessResult });
       if (businessResult) {

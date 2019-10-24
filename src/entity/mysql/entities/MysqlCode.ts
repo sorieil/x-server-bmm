@@ -1,6 +1,5 @@
 import { Base } from './MysqlBase';
 import { Entity, Column, OneToMany } from 'typeorm';
-import UserManager from './MysqlUserManager';
 import { BusinessVendorField } from './MysqlBusinessVendorField';
 import { BusinessVendorFieldValue } from './MysqlBusinessVendorFieldValue';
 import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
@@ -65,9 +64,6 @@ export class Code extends Base {
     businessVendorManagerField => businessVendorManagerField.code,
   )
   businessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
-
-  @OneToMany(type => UserManager, userManager => userManager.code)
-  userManager: UserManager[];
 
   @OneToMany(
     type => BusinessVendorField,

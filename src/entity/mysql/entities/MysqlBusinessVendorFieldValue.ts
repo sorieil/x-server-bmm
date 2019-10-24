@@ -13,7 +13,6 @@ import {
 } from 'typeorm';
 import { BusinessVendor } from './MysqlBusinessVendor';
 import { Code } from './MysqlCode';
-import UserManager from './MysqlUserManager';
 
 @Entity()
 export class BusinessVendorFieldValue extends Base {
@@ -59,13 +58,4 @@ export class BusinessVendorFieldValue extends Base {
     { nullable: true, onDelete: 'CASCADE' },
   )
   idx: BusinessVendorFieldChildNode;
-
-  // 모바일에서 입력하는 매니저가 있는데 회원정보와 일치를 시켜주러면, 맵핑해주는 컴럼이 필요하다.
-  // 실제로 테이블에 영향을 주진 않는다, 별도의 브릿지 테이블로 관리된다.
-  @OneToMany(
-    type => UserManager,
-    userManger => userManger.businessVendorFieldValue,
-    { onDelete: 'CASCADE' },
-  )
-  userManagers: UserManager[];
 }

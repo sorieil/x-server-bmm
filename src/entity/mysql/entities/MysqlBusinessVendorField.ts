@@ -1,11 +1,9 @@
-import { BusinessCode } from './MysqlBusinessCode';
 import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Code } from './MysqlCode';
 import { BusinessVendorFieldChildNode } from './MysqlBusinessVendorFieldChildNode';
 import { Business } from './MysqlBusiness';
 import { BusinessVendorFieldValue } from './MysqlBusinessVendorFieldValue';
-import UserManager from './MysqlUserManager';
 import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
 
 @Entity()
@@ -46,13 +44,6 @@ export class BusinessVendorField extends Base {
       BusinessVendorFieldManagerValue.businessVendorField,
   )
   BusinessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
-
-  // 일반적으로 businessVendorFieldValue 랑 같지만, 이곳은 매니저를 위한 곳이다.
-  @OneToMany(
-    type => UserManager,
-    userManager => userManager.businessVendorField,
-  )
-  userManagers: UserManager[];
 
   @ManyToOne(type => Code, code => code.businessVendorFieldInformationTypes)
   informationType: Code;

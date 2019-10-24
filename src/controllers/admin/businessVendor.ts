@@ -54,7 +54,7 @@ const CheckPermissionBusinessVendor = () =>
 
     businessVendor.id = value;
     return new Promise(async resolve => {
-      const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
+      const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
         admin,
       );
 
@@ -108,12 +108,11 @@ const apiGet = [
         delete j.text;
         delete j.textarea;
         delete j.idx;
-        // j.businessVendorField.informationType = j.businessVendorField.informationType.id;
-        // j.businessVendorField.fieldType = j.businessVendorField.fieldType.columnType;
+
         return j;
       });
 
-      console.log('query: ', query);
+      // console.log('query: ', query);
 
       if (query) {
         responseJson(res, [query], method, 'success');
@@ -203,34 +202,13 @@ const apiGets = [
         delete v.createdAt;
         delete v.updatedAt;
         v.businessCode = v.businessCode.code;
-        let duplicateFinderValue: any = null;
-        let duplicateFinderIndex: number = null;
         await v.businessVendorFieldValues.map((j: any, index: number) => {
-          // // 여기에서 만약에 fieldId의 값이 중복이 되면, 제일 처음 값에게 배열로 푸쉬를 해준다.
-          // if (duplicateFinderValue === j.businessVendorField.id) {
-          //     console.log('중복되는 값이다 ==== ', duplicateFinderValue, duplicateFinderIndex);
-          //     v.businessVendorFieldValues[duplicateFinderIndex].value = [
-          //         ...v.businessVendorFieldValues[duplicateFinderIndex].value,
-          //     ].push(j.idx);
-          //     j = null;
-          //     return j;
-          // }
+          j.value = j.text || j.textarea || j.idx;
           delete j.createdAt;
           delete j.updatedAt;
-
-          j.value = j.text || j.textarea || j.idx;
-
           delete j.text;
           delete j.textarea;
           delete j.idx;
-
-          // j.businessVendorField.informationType = j.businessVendorField.informationType.id;
-          // j.businessVendorField.fieldType = j.businessVendorField.fieldType.columnType;
-
-          // Run at the end process.
-          duplicateFinderValue = j.businessVendorField.id;
-          duplicateFinderIndex = index;
-          // delete j.businessVendorField;
           return j;
         });
         return v;

@@ -1,11 +1,9 @@
 import { BusinessVendorManager } from './../entity/mysql/entities/MysqlBusinessVendorManager';
-import { BusinessVendorFieldValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import { BaseService } from './BaseService';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
-import ServiceSearchVendor from './ServiceSearchVendor';
 import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
 
 export default class ServiceBusinessVendorManager extends BaseService {
@@ -34,40 +32,13 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
-  public async get(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVendorManager).findOne({
-      relations: [
-        'businessVendorFieldManagerValues',
-        'businessVendorFieldManagerValues.idx',
-        'businessVendorFieldManagerValues.businessVendorField',
-        'businessVendorFieldManagerValues.businessVendorField.informationType',
-        'businessVendorFieldManagerValues.businessVendorField.fieldType',
-      ],
-      where: { id: businessVendor.id },
-    });
-    return query;
-  }
-
-  public async _getWithBusinessVendor(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVendorManager).findOne({
-      relations: [
-        'businessVendorFieldManagerValues',
-        'businessVendorFieldManagerValues.idx',
-        'businessVendorFieldManagerValues.businessVendorField',
-        'businessVendorFieldManagerValues.businessVendorField.informationType',
-        'businessVendorFieldManagerValues.businessVendorField.fieldType',
-      ],
-      where: { businessVendor: businessVendor },
-    });
-    return query;
-  }
-
   /**
-   * 밴더를 소유 했는지 체크가 된다. 그리고 결과물로
+   * @description
+   * 비즈니스와 밴더로 조회 한다.
    * @param businessVendor
    * @param business
    */
-  public async _getWithBusiness(
+  public async _getBusinessVendorByBusinessVendorWithBusiness(
     businessVendor: BusinessVendor,
     business: Business,
   ) {
@@ -112,10 +83,20 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
-  public async _getByBusiness(business: Business) {
-    const query = this.mysqlManager(BusinessVendor).find({
+  /**
+   * @param businessVendor
+   * @description
+   * 비즈니스 밴더를 가지고 커스텀 필드의 매니저를 가져온다. 여기에서  BusinessVendorManager 의 하나의 레코드가
+   * BusinessVendorFieldManagerValue 의 그룹 코드로 작동한다.
+   * 고로 BusinessVendorManager 의 하나의 키 값은 매니저 한명을 의미한다.
+   *
+   * @returns BusinessVendorManager[]
+   */
+  public async _getBusinessVendorManagerByBusinessVendor(
+    businessVendor: BusinessVendor,
+  ) {
+    const query = this.mysqlManager(BusinessVendorManager).find({
       relations: [
-        'businessCode',
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.idx',
         'businessVendorFieldManagerValues.businessVendorField',
@@ -123,7 +104,35 @@ export default class ServiceBusinessVendorManager extends BaseService {
         'businessVendorFieldManagerValues.businessVendorField.fieldType',
       ],
       where: {
-        business: business,
+        businessVendor: businessVendor,
+      },
+    });
+
+    // query.map((v: any) => {});
+
+    return query;
+  }
+
+  /**
+   *
+   * @param businessVendorManager id
+   * @description
+   * BusinessVendorManager 의 아이디로 매니저를 조회 한다.
+   * @returns BusinessVendorManager
+   */
+  public async _getBusinessVendorManagerByBusinessVendorManager(
+    businessVendorManager: BusinessVendorManager,
+  ) {
+    const query = this.mysqlManager(BusinessVendorManager).findOne({
+      relations: [
+        'businessVendorFieldManagerValues',
+        'businessVendorFieldManagerValues.idx',
+        'businessVendorFieldManagerValues.businessVendorField',
+        'businessVendorFieldManagerValues.businessVendorField.informationType',
+        'businessVendorFieldManagerValues.businessVendorField.fieldType',
+      ],
+      where: {
+        id: businessVendorManager.id,
       },
     });
 

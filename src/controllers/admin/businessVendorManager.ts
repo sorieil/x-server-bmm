@@ -1,6 +1,7 @@
+import { BusinessVendorFieldManagerValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
+import { BusinessVendor } from './../../entity/mysql/entities/MysqlBusinessVendor';
 import { BusinessVendorManager } from '../../entity/mysql/entities/MysqlBusinessVendorManager';
 import { Request, Response } from 'express';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
@@ -10,7 +11,6 @@ import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermissi
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
-import { BusinessVendorFieldManagerValue } from '../../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
 import ServiceBusinessVendorManager from '../../service/ServiceBusinessVendorManager';
 
 // Post {{server}}/api/v1/business-vendor/{{vendorId}}/manager
@@ -43,9 +43,9 @@ const CheckPermissionBusinessVendorFieldType = () =>
  * @returns vendor
  */
 const CheckPermissionBusinessVendor = () =>
-  param('vendorId').custom((value, { req }) => {
+  param('vendorId').custom(async (value, { req }) => {
     const businessVendor = new BusinessVendor();
-    const service = new ServiceBusinessVendorManager();
+    const service = new ServiceBusinessVendor();
 
     if (!value) {
       return Promise.reject('Invalid insert data.');
@@ -53,13 +53,12 @@ const CheckPermissionBusinessVendor = () =>
 
     const admin = new Admin();
     admin.id = req.user.admins[0];
-
+    const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
+      admin,
+    );
     businessVendor.id = value;
     return new Promise(async resolve => {
       // 접속관 관지자의 아이디로 비즈니스 아이디를 조회한다.
-      const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
-        admin,
-      );
 
       // 소유한 비즈니스가 없다면, null
       if (!businessQuery) {
@@ -75,7 +74,7 @@ const CheckPermissionBusinessVendor = () =>
       resolve(query);
     }).then(result => {
       if (result) {
-        Object.assign(req.user, { vendor: result });
+        Object.assign(req.user, { vendor: result, business: businessQuery });
       } else {
         return Promise.reject('You are not authorized or have no data.');
       }
@@ -86,7 +85,12 @@ const CheckPermissionBusinessVendor = () =>
  * 비즈니스의 상태 값을 가져온다. Header, status
  */
 const apiGet = [
-  [CheckPermissionBusinessVendor.apply(this)],
+  [
+    CheckPermissionBusinessVendor.apply(this),
+    param('managerId')
+      .not()
+      .isEmpty(),
+  ],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -96,15 +100,18 @@ const apiGet = [
         responseJson(res, errors.array(), method, 'invalid');
         return;
       }
-      const query = req.user.vendor; // 권한 체크에서 밴더의 아이디 기준으로 벤더의 정보를 모두 가져온다.
+      const vendorId = req.params.managerId;
+      const serviceBusinessVendorManager = new ServiceBusinessVendorManager();
 
-      delete query.createdAt;
-      delete query.updatedAt;
-      query.businessCode = query.businessCode.code;
-      query.businessVendorFieldValues.map((j: any) => {
+      const businessVendorManager = new BusinessVendorManager();
+      businessVendorManager.id = vendorId;
+
+      const query = await serviceBusinessVendorManager._getBusinessVendorManagerByBusinessVendorManager(
+        businessVendorManager,
+      );
+
+      query.businessVendorFieldManagerValues.map((j: any) => {
         j.value = j.text || j.textarea || j.idx;
-
-        // 필요없는 필드는 삭제
         delete j.text;
         delete j.textarea;
         delete j.idx;
@@ -118,12 +125,10 @@ const apiGet = [
   },
 ];
 
-const apiGetField = [
+const apiGets = [
   [
     CheckPermissionBusinessAdmin.apply(this),
-    param('informationTypeId')
-      .not()
-      .isEmpty(),
+    CheckPermissionBusinessVendor.apply(this),
   ],
   async (req: Request, res: Response) => {
     try {
@@ -135,136 +140,30 @@ const apiGetField = [
         return;
       }
 
-      const service = new ServiceBusinessVendor();
-      const business = new Business();
-      const informationType = new Code();
-      business.id = req.user.business.id;
-      informationType.id = req.params.informationTypeId;
-      const query = await service._getField(business, informationType);
+      const service = new ServiceBusinessVendorManager();
+      const businessVendor = new BusinessVendor();
+      businessVendor.id = req.user.vendor.id;
 
-      console.log('query:', query);
-
-      const companyInformation = query.filter((v: any) => {
-        return v.informationType.id === 4;
-      });
-
-      const vendorInformation = query.filter((v: any) => {
-        return v.informationType.id === 5;
-      });
-
-      const manager = query.filter((v: any) => {
-        return v.informationType.id === 6;
-      });
-
-      console.log('companyInformation:', companyInformation);
-      responseJson(
-        res,
-        [
-          {
-            defaultInformation: companyInformation,
-            vendorInformation: vendorInformation,
-            manager: manager,
-          },
-        ],
-        method,
-        'success',
+      const query = await service._getBusinessVendorManagerByBusinessVendor(
+        businessVendor,
       );
-    } catch (error) {
-      tryCatch(res, error);
-    }
-  },
-];
-
-const apiGets = [
-  [CheckPermissionBusinessAdmin.apply(this)],
-  async (req: Request, res: Response) => {
-    try {
-      const method: RequestRole = req.method.toString() as any;
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        responseJson(res, errors.array(), method, 'invalid');
-        return;
-      }
-
-      const service = new ServiceBusinessVendor();
-      const business = new Business();
-      business.id = req.user.business.id;
-      const query = await service._getByBusiness(business);
 
       // 매니저는 별도로 불러줘야 한다.
-      query.map(async (v: any) => {
+      query.map((v: any) => {
         delete v.createdAt;
         delete v.updatedAt;
-        v.businessCode = v.businessCode.code;
-        let duplicateFinderValue: any = null;
-        let duplicateFinderIndex: number = null;
-        await v.businessVendorFieldValues.map((j: any, index: number) => {
-          // // 여기에서 만약에 fieldId의 값이 중복이 되면, 제일 처음 값에게 배열로 푸쉬를 해준다.
-          // if (duplicateFinderValue === j.businessVendorField.id) {
-          //     console.log('중복되는 값이다 ==== ', duplicateFinderValue, duplicateFinderIndex);
-          //     v.businessVendorFieldValues[duplicateFinderIndex].value = [
-          //         ...v.businessVendorFieldValues[duplicateFinderIndex].value,
-          //     ].push(j.idx);
-          //     j = null;
-          //     return j;
-          // }
-          delete j.createdAt;
-          delete j.updatedAt;
-
+        v.businessVendorFieldManagerValues.map((j: any) => {
           j.value = j.text || j.textarea || j.idx;
-
           delete j.text;
           delete j.textarea;
           delete j.idx;
-
-          // j.businessVendorField.informationType = j.businessVendorField.informationType.id;
-          // j.businessVendorField.fieldType = j.businessVendorField.fieldType.columnType;
-
-          // Run at the end process.
-          duplicateFinderValue = j.businessVendorField.id;
-          duplicateFinderIndex = index;
-          // delete j.businessVendorField;
           return j;
         });
         return v;
       });
+      console.log('Business Vendor Manager Lists:', query);
 
       responseJson(res, query, method, 'success');
-    } catch (error) {
-      tryCatch(res, error);
-    }
-  },
-];
-
-const apiGetInformationType = [
-  [
-    CheckPermissionBusinessVendor.apply(this),
-    CheckPermissionBusinessVendorFieldType.apply(this),
-  ],
-  async (req: Request, res: Response) => {
-    try {
-      const method: RequestRole = req.method.toString() as any;
-      const errors = validationResult(req);
-
-      if (!errors.isEmpty()) {
-        responseJson(res, errors.array(), method, 'invalid');
-        return;
-      }
-
-      const service = new ServiceBusinessVendor();
-      const businessVendor = new BusinessVendor();
-      const informationType = req.params.informationType;
-      businessVendor.id = req.user.vendor.id;
-      const query = await service._getByVendor(businessVendor);
-
-      query.businessCode = query.businessCode.code as any;
-      query.businessVendorFieldValues.filter((j: any) => {
-        console.log('id:', j['Code']);
-        return j.informationType.id === informationType;
-      });
-
-      responseJson(res, [query], method, 'success');
     } catch (error) {
       tryCatch(res, error);
     }
@@ -309,7 +208,6 @@ const apiPost = [
         const businessVendorFieldManagerValue = new BusinessVendorFieldManagerValue();
         const businessVendorField = new BusinessVendorField();
         businessVendorField.id = field.id; // field 아이
-
         const fieldTypeQuery = await service.checkFieldType(
           businessVendorField,
         ); // 필드가 어떤 타입인지 체크
@@ -349,26 +247,31 @@ const apiPost = [
       }
 
       await service._postVendorFieldManagerValue(query);
-      const businessVendorQuery = await service.get(businessVendor);
+      const businessVendorQuery = await service._getBusinessVendorManagerByBusinessVendor(
+        businessVendor,
+      );
 
-      businessVendorQuery.businessVendorFieldManagerValues.map((v: any) => {
-        v.value = v.text || v.textarea || v.idx;
+      console.log('Post result: ', businessVendorQuery);
+
+      businessVendorQuery.map((v: any) => {
+        v.businessVendorFieldManagerValue.map(
+          (j: BusinessVendorFieldManagerValue) => {
+            v.value = j.text || j.textarea || j.idx;
+            delete j.text;
+            delete j.textarea;
+            delete j.idx;
+          },
+        );
+
         delete v.createdAt;
         delete v.updatedAt;
-        delete v.text;
-        delete v.textarea;
-        delete v.idx;
-        // v.businessVendorField.informationType =
-        //   v.businessVendorField.informationType.id;
-        // v.businessVendorField.fieldType =
-        //   v.businessVendorField.fieldType.columnType;
-        // j.businessVendorField = j.businessVendorField.id;
+
         return v;
       });
 
       // 결과물이 group 아래 트리로 떨어져야 한다.
 
-      responseJson(res, [businessVendorQuery], method, 'success');
+      responseJson(res, businessVendorQuery, method, 'success');
     } catch (error) {
       tryCatch(res, error);
     }
@@ -490,6 +393,4 @@ export default {
   apiPost,
   apiPatch,
   apiDelete,
-  apiGetField,
-  apiGetInformationType,
 };

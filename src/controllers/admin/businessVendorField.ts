@@ -41,7 +41,7 @@ const CheckPermissionBusinessVendor = () =>
 
     businessVendorField.id = value;
     const r = await new Promise(async resolve => {
-      const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
+      const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
         admin,
       );
       if (!businessQuery) {
@@ -92,7 +92,7 @@ const CheckPermissionBusinessVendorChild = () =>
     businessVendorFieldChildNode.id = value;
 
     const r = await new Promise(async resolve => {
-      const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
+      const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
         admin,
       );
       if (!businessQuery) {

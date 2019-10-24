@@ -25,7 +25,7 @@ const businessVendorInformationPermission = () =>
     businessVendorFieldChildNode.id = value;
 
     return new Promise(async resolve => {
-      const businessQuery = await new ServiceBusinessPermission()._ByAdmin(
+      const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
         admin,
       );
       // console.log('businessQuery:', businessQuery);

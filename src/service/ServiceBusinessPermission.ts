@@ -15,7 +15,7 @@ export class ServiceBusinessPermission extends BaseService {
    * @param admin admin.id
    * @param business business.id
    */
-  public async _ByAdminWidthBusiness(admin: Admin, business: Business) {
+  public async _getByAdminWidthBusinessAdmin(admin: Admin, business: Business) {
     const query = await this.mysqlManager(Admin).findOne({
       where: { id: admin.id },
       relations: ['business'],
@@ -36,9 +36,10 @@ export class ServiceBusinessPermission extends BaseService {
    * Admin id 와 business id 로 business의 소유권이 있는지 체크
    * @param admin admin.id
    */
-  public _ByAdmin(admin: Admin) {
+  public _getBusinessByAdmin(admin: Admin) {
     const query = this.mysqlManager(Business).findOne({
-      // TODO 원래 엔티티를 통으로 보내주면 알아서 id를 매칭했는데 오늘 체크 해보니 아니다... 두번 체크 해보기
+      // 왜 아아디를 별도로 써주냐면, admin 객체에 각 필드마다 내용이 들어가 있어서 그 내용들이
+      // 같이 where 절로 검색하기 때문에 에러가 난다.
       where: { admin: admin.id },
     });
     return query;
