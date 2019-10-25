@@ -56,6 +56,12 @@ export default class ServiceUserVendor extends BaseService {
         'businessVendorFieldValues.businessVendorField.informationType',
         'businessVendorFieldValues.businessVendorField.fieldType',
         'businessVendorFieldValues.idx',
+        'businessVendorManagers',
+        'businessVendorManagers.businessVendorFieldManagerValues',
+        'businessVendorManagers.businessVendorFieldManagerValues.businessVendorField',
+        'businessVendorManagers.businessVendorFieldManagerValues.businessVendorField.informationType',
+        'businessVendorManagers.businessVendorFieldManagerValues.businessVendorField.fieldType',
+        'businessVendorManagers.businessVendorFieldManagerValues.idx',
       ],
     });
     return query;
