@@ -75,4 +75,5 @@ const apiGet = [
 
 export default {
   apiPatch,
+  apiGet,
 };

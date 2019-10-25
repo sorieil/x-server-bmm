@@ -188,7 +188,6 @@ export default class ServiceBusinessVendorManager extends BaseService {
         id: businessVendorFieldManagerValue.id,
       },
       relations: [
-        'businessVendor',
         'businessVendorField',
         'businessVendorField.fieldType',
         'businessVendorField.informationType',

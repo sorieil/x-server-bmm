@@ -168,3 +168,19 @@ export const CheckPermissionBuyerInformation = () =>
       }
     });
   });
+
+export const CheckPermissionBusinessUserManager = () => {
+  return param('permission').custom((value, { req }) => {
+    const admin = req.user.admins[0]; // passport 에서 주입한다.
+    const query = new ServiceBusinessPermission()._getBusinessByAdmin(admin);
+    return query.then((businessResult: Business) => {
+      if (businessResult) {
+        Object.assign(req.user, { business: businessResult });
+      } else {
+        return Promise.reject(
+          'You don`t have permission or first insert business information..',
+        );
+      }
+    });
+  });
+};

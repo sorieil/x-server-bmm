@@ -309,6 +309,7 @@ const apiPatch = [
     const businessVendorManagerValueQuery: BusinessVendorFieldManagerValue[] = [];
     for (const item of body) {
       const businessVendorManagerValue = new BusinessVendorFieldManagerValue();
+      console.log('field value id :', item.id);
       businessVendorManagerValue.id = item.id;
       const businessVendorFieldManagerValueQuery = await serviceBusinessVendorManager._getByVendorFieldManagerValue(
         businessVendorManagerValue,

@@ -241,7 +241,7 @@ connections(process.env)
     app.patch(
       '/api/v1/business-vendor/:vendorId/manager/:managerId',
       adminCheck,
-      ...businessVendorManager.apiPost,
+      ...businessVendorManager.apiPatch,
     );
 
     app.delete(
