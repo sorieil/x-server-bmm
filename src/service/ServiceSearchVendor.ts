@@ -43,7 +43,8 @@ export default class ServiceSearchVendor extends BaseService {
       // 키워드를 스트링으로 직열화 해준다.
       const keyword = businessVendorQuery.businessVendorFieldValues.reduce(
         (a: string, c: any) => {
-          let tempValue = c.text || c.textarea;
+          // vendor c.textarea; 원래는 포함 시켰으나 너무 길고, 문자열 입력에도 문제를 일으킴
+          let tempValue = c.text;
           // console.log('Type of a keyword: ', typeof a, a);
           if (!tempValue) return a;
           if (a) tempValue = ',' + tempValue;

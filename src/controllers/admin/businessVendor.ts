@@ -12,6 +12,7 @@ import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVe
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
+import ServiceBusinessVendorField from '../../service/ServiceBusinessVendorField';
 
 /**
  * @description
@@ -73,7 +74,7 @@ const CheckPermissionBusinessVendor = () =>
       }
 
       if (result) {
-        Object.assign(req.user, { vendor: result });
+        Object.assign(req.user, { vendor: result, business: business });
       } else {
         return Promise.reject('You are not authorized or have no data.');
       }
@@ -103,7 +104,7 @@ const apiGet = [
         delete j.createdAt;
         delete j.updatedAt;
 
-        j.value = j.text || j.textarea || j.idx;
+        j.value = j.text || j.textarea || j.idx.id;
 
         delete j.text;
         delete j.textarea;
@@ -420,10 +421,31 @@ const apiPatch = [
         businessVendorValue.businessVendor = vendor.id; // 미들웨어에서 가져옴
 
         // 기존 데이터 가져옴
-        const businessVendorFieldValueQuery = await service._getByVendorFieldValue(
+        let businessVendorFieldValueQuery = await service._getByVendorFieldValue(
           businessVendorValue,
         );
 
+        // 필드값이 없을 경우. 여기에서 데이터를 새로 저장 해야 한다.
+        if (!businessVendorFieldValueQuery) {
+          const serviceBusinessVendorField = new ServiceBusinessVendorField();
+          const businessVendorField = new BusinessVendorField();
+          businessVendorField.id = item.id;
+          businessVendorFieldValueQuery = new BusinessVendorFieldValue();
+          const newFieldType = await serviceBusinessVendorField._getWithBusiness(
+            businessVendorField,
+            req.user.business,
+          );
+
+          console.log(
+            'newFieldType:',
+            req.user.vendor,
+            newFieldType,
+            req.user.business,
+            item.id,
+          );
+          businessVendorFieldValueQuery.businessVendor = req.user.vendor;
+          businessVendorFieldValueQuery.businessVendorField = newFieldType;
+        }
         // 기존 데이터에서 필드 타입 가져옴
         const fieldType =
           businessVendorFieldValueQuery.businessVendorField.fieldType;

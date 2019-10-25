@@ -254,7 +254,7 @@ const apiPost = [
       console.log('Post result: ', businessVendorQuery);
 
       businessVendorQuery.map((v: any) => {
-        v.businessVendorFieldManagerValue.map(
+        v.businessVendorFieldManagerValues.map(
           (j: BusinessVendorFieldManagerValue) => {
             v.value = j.text || j.textarea || j.idx;
             delete j.text;
