@@ -81,8 +81,8 @@ export default class ServiceBusinessVendor extends BaseService {
     const serviceSearchVendor = new ServiceSearchVendor();
     // 여기에서는 밴더의 아이디를 받지 않는다.. value의 값으로 한다.
     // 업데이트시에는 밴더 아이디가 없다... 어떻게 해야 할까..?
-    console.log('query =>>>> \n', query);
-    console.log('BusinessVendorFieldValue =>>>> \n', businessVendorFieldValue);
+    // console.log('query =>>>> \n', query);
+    // console.log('BusinessVendorFieldValue =>>>> \n', businessVendorFieldValue);
     await serviceSearchVendor._updateBySelectBusinessVendor(
       businessVendorFieldValue[0].businessVendor,
     );

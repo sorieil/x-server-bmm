@@ -316,6 +316,8 @@ const apiPatch = [
       const fieldType =
         businessVendorFieldManagerValueQuery.businessVendorField.fieldType;
 
+      // TODO: 데이터가 비어 있는 경우 처리해줘야 한다.
+
       // 타입체크를 해서 타입에 따른 필드에 입력해준다.
       if (fieldType) {
         if (fieldType.columnType === 'text') {

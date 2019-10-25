@@ -454,9 +454,21 @@ const apiPatch = [
         const query = await service._postVendorFieldValue(
           businessVendorValueBucket,
         );
+
         query.map((v: any) => {
+          console.log('type:', v);
+          const columnType = v.businessVendorField.fieldType.columnType;
+
+          if (columnType === 'text') {
+            v.value = v.text || null;
+          } else if (columnType === 'textarea') {
+            v.value = v.textarea || null;
+          } else if (columnType === 'select_box') {
+            v.value = v.idx || null;
+          } else {
+            v.value = null;
+          }
           delete v.businessVendor;
-          v.value = v.text || v.textarea || v.idx;
           delete v.text;
           delete v.textarea;
           delete v.idx;
