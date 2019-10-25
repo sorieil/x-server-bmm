@@ -1,5 +1,7 @@
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
-import { BusinessVendorFieldType } from './../../service/ServiceBusinessVendorField';
+import ServiceBusinessVendorField, {
+  BusinessVendorFieldType,
+} from './../../service/ServiceBusinessVendorField';
 import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { Login } from '../../entity/mysql/entities/MysqlLogin';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
@@ -79,15 +81,25 @@ const apiGet = [
 
       delete query.createdAt;
       delete query.updatedAt;
-      query.businessVendorFieldValues.map((j: any) => {
-        delete j.createdAt;
-        delete j.updatedAt;
-        j.value = j.text || j.textarea || j.idx;
-        delete j.text;
-        delete j.textarea;
-        delete j.idx;
+      query.businessVendorFieldValues.map((v: any) => {
+        const columnType = v.businessVendorField.fieldType.columnType;
+        if (columnType === 'text') {
+          v.value = v.text || null;
+        } else if (columnType === 'textarea') {
+          v.value = v.textarea || null;
+        } else if (columnType === 'idx') {
+          v.value = v.idx || null;
+        } else {
+          v.value = null;
+        }
 
-        return j;
+        delete v.createdAt;
+        delete v.updatedAt;
+        delete v.text;
+        delete v.textarea;
+        delete v.idx;
+
+        return v;
       });
 
       responseJson(res, [query], method, 'success');
@@ -141,7 +153,17 @@ const apiGets = [
             v.companyName = j.text;
           }
 
-          j.value = j.text || j.textarea || j.idx;
+          const columnType = j.businessVendorField.fieldType.columnType;
+
+          if (columnType === 'text') {
+            j.value = j.text || null;
+          } else if (columnType === 'textarea') {
+            j.value = j.textarea || null;
+          } else if (columnType === 'idx') {
+            j.value = j.idx || null;
+          } else {
+            j.value = null;
+          }
 
           delete j.text;
           delete j.textarea;
@@ -340,17 +362,23 @@ const apiPost = [
       businessVendorQuery.businessCode = businessVendorQuery.businessCode
         .code as any;
       businessVendorQuery.businessVendorFieldValues.map((v: any) => {
+        const columnType = v.businessVendorField.fieldType.columnType;
+
+        if (columnType === 'text') {
+          v.value = v.text || null;
+        } else if (columnType === 'textarea') {
+          v.value = v.textarea || null;
+        } else if (columnType === 'idx') {
+          v.value = v.idx || null;
+        } else {
+          v.value = null;
+        }
+
         delete v.createdAt;
         delete v.updatedAt;
-        v.value = v.text || v.textarea || v.idx;
         delete v.text;
         delete v.textarea;
         delete v.idx;
-        v.businessVendorField.informationType =
-          v.businessVendorField.informationType.id;
-        v.businessVendorField.fieldType =
-          v.businessVendorField.fieldType.columnType;
-        // j.businessVendorField = j.businessVendorField.id;
         return v;
       });
 
@@ -410,9 +438,30 @@ const apiPatch = [
         businessVendorValue.businessVendor = vendor.id; // 미들웨어에서 가져옴
 
         // 기존 데이터 가져옴
-        const businessVendorFieldValueQuery = await service._getByVendorFieldValue(
+        let businessVendorFieldValueQuery = await service._getByVendorFieldValue(
           businessVendorValue,
         );
+
+        if (!businessVendorFieldValueQuery) {
+          const serviceBusinessVendorField = new ServiceBusinessVendorField();
+          const businessVendorField = new BusinessVendorField();
+          businessVendorField.id = item.id;
+          businessVendorFieldValueQuery = new BusinessVendorFieldValue();
+          const newFieldType = await serviceBusinessVendorField._getWithBusiness(
+            businessVendorField,
+            req.user.business,
+          );
+
+          console.log(
+            'newFieldType:',
+            req.user.vendor,
+            newFieldType,
+            req.user.business,
+            item.id,
+          );
+          businessVendorFieldValueQuery.businessVendor = req.user.vendor;
+          businessVendorFieldValueQuery.businessVendorField = newFieldType;
+        }
 
         // 기존 데이터에서 필드 타입 가져옴
         const fieldType =
@@ -456,14 +505,13 @@ const apiPatch = [
         );
 
         query.map((v: any) => {
-          console.log('type:', v);
           const columnType = v.businessVendorField.fieldType.columnType;
 
           if (columnType === 'text') {
             v.value = v.text || null;
           } else if (columnType === 'textarea') {
             v.value = v.textarea || null;
-          } else if (columnType === 'select_box') {
+          } else if (columnType === 'idx') {
             v.value = v.idx || null;
           } else {
             v.value = null;
