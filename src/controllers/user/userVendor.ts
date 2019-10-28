@@ -40,7 +40,7 @@ const CheckPermissionUserVendor = () =>
       // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
       business.id = req.user.business.id;
-      const query = await service._getWithBusinessVendor(
+      const query = await service._getBusinessVendorByBusinessVendorWithBusiness(
         businessVendor,
         business,
       );

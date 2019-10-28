@@ -46,7 +46,7 @@ export const CheckPermissionGetUserData = () => {
   return param('loginData').custom((value, { req }) => {
     const login = new Login();
     login.id = req.user.id; // passport 에서 주입 한다.
-    const query = new ServiceUserPermission()._byLogin(login);
+    const query = new ServiceUserPermission()._getUserByLogin(login);
     return query.then((userResult: User) => {
       if (userResult) {
         Object.assign(req.user, { user: userResult });
@@ -85,7 +85,7 @@ export const CheckPermissionAdminBusinessVendor = () =>
       // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
       business.id = req.user.business.id;
-      const query = await service._getWithBusinessVendor(
+      const query = await service._getBusinessVendorByBusinessVendorWithBusiness(
         businessVendor,
         business,
       );
@@ -182,5 +182,23 @@ export const CheckPermissionBusinessUserManager = () => {
         );
       }
     });
+  });
+};
+
+/**
+ * @description
+ * 유저가 바이어인지 매니저인지 체크를 한다. 기본값이 null인데 만약 user.type이 아무것도 설정이 안되어 있는 상태라면,
+ * 설정하라고 메세지를 보내줘야 한다.
+ * @target 유저
+ * @returns 유저가 타입을 가지고 있는지 체크한다.
+ */
+export const CheckPermissionUserType = () => {
+  return param('userType').custom((value, { req }) => {
+    console.log('Check permission user type:', req.user.users);
+    if (req.user.users.type === null) {
+      return Promise.reject(
+        'You don`t have a user type. Please input user type.',
+      );
+    }
   });
 };

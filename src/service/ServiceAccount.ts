@@ -44,8 +44,9 @@ export default class ServiceAccount extends BaseService {
         where: {
           login: bridgeQuery.login,
         },
+        relations: ['userBuyer', 'businessVendorManager'],
       });
-      user.id = userQuery.id;
+      Object.assign(user, userQuery);
 
       // const loginQuery = mysqlManager
       //     .getRepository(Login)
@@ -85,6 +86,19 @@ export default class ServiceAccount extends BaseService {
       user.isWithdrawal = mongoQuery.isWithdrawal ? 'yes' : 'no';
       user.createdAt = mongoQuery.createDt;
       user.profileImg = mongoQuery.profiles.profileImg;
+
+      // TODO: 바이어인지 매니저인지 설정해준다. 하지만 추후 매니저의 인증 방법이 달라 진다면,
+      // TODO: 웹에서 매니저를 인증하는 방식으로하고, 모바일에서는 모두 바이어로 설정 될 가능성도 있다.
+      // TODO: 추후 변경될 수 있다. user.type은 변경될거 같지 않음. ㅎㅎ
+      if (user.type === null) {
+        if (user.userBuyer) {
+          user.type = 'buyer';
+          console.log('buyer');
+        } else if (user.businessVendorManager) {
+          console.log('manager');
+          user.type = 'manager';
+        }
+      }
       // user.permission = permissionSave;
       // user.event = eventSave;
 
@@ -114,6 +128,7 @@ export default class ServiceAccount extends BaseService {
     } finally {
       // you need to release query runner which is manually created:
       await this.queryRunner.release();
+      console.log('user type:');
       return login;
     }
   }

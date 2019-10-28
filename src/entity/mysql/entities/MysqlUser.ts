@@ -1,6 +1,6 @@
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { UserEvent } from './MysqlUserEvent';
-import { Base, StatusTypeRole } from './MysqlBase';
+import { Base, StatusTypeRole, UserTypeRole } from './MysqlBase';
 import {
   Entity,
   Column,
@@ -70,4 +70,7 @@ export class User extends Base {
     },
   )
   businessVendorManager: BusinessVendorManager;
+
+  @Column({ type: 'enum', enum: ['buyer', 'manager', null], default: null })
+  type: UserTypeRole;
 }

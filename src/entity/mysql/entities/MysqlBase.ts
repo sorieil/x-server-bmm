@@ -10,10 +10,12 @@ import {
 } from 'typeorm';
 import { IoTJobsDataPlane } from 'aws-sdk';
 export type StatusTypeRole = 'no' | 'yes';
+export type UserTypeRole = 'buyer' | 'manager' | null;
 export class Base {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // 시간 설정에 대한 것.
   // @Column({
   //     type: 'timestamp',
   //     nullable: false,

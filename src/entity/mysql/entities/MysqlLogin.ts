@@ -1,15 +1,6 @@
-import { UserEvent } from './MysqlUserEvent';
 import { MongoBridge } from './MysqlMongoBridge';
 import { Base, StatusTypeRole } from './MysqlBase';
-import {
-  Entity,
-  Column,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { UserPermission } from './MysqlUserPermission';
+import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
 import { User } from './MysqlUser';
 @Entity()
 export class Login extends Base {

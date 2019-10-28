@@ -5,15 +5,14 @@ import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
 import {
-  CheckPermissionBusinessAdmin,
   CheckPermissionGetUserData,
+  CheckPermissionUserType,
 } from '../../util/permission';
 import { ServiceBusinessTimeList } from '../../service/ServiceBusinessTimeList';
 import moment = require('moment');
 
 const apiPatch = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
     param('timeListId')
       .not()
       .isEmpty()
@@ -30,6 +29,7 @@ const apiPatch = [
       responseJson(res, errors.array(), method, 'invalid');
       return;
     }
+
     const body = req.body;
     const businessMeetingTimeList = new BusinessMeetingTimeList();
     businessMeetingTimeList.id = req.params.timeListId;
@@ -56,7 +56,7 @@ const apiPatch = [
 
 const apiGet = [
   [
-    CheckPermissionGetUserData.apply(this),
+    CheckPermissionUserType.apply(this),
     check('date').custom((value, { req }) => {
       const date = moment(value).isValid();
       if (!date) {
@@ -68,22 +68,26 @@ const apiGet = [
   async (req: Request, res: Response) => {
     const method: RequestRole = req.method.toString() as any;
     const errors = validationResult(req);
+    try {
+      if (!errors.isEmpty()) {
+        responseJson(res, errors.array(), method, 'invalid');
+        return;
+      }
 
-    if (!errors.isEmpty()) {
-      responseJson(res, errors.array(), method, 'invalid');
-      return;
+      // TODO 여기에서 중요한 것은 바이어의 데이터와 매니저의 데이터를 구분지어야 한다.
+      console.log('user type:', req.user);
+
+      const service = new ServiceBusinessTimeList();
+      const business = new Business();
+      business.id = req.user.business.id;
+      console.log('business :', business);
+
+      // const query = await service._getBusinessMeetingTImeByBusiness(business);
+
+      responseJson(res, [], method, 'success');
+    } catch (error) {
+      tryCatch(res, error);
     }
-
-    // TODO 여기에서 중요한 것은 바이어의 데이터와 매니저의 데이터를 구분지어야 한다.
-    console.log('user type:', req.user);
-
-    const service = new ServiceBusinessTimeList();
-    const business = new Business();
-    business.id = req.user.business.id;
-
-    const query = await service._getBusinessMeetingTImeByBusiness(business);
-
-    responseJson(res, [query], method, 'success');
   },
 ];
 
