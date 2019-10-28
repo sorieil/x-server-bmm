@@ -61,12 +61,6 @@ export class User extends Base {
   @OneToOne(type => UserBuyer, userBuyer => userBuyer.user, { nullable: true })
   userBuyer: UserBuyer;
 
-  @OneToOne(
-    type => BusinessVendorManager,
-    businessVendorManager => businessVendorManager.user,
-  )
-  businessVenderManager: BusinessVendorManager;
-
   // 밴더 아이디가 있으면, 매니저 없으면(null) 바이어
   @OneToOne(
     type => BusinessVendorManager,
@@ -75,6 +69,5 @@ export class User extends Base {
       nullable: true,
     },
   )
-  @JoinTable()
   businessVendorManager: BusinessVendorManager;
 }

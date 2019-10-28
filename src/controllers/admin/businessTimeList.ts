@@ -29,7 +29,7 @@ const apiPost = [
       const business = new Business();
       business.id = req.user.business.id;
       const businessMeetingTime = new BusinessMeetingTime();
-      const businessMeetingTimeQuery: BusinessMeetingTime = await service.getByBusiness(
+      const businessMeetingTimeQuery: BusinessMeetingTime = await service._getBusinessMeetingTImeByBusiness(
         business,
       );
 
@@ -176,7 +176,7 @@ const apiGets = [
     const business = new Business();
     business.id = req.user.business.id;
 
-    const query = await service.getByBusiness(business);
+    const query = await service._getBusinessMeetingTImeByBusiness(business);
     let cursor = 0;
     const times: any[] = query.businessMeetingTimeLists.reduce(
       (aa, cc, index) => {

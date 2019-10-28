@@ -24,8 +24,6 @@ export class BusinessVendorManager extends Base {
   businessVendor: BusinessVendor;
   // 나중에 매너저로 된다면, 여기에 유저의 아이디가 들어 가야 한다. 그래서 매칭을 시켜준다.
   // 유저의 아이디가 들어 간다면, 매니저 매칭 완료
-  @OneToOne(type => User, user => user.businessVendorManager, {
-    nullable: true,
-  })
+  @OneToOne(type => User, user => user.businessVendorManager)
   user: User;
 }

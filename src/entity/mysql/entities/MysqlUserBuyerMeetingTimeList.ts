@@ -12,9 +12,6 @@ export class UserBuyerMeetingTimeList extends Base {
   @Column('varchar', { nullable: false })
   dateBlock: string;
 
-  @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
-  use: StatusTypeRole;
-
   @Column('text', { nullable: true })
   memo: string;
 

@@ -43,7 +43,10 @@ const apiGet = [
     const service = new ServiceUserManager();
     const businessVendor = new BusinessVendor();
     businessVendor.id = req.user.vendor.id;
-    const query = await service._getByNameWithVendor(name, businessVendor);
+    const query = await service._getBusinessVendorFieldValueByNameWithBusinessVendor(
+      name,
+      businessVendor,
+    );
 
     // 입력으로(post) 나온 값중에서 담당자의 항목을 유지해서 데이터를 뽑아줘야 함.
     // 수정시(patch)에는 value 의 id 값 기준으로 수정을 해주면되고,

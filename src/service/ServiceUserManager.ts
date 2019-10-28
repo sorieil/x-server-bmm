@@ -8,11 +8,13 @@ export default class ServiceUserManager extends BaseService {
   }
 
   /**
+   * @description
    * 유저의 이름으로 관리자 페이지에서 입력한 밴더의 담당자 조회
    * @param name 담당자명
    * @param businessVendor 벤더의 아이디
+   * @returns BusinessVendorFieldValue[]
    */
-  public async _getByNameWithVendor(
+  public async _getBusinessVendorFieldValueByNameWithBusinessVendor(
     name: string,
     businessVendor: BusinessVendor,
   ) {
@@ -28,7 +30,7 @@ export default class ServiceUserManager extends BaseService {
   /**
    * 전체 정보를 가져온다.
    */
-  public async gets() {
+  public async _getsCode() {
     const query = this.mysqlManager(Code).find();
     return query;
   }

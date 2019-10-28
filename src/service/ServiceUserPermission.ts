@@ -13,6 +13,7 @@ export default class ServiceUserPermission extends BaseService {
       where: {
         login: login,
       },
+      relations: ['businessVendorManager'],
     });
     return query;
   }

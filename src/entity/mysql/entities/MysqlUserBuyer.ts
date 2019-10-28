@@ -34,3 +34,6 @@ export default class UserBuyer extends Base {
   )
   userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
 }
+
+// TODO 현재 미팅 리스트 가져오는걸 하고 있었다. 바이어의 정보와 미팅정보를 가져오는 방법을
+// 고민중이였다.

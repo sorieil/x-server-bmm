@@ -102,6 +102,30 @@ const apiGet = [
         return v;
       });
 
+      query.businessVendorManagers.map((v: any) => {
+        v.businessVendorFieldManagerValues.map((j: any) => {
+          const columnType = j.businessVendorField.fieldType.columnType;
+          if (columnType === 'text') {
+            j.value = j.text || null;
+          } else if (columnType === 'textarea') {
+            j.value = j.textarea || null;
+          } else if (columnType === 'idx') {
+            j.value = j.idx || null;
+          } else {
+            j.value = null;
+          }
+
+          delete j.createdAt;
+          delete j.updatedAt;
+          delete j.text;
+          delete j.textarea;
+          delete j.idx;
+
+          return j;
+        });
+        return v;
+      });
+
       responseJson(res, [query], method, 'success');
     } catch (error) {
       tryCatch(res, error);

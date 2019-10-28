@@ -34,7 +34,7 @@ export class ServiceBusinessTimeList extends BaseService {
     return query;
   }
 
-  public getByBusiness(business: Business) {
+  public _getBusinessMeetingTImeByBusiness(business: Business) {
     const query = this.mysqlManager(BusinessMeetingTime).findOne({
       where: {
         business: business,
