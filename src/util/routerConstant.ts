@@ -1,3 +1,7 @@
+/**
+ * @description
+ * 중복 라우팅을 방지 하고, 정렬을 위해서
+ */
 export enum RouterRole {
   '/api/v1/business' = '/api/v1/business',
   '/api/v1/business-meeting-room' = '/api/v1/business-meeting-room',
