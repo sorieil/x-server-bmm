@@ -1,8 +1,9 @@
+import { RouterRole } from './util/routerConstant';
 import { responseJson, RequestRole } from './util/common';
 import 'reflect-metadata';
 import bodyParser from 'body-parser';
 import compression from 'compression'; // compresses requests
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response, Router } from 'express';
 import passport from 'passport';
 import errorHandler from 'errorhandler';
 import { auth } from './util/passport';
@@ -29,6 +30,8 @@ import businessVendorManager from './controllers/admin/businessVendorManager';
 import userVendorField from './controllers/user/userVendorField';
 import userBusiness from './controllers/user/userBusiness';
 import userBusinessTimeList from './controllers/user/userBusinessTimeList';
+import userBuyer from './controllers/user/userBuyer';
+import userVendorManager from './controllers/user/userVendorManager';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -85,264 +88,342 @@ connections(process.env)
      */
     // == admin
     const adminCheck = auth('xsync-admin').isAuthenticate;
-    app.get('/api/v1/business', adminCheck, ...business.apiGet);
-    app.post('/api/v1/business', adminCheck, ...business.apiPost);
-    app.patch('/api/v1/business', adminCheck, ...business.apiPost);
-    app.delete('/api/v1/business', adminCheck, ...business.apiDelete);
+    app.get(RouterRole['/api/v1/business'], adminCheck, ...business.apiGet);
+    app.post(RouterRole['/api/v1/business'], adminCheck, ...business.apiPost);
+    app.patch(RouterRole['/api/v1/business'], adminCheck, ...business.apiPost);
+    app.delete(
+      RouterRole['/api/v1/business'],
+      adminCheck,
+      ...business.apiDelete,
+    );
 
     // meeting room
     app.post(
-      '/api/v1/business-meeting-room',
+      RouterRole['/api/v1/business-meeting-room'],
       adminCheck,
       ...businessMeetingRoom.apiPost,
     );
     app.get(
-      '/api/v1/business-meeting-room',
+      RouterRole['/api/v1/business-meeting-room'],
       adminCheck,
       ...businessMeetingRoom.apiGets,
     );
     app.get(
-      '/api/v1/business-meeting-room/meetingRoomId',
+      RouterRole['/api/v1/business-meeting-room/:meetingRoomId'],
       adminCheck,
       ...businessMeetingRoom.apiGet,
     );
     app.patch(
-      '/api/v1/business-meeting-room/:meetingRoomId',
+      RouterRole['/api/v1/business-meeting-room/:meetingRoomId'],
       adminCheck,
       ...businessMeetingRoom.apiPost,
     );
     app.delete(
-      '/api/v1/business-meeting-room/:meetingRoomId',
+      RouterRole['/api/v1/business-meeting-room/:meetingRoomId'],
       adminCheck,
       ...businessMeetingRoom.apiDelete,
     );
 
     // meeting time
-    app.get('/api/v1/business-time', adminCheck, ...businessTime.apiGet);
-    app.post('/api/v1/business-time', adminCheck, ...businessTime.apiPost);
+    app.get(
+      RouterRole['/api/v1/business-time'],
+      adminCheck,
+      ...businessTime.apiGet,
+    );
+    app.post(
+      RouterRole['/api/v1/business-time'],
+      adminCheck,
+      ...businessTime.apiPost,
+    );
     app.patch('/api/v1/business-time', adminCheck, ...businessTime.apiPost);
 
     // Meeting time list
     app.get(
-      '/api/v1/business-time-list',
+      RouterRole['/api/v1/business-time-list'],
       adminCheck,
       ...businessTimeList.apiGets,
     );
     app.post(
-      '/api/v1/business-time-list',
+      RouterRole['/api/v1/business-time-list'],
       adminCheck,
       ...businessTimeList.apiPost,
     );
     app.patch(
-      '/api/v1/business-time-list/:timeListId',
+      RouterRole['/api/v1/business-time-list/:timeListId'],
       adminCheck,
       ...businessTimeList.apiPatch,
     );
 
     // vendor field init
     app.post(
-      '/api/v1/business-vendor-field-init',
+      RouterRole['/api/v1/business-vendor-field-init'],
       adminCheck,
       ...businessVendorField.apiInit,
     );
 
     // vendor field
     app.post(
-      '/api/v1/business-vendor-field',
+      RouterRole['/api/v1/business-vendor-field'],
       adminCheck,
       ...businessVendorField.apiPost,
     );
     app.get(
-      '/api/v1/business-vendor-field/:fieldId',
+      RouterRole['/api/v1/business-vendor-field/:fieldId'],
       adminCheck,
       ...businessVendorField.apiGet,
     );
     app.get(
-      '/api/v1/business-vendor-field',
+      RouterRole['/api/v1/business-vendor-field'],
       adminCheck,
       ...businessVendorField.apiGets,
     );
     app.patch(
-      '/api/v1/business-vendor-field/:fieldId',
+      RouterRole['/api/v1/business-vendor-field/:fieldId'],
       adminCheck,
       ...businessVendorField.apiPatch,
     );
     app.delete(
-      '/api/v1/business-vendor-field/:fieldId',
+      RouterRole['/api/v1/business-vendor-field/:fieldId'],
       adminCheck,
       ...businessVendorField.apiDelete,
     );
     app.delete(
-      '/api/v1/business-vendor-field/:fieldId/child/:fieldChildNodeId',
+      RouterRole[
+        '/api/v1/business-vendor-field/:fieldId/child/:fieldChildNodeId'
+      ],
       adminCheck,
       ...businessVendorField.apiDeleteChildNode,
     );
     app.delete(
-      '/api/v1/business-vendor-field-all',
+      RouterRole['/api/v1/business-vendor-field-all'],
       adminCheck,
       ...businessVendorField.apiDeleteAll,
     );
 
     // vendor field child node
     app.delete(
-      '/api/v1/business-vendor-field-child/:fieldChildNodeId',
+      RouterRole['/api/v1/business-vendor-field-child/:fieldChildNodeId'],
       adminCheck,
       ...businessVendorFieldChildNode.apiDelete,
     );
 
     // Business vendor
-    app.post('/api/v1/business-vendor', adminCheck, ...businessVendor.apiPost);
+    app.post(
+      RouterRole['/api/v1/business-vendor'],
+      adminCheck,
+      ...businessVendor.apiPost,
+    );
     app.patch(
-      '/api/v1/business-vendor/:vendorId',
+      RouterRole['/api/v1/business-vendor/:vendorId'],
       adminCheck,
       ...businessVendor.apiPatch,
     );
     app.delete(
-      '/api/v1/business-vendor/:vendorId',
+      RouterRole['/api/v1/business-vendor/:vendorId'],
       adminCheck,
       ...businessVendor.apiDelete,
     );
     app.get(
-      '/api/v1/business-vendor/:vendorId',
+      RouterRole['/api/v1/business-vendor/:vendorId'],
       adminCheck,
       ...businessVendor.apiGet,
     );
     app.get(
-      '/api/v1/business-vendor/:vendorId/information-type/:informationType',
+      RouterRole[
+        '/api/v1/business-vendor/:vendorId/information-type/:informationType'
+      ],
       adminCheck,
       ...businessVendor.apiGetInformationType,
     );
-    app.get('/api/v1/business-vendor', adminCheck, ...businessVendor.apiGets);
     app.get(
-      '/api/v1/business-vendor-field-list/:informationTypeId',
+      RouterRole['/api/v1/business-vendor'],
+      adminCheck,
+      ...businessVendor.apiGets,
+    );
+    app.get(
+      RouterRole['/api/v1/business-vendor-field-list/:informationTypeId'],
       adminCheck,
       ...businessVendor.apiGetField,
     );
 
     // Business vendor manager
     app.get(
-      '/api/v1/business-vendor/:vendorId/manager/:managerId',
+      RouterRole['/api/v1/business-vendor/:vendorId/manager/:managerId'],
       adminCheck,
       ...businessVendorManager.apiGet,
     );
 
     app.get(
-      '/api/v1/business-vendor/:vendorId/manager',
+      RouterRole['/api/v1/business-vendor/:vendorId/manager'],
       adminCheck,
       ...businessVendorManager.apiGets,
     );
 
     app.post(
-      '/api/v1/business-vendor/:vendorId/manager',
+      RouterRole['/api/v1/business-vendor/:vendorId/manager'],
       adminCheck,
       ...businessVendorManager.apiPost,
     );
 
     app.patch(
-      '/api/v1/business-vendor/:vendorId/manager/:managerId',
+      RouterRole['/api/v1/business-vendor/:vendorId/manager/:managerId'],
       adminCheck,
       ...businessVendorManager.apiPatch,
     );
 
     app.delete(
-      '/api/v1/business-vendor/:vendorId/manager/:managerId',
+      RouterRole['/api/v1/business-vendor/:vendorId/manager/:managerId'],
       adminCheck,
       ...businessVendorManager.apiDelete,
     );
 
     // Business code get
-    app.get('/api/v1/business-code', adminCheck, ...businessCode.apiGet);
+    app.get(
+      RouterRole['/api/v1/business-code'],
+      adminCheck,
+      ...businessCode.apiGet,
+    );
 
     // code table
-    app.get('/api/v1/code/:category', ...code.apiGet);
+    app.get(RouterRole['/api/v1/code/:category'], ...code.apiGet);
     app.get('/api/v1/code', ...code.apiGet);
 
     // Temperature token
-    app.post('/api/v1/token', ...api.generateToken);
-    app.get('/api/v1/token-verify', ...api.tokenVerify);
+    app.post(RouterRole['/api/v1/token'], ...api.generateToken);
+    app.get(RouterRole['/api/v1/token-verify'], ...api.tokenVerify);
 
     // == user ================================================================================
     const clientCheck = auth('xsync-user').isAuthenticate;
 
     // Vendor
-    app.get('/api/v1/user/vendor', clientCheck, ...userVendor.apiGets);
-    app.get('/api/v1/user/vendor/:vendorId', clientCheck, ...userVendor.apiGet);
-    app.post('/api/v1/user/vendor', clientCheck, ...userVendor.apiPost);
+    app.get(
+      RouterRole['/api/v1/user/vendor'],
+      clientCheck,
+      ...userVendor.apiGets,
+    );
+    app.get(
+      RouterRole['/api/v1/user/vendor/:vendorId'],
+      clientCheck,
+      ...userVendor.apiGet,
+    );
+    app.post(
+      RouterRole['/api/v1/user/vendor'],
+      clientCheck,
+      ...userVendor.apiPost,
+    );
     app.patch(
-      '/api/v1/user/vendor/:vendorId',
+      RouterRole['/api/v1/user/vendor/:vendorId'],
       clientCheck,
       ...userVendor.apiPatch,
     );
     // Vendor code
     app.post(
-      '/api/v1/user/vendor/:vendorId/verify-vendor-code',
+      RouterRole['/api/v1/user/vendor/:vendorId/verify-vendor-code'],
       clientCheck,
       ...userVendor.apiPostVerifyVendorCode,
     );
 
     // Favorite
-    app.get('/api/v1/user/favorite', clientCheck, ...userFavorite.apiGets);
+    app.get(
+      RouterRole['/api/v1/user/favorite'],
+      clientCheck,
+      ...userFavorite.apiGets,
+    );
     app.post(
-      '/api/v1/user/favorite/:vendorId',
+      RouterRole['/api/v1/user/favorite/:vendorId'],
       clientCheck,
       ...userFavorite.apiPost,
     );
     app.delete(
-      '/api/v1/user/favorite/:vendorId',
+      RouterRole['/api/v1/user/favorite/:vendorId'],
       clientCheck,
       ...userFavorite.apiDelete,
     );
 
     // Meeting reservation
     app.get(
-      '/api/v1/user/meeting-reservation/:blockId',
+      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
     app.patch(
-      '/api/v1/user/meeting-reservation/:blockId',
+      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
     app.delete(
-      '/api/v1/user/meeting-reservation/:blockId',
+      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
 
     // Meeting Lists
     app.get(
-      '/api/v1/user/meeting-reservation/:blockId',
+      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
 
     // Vendor schedule
     app.get(
-      '/api/v1/user/schedule',
+      RouterRole['/api/v1/user/schedule'],
       clientCheck,
       ...userBusinessTimeList.apiGet,
     );
     app.get(
-      '/api/v1/user/schedule/:date',
+      RouterRole['/api/v1/user/schedule/:date'],
       clientCheck,
       ...userBusinessTimeList.apiGet,
     );
 
     app.patch(
-      '/api/v1/user/schedule/:date',
+      RouterRole['/api/v1/user/schedule/:date'],
       clientCheck,
       ...userBusinessTimeList.apiPatch,
     );
 
     // Vendor filter lists
-    app.get('/api/v1/user/filter', clientCheck, ...userVendorFilter.apiGets);
+    app.get(
+      RouterRole['/api/v1/user/filter'],
+      clientCheck,
+      ...userVendorFilter.apiGets,
+    );
 
     // Vendor field
-    app.get('/api/v1/user/field', clientCheck, ...userVendorField.apiGets);
+    app.get(
+      RouterRole['/api/v1/user/field'],
+      clientCheck,
+      ...userVendorField.apiGets,
+    );
 
     // Business
-    app.get('/api/v1/user/business', clientCheck, ...userBusiness.apiGet);
+    app.get(
+      RouterRole['/api/v1/user/business'],
+      clientCheck,
+      ...userBusiness.apiGet,
+    );
+
+    // Buyer
+    app.get(RouterRole['/api/v1/user/buyer'], clientCheck, ...userBuyer.apiGet);
+    app.post(
+      RouterRole['/api/v1/user/buyer'],
+      clientCheck,
+      ...userBuyer.apiPost,
+    );
+    app.patch(
+      RouterRole['/api/v1/user/buyer'],
+      clientCheck,
+      ...userBuyer.apiPost,
+    );
+
+    // UserVendor manager
+    app.get(
+      RouterRole['/api/v1/user/buyer'],
+      clientCheck,
+      ...userVendorManager.apiGet,
+    );
+    // app.post('/api/v1/user/buyer', clientCheck, ...userVendorManager.apiPost);
+    // app.patch('/api/v1/user/buyer/:businessVendorManagerId', clientCheck, ...userVendorManager.apiPatch);
 
     /**
      * Error Handler. Provides full stack - remove for production

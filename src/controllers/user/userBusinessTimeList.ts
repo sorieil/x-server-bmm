@@ -62,7 +62,6 @@ const apiGet = [
       if (!date) {
         return Promise.reject('Invalid inserted date');
       }
-      return true;
     }),
   ],
   async (req: Request, res: Response) => {

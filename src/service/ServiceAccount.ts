@@ -37,7 +37,7 @@ export default class ServiceAccount extends BaseService {
     });
 
     if (bridgeQuery) {
-      console.log('User 업데이트');
+      // console.log('User 업데이트');
       mongoBridge.id = bridgeQuery.id;
       login.id = bridgeQuery.login.id;
       const userQuery = await this.queryRunner.manager.findOne(User, {
@@ -121,14 +121,13 @@ export default class ServiceAccount extends BaseService {
       await this.queryRunner.commitTransaction();
     } catch (err) {
       // since we have errors lets rollback changes we made
-      logger.error(err);
+      logger.error('Transaction error: ', err);
       console.error('유저 회원정보 트랜젝션 에러');
       await this.queryRunner.rollbackTransaction();
       return err;
     } finally {
       // you need to release query runner which is manually created:
       await this.queryRunner.release();
-      console.log('user type:');
       return login;
     }
   }
@@ -154,7 +153,7 @@ export default class ServiceAccount extends BaseService {
           adminLogin: bridgeQuery.adminLogin,
         },
       });
-      admin.id = adminQuery.id;
+      Object.assign(admin, adminQuery);
     } else {
       // console.log('추가', bridgeQuery);
     }
@@ -182,7 +181,7 @@ export default class ServiceAccount extends BaseService {
       await this.queryRunner.commitTransaction();
     } catch (err) {
       // since we have errors lets rollback changes we made
-      logger.error(err);
+      logger.error('Transaction error: ', err);
       console.error('관리자 회원정보 트랜젝션 에러');
       await this.queryRunner.rollbackTransaction();
       return err;

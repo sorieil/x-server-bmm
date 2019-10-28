@@ -5,7 +5,6 @@ import passport from 'passport';
 import { NextFunction, Request, Response } from 'express';
 import logger from './logger';
 import ServiceAccount from '../service/ServiceAccount';
-import { tryCatch } from './common';
 import ServiceBusinessEventBridge from '../service/ServiceBusinessEventBridge';
 // 발급되는 토큰의 타입들( 기존 2.0 api 에서 발급)
 export type secretNameType =
@@ -21,12 +20,10 @@ export const auth = (secretName: secretNameType) => {
     secretOrKey: secretName,
     algorithms: ['HS256'],
   };
-  // (req: Request, res: Response, next: NextFunction) => {
+
   passport.use(
     secretName,
     new Strategy(opts, async (jwt_payload, done) => {
-      // console.log('jwt_payload:', jwt_payload);
-
       try {
         const serviceAccount = new ServiceAccount();
         const level = jwt_payload.level;
@@ -39,7 +36,6 @@ export const auth = (secretName: secretNameType) => {
         }
         // 토큰의 상태가 유저인지 관리자인지 체크 한다.
         // 관리자 모드와, 앱/웹 모드를 구분 짓는다.
-        // console.log('Token level:', level);
 
         if (level === 'eUser') {
           // 유저 모드
@@ -106,7 +102,7 @@ export const auth = (secretName: secretNameType) => {
 
         // TODO 여기에다가 로그를 기록해야 한다.
       } catch (error) {
-        console.log(error);
+        console.log('Passport: ', error);
         return done(undefined, undefined);
       }
     }),
@@ -125,7 +121,6 @@ export const auth = (secretName: secretNameType) => {
 
   const isAuthenticate = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(secretName, { session: false }, (err, user, info) => {
-      // console.log('\n info:', info);
       if (err === 'dbError') {
         res.status(500).json({
           resCode: 500,
@@ -152,6 +147,8 @@ export const auth = (secretName: secretNameType) => {
       } else {
         // Pass through
         // req.user = user;
+        // 여기에서 login 으로 할 수 있는데 login 은 express 의 내부 함수이기도 해서 user 로 했다.
+        // 그리서 req 로 불러 올때  req.user.users[0] or req.user.admin[0] 이런식으로 사용해야 한다.
         Object.assign(req, { user: user });
         // 맨 마지막에 실행 되게 하기 위해서
         setTimeout(() => {

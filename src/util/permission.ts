@@ -157,7 +157,7 @@ export const CheckPermissionBuyerInformation = () =>
 
     // 여기에서 굳이 프로미스를 사용한 이유는 통일성을 가져가기 위해서이다.
     return new Promise(async resolve => {
-      const query = await service._getByUser(user);
+      const query = await service._getUserBuyerByUser(user);
       // 여기에서 또 다른 로직이 들어 갈 수 있는 여지를 코드 스타일이다.
       resolve(query);
     }).then(result => {
@@ -194,10 +194,10 @@ export const CheckPermissionBusinessUserManager = () => {
  */
 export const CheckPermissionUserType = () => {
   return param('userType').custom((value, { req }) => {
-    console.log('Check permission user type:', req.user.users);
-    if (req.user.users.type === null) {
+    console.log('Check permission user type:', req.user.users[0].userBuyer);
+    if (req.user.users[0].type === 'null') {
       return Promise.reject(
-        'You don`t have a user type. Please input user type.',
+        'You did not have completed user profile. Please complete your profile.',
       );
     }
   });
