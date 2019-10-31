@@ -21,6 +21,11 @@ const CheckPermissionBuyerInformation = () =>
       }
     });
   });
+
+/**
+ * @description
+ * 바이어면, 여기에서 기본 정보를 가져온다.
+ */
 const apiGet = [
   [CheckPermissionBuyerInformation.apply(this)],
   async (req: Request, res: Response) => {
@@ -38,6 +43,12 @@ const apiGet = [
   },
 ];
 
+/**
+ * @description
+ * 바이어의 정보를 입력하거나 수정 할때 사용한다.
+ * user.type 값이 없는 상태에서 처음 입력하게 되면,
+ * 바이어로 등록된다. user.type = 'buyer' 로 등록된다.
+ */
 const apiPost = [
   [
     body('name')

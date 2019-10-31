@@ -20,7 +20,7 @@ import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
  *
  * @target admin
  */
-export const CheckPermissionBusinessAdmin = () => {
+export const CheckPermissionBusinessForAdmin = () => {
   return param('permission').custom((value, { req }) => {
     const admin = req.user.admins[0]; // passport 에서 주입한다.
     const query = new ServiceBusinessPermission()._getBusinessByAdmin(admin);
@@ -42,7 +42,7 @@ export const CheckPermissionBusinessAdmin = () => {
  * 로그인 정보로 유저의 정보를 불어오는 함수이다.
  * @target 유저
  */
-export const CheckPermissionGetUserData = () => {
+export const CheckPermissionGetUserDataForUser = () => {
   return param('loginData').custom((value, { req }) => {
     const login = new Login();
     login.id = req.user.id; // passport 에서 주입 한다.
@@ -68,7 +68,7 @@ export const CheckPermissionGetUserData = () => {
  * @target 관리자
  * @returns vendor
  */
-export const CheckPermissionAdminBusinessVendor = () =>
+export const CheckPermissionAdminBusinessVendorForAdmin = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
@@ -106,7 +106,7 @@ export const CheckPermissionAdminBusinessVendor = () =>
  * @target 관리자
  * @returns meetingRoom
  */
-export const CheckPermissionBusinessMeetingRoomById = () =>
+export const CheckPermissionBusinessMeetingRoomByIdForAdmin = () =>
   param('meetingRoomId').custom((value, { req }) => {
     const meetingRoom = new BusinessMeetingRoom();
     const business = new Business();
@@ -150,7 +150,7 @@ export const CheckPermissionBusinessMeetingRoomById = () =>
  * @target user
  * @returns buyer
  */
-export const CheckPermissionBuyerInformation = () =>
+export const CheckPermissionBuyerInformationForUser = () =>
   param('userId').custom((value, { req }) => {
     const service = new ServiceUserBuyerPermission();
     const user = req.user;
@@ -169,22 +169,6 @@ export const CheckPermissionBuyerInformation = () =>
     });
   });
 
-export const CheckPermissionBusinessUserManager = () => {
-  return param('permission').custom((value, { req }) => {
-    const admin = req.user.admins[0]; // passport 에서 주입한다.
-    const query = new ServiceBusinessPermission()._getBusinessByAdmin(admin);
-    return query.then((businessResult: Business) => {
-      if (businessResult) {
-        Object.assign(req.user, { business: businessResult });
-      } else {
-        return Promise.reject(
-          'You don`t have permission or first insert business information..',
-        );
-      }
-    });
-  });
-};
-
 /**
  * @description
  * 유저가 바이어인지 매니저인지 체크를 한다. 기본값이 null인데 만약 user.type이 아무것도 설정이 안되어 있는 상태라면,
@@ -192,7 +176,7 @@ export const CheckPermissionBusinessUserManager = () => {
  * @target 유저
  * @returns 유저가 타입을 가지고 있는지 체크한다.
  */
-export const CheckPermissionUserType = () => {
+export const CheckPermissionUserTypeForUser = () => {
   return param('userType').custom((value, { req }) => {
     console.log('Check permission user type:', req.user.users[0].userBuyer);
     if (req.user.users[0].type === 'null') {

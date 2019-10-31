@@ -27,6 +27,7 @@ export class BusinessVendorManager extends Base {
   @ManyToOne(
     type => BusinessVendor,
     businessVendor => businessVendor.businessVendorManagers,
+    { onDelete: 'CASCADE' },
   )
   businessVendor: BusinessVendor;
   // 나중에 매너저로 된다면, 여기에 유저의 아이디가 들어 가야 한다. 그래서 매칭을 시켜준다.

@@ -37,4 +37,5 @@ export enum RouterRole {
   '/api/v1/user/field' = '/api/v1/user/field',
   '/api/v1/user/business' = '/api/v1/user/business',
   '/api/v1/user/buyer' = '/api/v1/user/buyer',
+  '/api/v1/user' = '/api/v1/user',
 }

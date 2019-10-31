@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import ServiceBusinessCode from '../../service/ServiceBusinessCode';
 import { responseJson, RequestRole } from '../../util/common';
-import { CheckPermissionBusinessAdmin } from '../../util/permission';
+import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import { validationResult } from 'express-validator';
 
 const apiGet = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     const method: RequestRole = req.method.toString() as any;
     const errors = validationResult(req);

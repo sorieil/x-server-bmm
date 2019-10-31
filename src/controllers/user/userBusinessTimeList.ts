@@ -5,8 +5,8 @@ import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
 import {
-  CheckPermissionGetUserData,
-  CheckPermissionUserType,
+  CheckPermissionGetUserDataForUser,
+  CheckPermissionUserTypeForUser,
 } from '../../util/permission';
 import { ServiceBusinessTimeList } from '../../service/ServiceBusinessTimeList';
 import moment = require('moment');
@@ -56,7 +56,7 @@ const apiPatch = [
 
 const apiGet = [
   [
-    CheckPermissionUserType.apply(this),
+    CheckPermissionUserTypeForUser.apply(this),
     check('date').custom((value, { req }) => {
       const date = moment(value).isValid();
       if (!date) {

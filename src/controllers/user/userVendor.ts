@@ -553,4 +553,11 @@ const apiPatch = [
     }
   },
 ];
-export default { apiGet, apiGets, apiPostVerifyVendorCode, apiPost, apiPatch };
+
+export default {
+  apiGet,
+  apiGets,
+  apiPostVerifyVendorCode,
+  apiPost,
+  apiPatch,
+};

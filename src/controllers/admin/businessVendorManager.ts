@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 import { validationResult, param } from 'express-validator';
-import { CheckPermissionBusinessAdmin } from '../../util/permission';
+import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
@@ -127,7 +127,7 @@ const apiGet = [
 
 const apiGets = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     CheckPermissionBusinessVendor.apply(this),
   ],
   async (req: Request, res: Response) => {
@@ -175,7 +175,7 @@ const apiGets = [
  */
 const apiPost = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     param('vendorId')
       .not()
       .isEmpty(),

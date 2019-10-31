@@ -4,12 +4,12 @@ import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMe
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
 import { check, validationResult, param } from 'express-validator';
-import { CheckPermissionBusinessAdmin } from '../../util/permission';
+import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import { ServiceBusinessTimeList } from '../../service/ServiceBusinessTimeList';
 
 const apiPost = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     check('timeLists')
       .not()
       .isEmpty()
@@ -120,7 +120,7 @@ const apiPost = [
 
 const apiPatch = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     param('timeListId')
       .not()
       .isEmpty()
@@ -162,7 +162,7 @@ const apiPatch = [
 ];
 
 const apiGets = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     const method: RequestRole = req.method.toString() as any;
     const errors = validationResult(req);

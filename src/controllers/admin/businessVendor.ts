@@ -4,8 +4,8 @@ import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBus
 import { BusinessVendor } from './../../entity/mysql/entities/MysqlBusinessVendor';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { validationResult, param } from 'express-validator';
-import { CheckPermissionBusinessAdmin } from '../../util/permission';
+import { validationResult, param, body } from 'express-validator';
+import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
@@ -34,7 +34,7 @@ const CheckExistingBusinessVendorFieldType = () =>
  * @requires vendorId
  *
  * @description
- * 벤더의 아이디로 관리자가 소유 하고 있는 밴더 인지 체크하고, 밴더 정보를 리턴한다.
+ * 비즈니스 아이디로 관리자가 소유 하고 있는 밴더 인지 체크하고, 밴더 정보를 리턴한다.
  *
  * @target 관리자
  *
@@ -128,7 +128,7 @@ const apiGet = [
 
 const apiGetField = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     param('informationTypeId')
       .not()
       .isEmpty(),
@@ -184,7 +184,7 @@ const apiGetField = [
 ];
 
 const apiGets = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -260,7 +260,7 @@ const apiGetInformationType = [
  * 밴더 값 입력 / 수정
  */
 const apiPost = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -503,7 +503,11 @@ const apiPatch = [
 ];
 
 const apiDelete = [
-  [CheckPermissionBusinessVendor.apply(this)],
+  CheckPermissionBusinessForAdmin.apply(this),
+  body('data')
+    .not()
+    .isEmpty()
+    .isArray(),
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;
@@ -513,18 +517,43 @@ const apiDelete = [
         responseJson(res, errors.array(), method, 'invalid');
         return;
       }
-
+      const vendors = req.body.data;
       const service = new ServiceBusinessVendor();
-      const businessVendor = new BusinessVendor();
-      businessVendor.id = req.user.vendor.id;
-      const query = await service.delete(businessVendor);
 
-      responseJson(res, [query], method, 'delete');
+      const deleteBucket: BusinessVendor[] = [];
+
+      for (let vendor of vendors) {
+        console.log('vendor:', typeof vendor, parseInt(vendor, 10));
+        const businessVendor = new BusinessVendor();
+        businessVendor.id = parseInt(vendor, 10);
+        businessVendor.business = req.user.business;
+        deleteBucket.push(businessVendor);
+      }
+
+      console.log('deleteBucket:', deleteBucket);
+
+      const query = service.remove(deleteBucket);
+
+      query
+        .then(result => {
+          responseJson(res, [result], method, 'delete');
+        })
+        .catch(() => {
+          responseJson(
+            res,
+            ['존재 하지 않는 밴더가 포함되어 있습니다.'],
+            method,
+            'invalid',
+          );
+          return;
+        });
     } catch (error) {
       tryCatch(res, error);
     }
   },
 ];
+
+// TODO : 밴더에서 빈값을 입력하면, 입력은 성공하나, 에러가 다시 나오고, 업데이트를 계속 하게 되면, keyword 필드에서 데이터가 너무 길게 들어간다는 에러가 또 나온다.
 
 export default {
   apiGet,

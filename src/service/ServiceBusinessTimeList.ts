@@ -54,9 +54,7 @@ export class ServiceBusinessTimeList extends BaseService {
 
   public deleteAllMeetingTimeList(businessMeetingTime: BusinessMeetingTime) {
     const query = this.mysqlManager(BusinessMeetingTimeList).delete({
-      where: {
-        businessMeetingTime: businessMeetingTime,
-      },
+      businessMeetingTime: businessMeetingTime,
     });
 
     return query;

@@ -127,8 +127,9 @@ export default class ServiceBusinessVendor extends BaseService {
     return query;
   }
 
-  public async delete(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVendor).delete(businessVendor);
+  public remove(businessVendors: BusinessVendor[]) {
+    const query = this.mysqlManager(BusinessVendor).remove(businessVendors);
+    console.log('remove result:', query);
     return query;
   }
 

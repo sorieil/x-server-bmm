@@ -32,6 +32,7 @@ import userBusiness from './controllers/user/userBusiness';
 import userBusinessTimeList from './controllers/user/userBusinessTimeList';
 import userBuyer from './controllers/user/userBuyer';
 import userVendorManager from './controllers/user/userVendorManager';
+import user from './controllers/user/user';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -219,7 +220,7 @@ connections(process.env)
       ...businessVendor.apiPatch,
     );
     app.delete(
-      RouterRole['/api/v1/business-vendor/:vendorId'],
+      RouterRole['/api/v1/business-vendor'],
       adminCheck,
       ...businessVendor.apiDelete,
     );
@@ -422,6 +423,9 @@ connections(process.env)
       clientCheck,
       ...userVendorManager.apiGet,
     );
+
+    // User type
+    app.get(RouterRole['/api/v1/user'], clientCheck, ...user.apiGet);
     // app.post('/api/v1/user/buyer', clientCheck, ...userVendorManager.apiPost);
     // app.patch('/api/v1/user/buyer/:businessVendorManagerId', clientCheck, ...userVendorManager.apiPatch);
 

@@ -7,8 +7,8 @@ import { BusinessMeetingRoom } from '../../entity/mysql/entities/MysqlBusinessMe
 import { check, validationResult, param } from 'express-validator';
 import { ServiceBusinessMeetingRoom } from '../../service/ServiceBusinessMeetingRoom';
 import {
-  CheckPermissionBusinessAdmin,
-  CheckPermissionBusinessMeetingRoomById,
+  CheckPermissionBusinessForAdmin,
+  CheckPermissionBusinessMeetingRoomByIdForAdmin,
 } from '../../util/permission';
 
 /**
@@ -16,7 +16,7 @@ import {
  */
 const apiPost = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     param('meetingRoomId')
       .optional()
       .isNumeric(),
@@ -84,7 +84,7 @@ const apiPost = [
  * Get business meeting room lists
  */
 const apiGets = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -109,7 +109,7 @@ const apiGets = [
  * Get business meeting room lists
  */
 const apiGet = [
-  [CheckPermissionBusinessMeetingRoomById.apply(this)],
+  [CheckPermissionBusinessMeetingRoomByIdForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -134,7 +134,7 @@ const apiGet = [
  * Delete business meeting room
  */
 const apiDelete = [
-  [CheckPermissionBusinessMeetingRoomById.apply(this)],
+  [CheckPermissionBusinessMeetingRoomByIdForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const method: RequestRole = req.method.toString() as any;

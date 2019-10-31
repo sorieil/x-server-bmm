@@ -13,7 +13,7 @@ import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { ServiceBusinessPermission } from '../../service/ServiceBusinessPermission';
 import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVendorFieldChildNode';
 import { Code } from '../../entity/mysql/entities/MysqlCode';
-import { CheckPermissionBusinessAdmin } from '../../util/permission';
+import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 
@@ -127,7 +127,7 @@ const CheckPermissionBusinessVendorChild = () =>
     }
   });
 const apiInit = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -212,7 +212,7 @@ const apiInit = [
 ];
 const apiPost = [
   [
-    CheckPermissionBusinessAdmin.apply(this),
+    CheckPermissionBusinessForAdmin.apply(this),
     check('name')
       .not()
       .isEmpty(),
@@ -447,7 +447,7 @@ const apiPatch = [
 ];
 
 const apiGets = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -546,7 +546,7 @@ const apiGet = [
 ];
 
 const apiDeleteAll = [
-  [CheckPermissionBusinessAdmin.apply(this)],
+  [CheckPermissionBusinessForAdmin.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
