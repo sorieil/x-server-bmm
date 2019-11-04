@@ -5,7 +5,7 @@ DIRECTORY=server-xsync-api-2.0-bmm
 
 cd /home/centos
 
-if ! command -v node > /dev/null; then
+if ! command -v node >/dev/null; then
   sudo npm install -g yarn
 fi
 
@@ -16,11 +16,11 @@ fi
 cd $DIRECTORY
 
 printf "================================\n "
-git pull > /dev/null
+git pull >/dev/null
 printf "  Git pull done \n "
 printf "================================\n "
 
-yarn --ignore-engines > /dev/null
+yarn --ignore-engines >/dev/null
 printf "  Yarn Done \n "
 printf "================================\n "
 
@@ -32,7 +32,7 @@ npx pm2 link k503tcw92v6rrc9 26epi1y5ctn6xd2 'BMM API(ec2)'
 printf "  PM2 plus setup \n "
 printf "================================\n "
 
-yarn start > /dev/null
+yarn start >/dev/null
 printf "  Server start \n"
 printf "================================\n "
 

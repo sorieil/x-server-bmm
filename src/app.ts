@@ -3,7 +3,7 @@ import { responseJson, RequestRole } from './util/common';
 import 'reflect-metadata';
 import bodyParser from 'body-parser';
 import compression from 'compression'; // compresses requests
-import express, { NextFunction, Request, Response, Router } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import errorHandler from 'errorhandler';
 import { auth } from './util/passport';
