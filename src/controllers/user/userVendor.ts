@@ -1,9 +1,5 @@
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
-import ServiceBusinessVendorField, {
-  BusinessVendorFieldType,
-} from './../../service/ServiceBusinessVendorField';
-import { BusinessVendorFavorite } from '../../entity/mysql/entities/MysqlBusinessVendorFavorite';
-import { Login } from '../../entity/mysql/entities/MysqlLogin';
+import ServiceBusinessVendorField from './../../service/ServiceBusinessVendorField';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
 import { validationResult, param, check, body } from 'express-validator';
 import { Request, Response } from 'express';
@@ -23,14 +19,14 @@ import { BusinessVendorFieldChildNode } from '../../entity/mysql/entities/MysqlB
  * @description
  * 벤더의 아이디로 유저가 밴더를 소유 했는지
  */
-const CheckPermissionUserVendor = () =>
+const CheckPermissionBusinessVendorForUser = () =>
   param('vendorId').custom((value, { req }) => {
     const businessVendor = new BusinessVendor();
     const service = new ServiceUserPermission();
     const business = new Business();
 
     if (!value) {
-      return Promise.reject('Invalid insert data.');
+      return Promise.reject('Need vendor id.');
     }
 
     businessVendor.id = value;
@@ -62,7 +58,7 @@ const CheckPermissionUserVendor = () =>
  *
  */
 const apiGet = [
-  [CheckPermissionUserVendor.apply(this)],
+  [CheckPermissionBusinessVendorForUser.apply(this)],
   async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
@@ -229,7 +225,7 @@ const apiGets = [
 
 const apiPostVerifyVendorCode = [
   [
-    CheckPermissionUserVendor.apply(this),
+    CheckPermissionBusinessVendorForUser.apply(this),
     body('vendorCode').custom((value, { req }) => {
       const service = new ServiceUserVendor();
       const businessVendor = new BusinessVendor();
@@ -415,7 +411,7 @@ const apiPost = [
 
 const apiPatch = [
   [
-    CheckPermissionUserVendor.apply(this),
+    CheckPermissionBusinessVendorForUser.apply(this),
     body('data')
       .not()
       .isEmpty()
@@ -476,13 +472,13 @@ const apiPatch = [
             req.user.business,
           );
 
-          console.log(
-            'newFieldType:',
-            req.user.vendor,
-            newFieldType,
-            req.user.business,
-            item.id,
-          );
+          // console.log(
+          //   'newFieldType:',
+          //   req.user.vendor,
+          //   newFieldType,
+          //   req.user.business,
+          //   item.id,
+          // );
           businessVendorFieldValueQuery.businessVendor = req.user.vendor;
           businessVendorFieldValueQuery.businessVendorField = newFieldType;
         }

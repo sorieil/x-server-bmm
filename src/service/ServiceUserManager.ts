@@ -2,9 +2,19 @@ import { BusinessVendorFieldValue } from './../entity/mysql/entities/MysqlBusine
 import { BaseService } from './BaseService';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
+import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
 export default class ServiceUserManager extends BaseService {
   constructor() {
     super();
+  }
+
+  public post(
+    businessVendorFieldManagerValue: BusinessVendorFieldManagerValue,
+  ) {
+    const query = this.mysqlManager(BusinessVendorFieldManagerValue).save(
+      businessVendorFieldManagerValue,
+    );
+    return query;
   }
 
   /**

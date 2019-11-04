@@ -101,10 +101,17 @@ const apiGet = [
       delete query.updatedAt;
       query.businessCode = query.businessCode.code;
       query.businessVendorFieldValues.map((j: any) => {
+        console.log(j);
         delete j.createdAt;
         delete j.updatedAt;
 
-        j.value = j.text || j.textarea || j.idx.id;
+        // 빈값이 있는 경우도  false로 보기 때문에 분기 처리를 해줘야 한다.
+        j.value =
+          j.text !== null
+            ? j.text
+            : null || j.textarea !== null
+            ? j.textarea
+            : null || j.idx.id;
 
         delete j.text;
         delete j.textarea;
@@ -351,7 +358,6 @@ const apiPost = [
       }
 
       // 매니저는 별도로 저장한다.
-
       await service._postVendorFieldValue(query);
       const businessVendorQuery = await service.get(businessVendor);
       businessVendorQuery.businessCode = businessVendorQuery.businessCode
@@ -370,6 +376,8 @@ const apiPost = [
         // j.businessVendorField = j.businessVendorField.id;
         return v;
       });
+
+      // 타임 테이블을 저장한다.
 
       responseJson(res, [businessVendorQuery], method, 'success');
     } catch (error) {
@@ -521,7 +529,7 @@ const apiDelete = [
       const service = new ServiceBusinessVendor();
 
       const deleteBucket: BusinessVendor[] = [];
-
+      console.log('vendors:', vendors);
       for (let vendor of vendors) {
         console.log('vendor:', typeof vendor, parseInt(vendor, 10));
         const businessVendor = new BusinessVendor();
@@ -530,13 +538,14 @@ const apiDelete = [
         deleteBucket.push(businessVendor);
       }
 
-      console.log('deleteBucket:', deleteBucket);
+      console.log('deleteBucket:', deleteBucket.length);
 
       const query = service.remove(deleteBucket);
 
       query
         .then(result => {
-          responseJson(res, [result], method, 'delete');
+          console.log('삭제된 데이터가 있는지: ', result.length);
+          responseJson(res, result, method, 'delete');
         })
         .catch(() => {
           responseJson(

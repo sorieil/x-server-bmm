@@ -7,6 +7,7 @@ import {
   OneToOne,
   JoinColumn,
   OneToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './MysqlUser';
 
@@ -21,7 +22,7 @@ export default class UserBuyer extends Base {
   @Column('varchar')
   email: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true, default: null })
   profileImage: string;
 
   @OneToOne(type => User, user => user.userBuyer, { onDelete: 'CASCADE' })

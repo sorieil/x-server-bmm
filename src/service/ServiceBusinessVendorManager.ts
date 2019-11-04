@@ -5,6 +5,7 @@ import { BaseService } from './BaseService';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Code } from '../entity/mysql/entities/MysqlCode';
 import { BusinessVendorFieldManagerValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldManagerValue';
+import { User } from '../entity/mysql/entities/MysqlUser';
 
 export default class ServiceBusinessVendorManager extends BaseService {
   constructor() {
@@ -193,6 +194,12 @@ export default class ServiceBusinessVendorManager extends BaseService {
         'businessVendorField.informationType',
       ],
     });
+    return query;
+  }
+
+  public _changeUserTypeManager(user: User) {
+    user.type = 'manager';
+    const query = this.mysqlManager(User).save(user);
     return query;
   }
 }

@@ -1,3 +1,5 @@
+import { BusinessVendorMeetingTimeList } from './../entity/mysql/entities/MysqlBusinessVendorMeetingTimeList';
+import { BusinessMeetingTimeList } from './../entity/mysql/entities/MysqlBusinessMeetingTimeList';
 import { BusinessVendorFieldValue } from '../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
@@ -161,5 +163,23 @@ export default class ServiceBusinessVendor extends BaseService {
     });
 
     return query;
+  }
+
+  public async cloneAtBusinessTimeTableLists(
+    businessVendor: BusinessVendor,
+    business: Business,
+  ) {
+    const cloneTarget = await this.mysqlManager(BusinessMeetingTimeList).find({
+      where: { business: business },
+    });
+
+    // for(const item )
+    // todo 데이터를 불러와서 for을 돌려서 비즈니스미팅타임리스트를 복사 한다.
+    // 복사를 하는데 use 의 부모 상태 값 변경에 따른 일괄 업데이트를 처리 해줘야 한다.
+    // 부모에도 OneToOne을 해줘야 하나?
+
+    const query = this.mysqlManager(BusinessVendorMeetingTimeList).save(
+      cloneTarget,
+    );
   }
 }

@@ -36,7 +36,7 @@ import user from './controllers/user/user';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
-
+// Setup sentry.
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: 'https://06f4e243004948ea805a2f3c7709e7ac@sentry.io/1503535',
@@ -55,6 +55,8 @@ connections(process.env)
     const app = express();
     // Express configuration
     app.set('port', process.env.PORT || 3003);
+
+    // Active sentry when deployed.
     if (process.env.NODE_ENV === 'production') {
       app.use(Sentry.Handlers.requestHandler());
       // app.use(
@@ -65,6 +67,7 @@ connections(process.env)
       // );
     }
 
+    // Cross browsing free open.
     app.use(
       cors({
         origin: '*',
@@ -72,7 +75,10 @@ connections(process.env)
       }),
     );
 
+    // Traffic compress.
     app.use(compression());
+
+    // Auto convert body parse
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(
       bodyParser.urlencoded({
@@ -80,14 +86,14 @@ connections(process.env)
         extended: true,
       }),
     );
+    // Default secure guard
     app.use(helmet());
-
     app.use(passport.initialize());
 
     /**
      * Primary app routes.
      */
-    // == admin
+    // == Admin router
     const adminCheck = auth('xsync-admin').isAuthenticate;
     app.get(RouterRole['/api/v1/business'], adminCheck, ...business.apiGet);
     app.post(RouterRole['/api/v1/business'], adminCheck, ...business.apiPost);
@@ -293,7 +299,7 @@ connections(process.env)
     app.post(RouterRole['/api/v1/token'], ...api.generateToken);
     app.get(RouterRole['/api/v1/token-verify'], ...api.tokenVerify);
 
-    // == user ================================================================================
+    // User router ================================================================================
     const clientCheck = auth('xsync-user').isAuthenticate;
 
     // Vendor
@@ -417,11 +423,23 @@ connections(process.env)
       ...userBuyer.apiPost,
     );
 
-    // UserVendor manager
+    // User Vendor manager
     app.get(
-      RouterRole['/api/v1/user/buyer'],
+      RouterRole['/api/v1/user/vendor-manager'],
       clientCheck,
       ...userVendorManager.apiGet,
+    );
+
+    app.post(
+      RouterRole['/api/v1/user/vendor-manager/:vendorId'],
+      clientCheck,
+      ...userVendorManager.apiPost,
+    );
+
+    app.patch(
+      RouterRole['/api/v1/user/vendor-manager/:vendorManagerId'],
+      clientCheck,
+      ...userVendorManager.apiPatch,
     );
 
     // User type

@@ -52,7 +52,7 @@ export default class ServiceAccount extends BaseService {
       //     .getRepository(Login)
       //     .find({ where: { id: bridge.login.id, relations: ['user', 'user.permission', 'user.event'] } });
     } else {
-      console.log('User 추가', bridgeQuery);
+      console.log('User 추가 됐습니다.', bridgeQuery);
     }
 
     // 퍼미션 정리
@@ -93,9 +93,9 @@ export default class ServiceAccount extends BaseService {
       if (user.type === null) {
         if (user.userBuyer) {
           user.type = 'buyer';
-          console.log('buyer');
+          // console.log('buyer');
         } else if (user.businessVendorManager) {
-          console.log('manager');
+          // console.log('manager');
           user.type = 'manager';
         }
       }

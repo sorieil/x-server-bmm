@@ -1,5 +1,6 @@
+import { BusinessVendor } from './../entity/mysql/entities/MysqlBusinessVendor';
+import { ServiceBusinessPermission } from './../service/ServiceBusinessPermission';
 import { param } from 'express-validator';
-import { ServiceBusinessPermission } from '../service/ServiceBusinessPermission';
 import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
@@ -8,7 +9,6 @@ import { User } from '../entity/mysql/entities/MysqlUser';
 import { BusinessMeetingRoom } from '../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { ServiceBusinessMeetingRoom } from '../service/ServiceBusinessMeetingRoom';
 import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
-import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 
 /**
  * @description
@@ -183,6 +183,55 @@ export const CheckPermissionUserTypeForUser = () => {
       return Promise.reject(
         'You did not have completed user profile. Please complete your profile.',
       );
+    }
+  });
+};
+
+/**
+ * @description
+ * 유저가 매니저로 등록을 하지 않았다면, 등록되지 않은 유저라고 표현해줘야 한다.
+ * @target 유저
+ * @returns express-validation
+ */
+export const CheckPermissionBusienssVendorManagerForUser = () => {
+  return param('businessVendorManagerId').custom((value, { req }) => {
+    console.log(req.user.users[0]);
+    const user = req.user.users[0];
+    console.log(
+      'CheckPermissionBusienssVendorManagerForUser user :',
+      user.businessVendorManager.id,
+    );
+    if (!user.businessVendorManager.id) {
+      return Promise.reject('You are not manager.');
+    } else {
+      return Promise.resolve(true);
+    }
+  });
+};
+
+/**
+ * @description
+ * 파라미터로 받은 vendorId 가 존재하는 vendorId 인지 활동중인 비즈니스와 같이 체크 한다.
+ * @target 유저
+ * @returns express validation
+ */
+export const CheckPermissionBusinessVendorForUser = () => {
+  return param('vendorId').custom(async (value, { req }) => {
+    const serviceUserPermission = new ServiceUserPermission();
+    const business = req.user.business;
+    const businessVendor = new BusinessVendor();
+    businessVendor.id = value;
+    console.log('business:', req.user.business);
+    console.log('businessVendor:', value);
+    const query = await serviceUserPermission._getBusinessVendorByBusinessVendorWithBusiness(
+      businessVendor,
+      business,
+    );
+
+    console.log('vendor id:', query);
+
+    if (!query) {
+      return Promise.reject('This vendor id does not exist.');
     }
   });
 };

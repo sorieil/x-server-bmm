@@ -1,14 +1,7 @@
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { UserEvent } from './MysqlUserEvent';
 import { Base, StatusTypeRole, UserTypeRole } from './MysqlBase';
-import {
-  Entity,
-  Column,
-  OneToMany,
-  ManyToOne,
-  OneToOne,
-  JoinTable,
-} from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, OneToOne } from 'typeorm';
 import { UserPermission } from './MysqlUserPermission';
 import { Login } from './MysqlLogin';
 import UserBuyer from './MysqlUserBuyer';
