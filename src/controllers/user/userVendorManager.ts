@@ -34,12 +34,26 @@ const apiGet = [
       );
 
       query.businessVendorFieldManagerValues.map((v: any) => {
-        v.value =
-          v.text !== null
-            ? v.text
-            : null || v.textarea !== null
-            ? v.textarea
-            : null || v.idx.id;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType].id || null;
+        } else {
+          v.value = v[fieldType] || null;
+        }
+        delete v.text;
+        delete v.textarea;
+        delete v.idx;
+        return v;
+      });
+
+      query.businessVendor.businessVendorFieldValues.map((v: any) => {
+        console.log(v);
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType] || null;
+        } else {
+          v.value = v[fieldType] || null;
+        }
 
         delete v.text;
         delete v.textarea;
@@ -128,14 +142,17 @@ const apiPost = [
       );
 
       businessVendorQuery.map((v: any) => {
-        v.businessVendorFieldManagerValues.map(
-          (j: BusinessVendorFieldManagerValue) => {
-            v.value = j.text || j.textarea || j.idx;
-            delete j.text;
-            delete j.textarea;
-            delete j.idx;
-          },
-        );
+        v.businessVendorFieldManagerValues.map((j: any) => {
+          const fieldType = j.businessVendorField.fieldType.columnType;
+          if (fieldType === 'idx') {
+            v.value = j[fieldType].id || null;
+          } else {
+            v.value = j[fieldType] || null;
+          }
+          delete j.text;
+          delete j.textarea;
+          delete j.idx;
+        });
 
         delete v.createdAt;
         delete v.updatedAt;
@@ -157,9 +174,11 @@ const apiPost = [
   },
 ];
 
+// TODO: 변경하려고 하는 밴더 매니저의 정보에 권한이 있는지 체크 해야 한다.
+// 밑에 vendorManagerId는 그때 사용하면된다. 지우지마세용~
 const apiPatch = [
   [
-    param('managerId')
+    param('vendorManagerId')
       .not()
       .isEmpty(),
   ],
@@ -173,16 +192,16 @@ const apiPatch = [
     }
 
     const serviceBusinessVendorManager = new ServiceBusinessVendorManager();
-    const businessVendor = new BusinessVendor();
+    // const businessVendor = new BusinessVendor();
     const body: {
       id: number;
-      businessVendorField: number;
       value: string;
     }[] = req.body.data;
 
     // 밴더 인증후 밴더 아이디 지정
-    const vendor = req.user.vendor;
-    businessVendor.id = vendor.id;
+    // const vendor = req.user.vendor;
+    // console.log('vendor::', vendor);
+    // businessVendor.id = vendor.id;
 
     const businessVendorManagerValueQuery: BusinessVendorFieldManagerValue[] = [];
     for (const item of body) {
@@ -209,7 +228,7 @@ const apiPatch = [
       } else {
         responseJson(
           res,
-          [{ message: `${item.businessVendorField} dose net exist.` }],
+          [{ message: `${item.id} dose net exist.` }],
           method,
           'invalid',
         );
@@ -227,7 +246,12 @@ const apiPatch = [
         businessVendorManagerValueQuery,
       );
       query.map((v: any) => {
-        v.value = v.text || v.textarea || v.idx;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType].id || null;
+        } else {
+          v.value = v[fieldType] || null;
+        }
         delete v.text;
         delete v.textarea;
         delete v.idx;

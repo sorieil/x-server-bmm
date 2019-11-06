@@ -78,15 +78,11 @@ const apiGet = [
       delete query.createdAt;
       delete query.updatedAt;
       query.businessVendorFieldValues.map((v: any) => {
-        const columnType = v.businessVendorField.fieldType.columnType;
-        if (columnType === 'text') {
-          v.value = v.text || null;
-        } else if (columnType === 'textarea') {
-          v.value = v.textarea || null;
-        } else if (columnType === 'idx') {
-          v.value = v.idx || null;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType] || null;
         } else {
-          v.value = null;
+          v.value = v[fieldType] || null;
         }
 
         delete v.createdAt;
@@ -384,14 +380,11 @@ const apiPost = [
       businessVendorQuery.businessVendorFieldValues.map((v: any) => {
         const columnType = v.businessVendorField.fieldType.columnType;
 
-        if (columnType === 'text') {
-          v.value = v.text || null;
-        } else if (columnType === 'textarea') {
-          v.value = v.textarea || null;
-        } else if (columnType === 'idx') {
-          v.value = v.idx || null;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType] || null;
         } else {
-          v.value = null;
+          v.value = v[fieldType] || null;
         }
 
         delete v.createdAt;
@@ -401,6 +394,12 @@ const apiPost = [
         delete v.idx;
         return v;
       });
+
+      // 타임 테이블을 저장한다.
+      await service.cloneFormBusinessTimeTableListsToBusinessVendor(
+        businessVendorQuery,
+        business,
+      );
 
       responseJson(res, [businessVendorQuery], method, 'success');
     } catch (error) {
@@ -525,17 +524,13 @@ const apiPatch = [
         );
 
         query.map((v: any) => {
-          const columnType = v.businessVendorField.fieldType.columnType;
-
-          if (columnType === 'text') {
-            v.value = v.text || null;
-          } else if (columnType === 'textarea') {
-            v.value = v.textarea || null;
-          } else if (columnType === 'idx') {
-            v.value = v.idx || null;
+          const fieldType = v.businessVendorField.fieldType.columnType;
+          if (fieldType === 'idx') {
+            v.value = v[fieldType] || null;
           } else {
-            v.value = null;
+            v.value = v[fieldType] || null;
           }
+
           delete v.businessVendor;
           delete v.text;
           delete v.textarea;

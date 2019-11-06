@@ -15,6 +15,7 @@ import {
 import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessVendorFieldValue } from './MysqlBusinessVendorFieldValue';
 import SearchVendor from './MysqlSearchVendor';
+import { BusinessVendorMeetingTimeList } from './MysqlBusinessVendorMeetingTimeList';
 
 @Entity()
 export class BusinessVendor extends Base {
@@ -49,4 +50,11 @@ export class BusinessVendor extends Base {
     businessVendorManager => businessVendorManager.businessVendor,
   )
   businessVendorManagers: BusinessVendorManager[];
+
+  @OneToMany(
+    type => BusinessVendorMeetingTimeList,
+    businessVendorMeetingTimeList =>
+      businessVendorMeetingTimeList.businessVendor,
+  )
+  businessVendorMeetingTimeLists: BusinessVendorMeetingTimeList[];
 }

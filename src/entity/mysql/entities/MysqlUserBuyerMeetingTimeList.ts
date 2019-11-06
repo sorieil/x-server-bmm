@@ -1,31 +1,41 @@
-import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
-import { Base, StatusTypeRole } from './MysqlBase';
-import { Entity, Column, ManyToOne, OneToOne } from 'typeorm';
+import { Base } from './MysqlBase';
+import { Entity, ManyToOne, OneToOne } from 'typeorm';
 import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 import UserBuyer from './MysqlUserBuyer';
+import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
 
 @Entity()
 export class UserBuyerMeetingTimeList extends Base {
-  @Column('varchar', { nullable: false })
-  timeBlock: string;
+  // @Column('varchar', { nullable: false })
+  // timeBlock: string;
 
-  @Column('varchar', { nullable: false })
-  dateBlock: string;
+  // @Column('varchar', { nullable: false })
+  // dateBlock: string;
 
-  @Column('text', { nullable: true })
-  memo: string;
+  // TODO: 여기에서 비즈니스 주최자가 타임 블럭을 비활성화 시키면, 바이어도 못하게 되어야 하는데
+  // TODO:  밴더는 그걸 다시 수정 할 수 있는 구조로 되어 있다. 논리적 오류.
+  // @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
+  // use: StatusTypeRole;
 
   @OneToOne(
     type => BusinessMeetingRoomReservation,
     businessMeetingRoomReservation =>
       businessMeetingRoomReservation.userBuyerMeetingTimeList,
   )
-  businessMeetingRoomReservation: BusinessMeetingRoom;
+  businessMeetingRoomReservation: BusinessMeetingRoomReservation;
+
+  @ManyToOne(
+    type => BusinessMeetingTimeList,
+    businessMeetingTimeList =>
+      businessMeetingTimeList.userBuyerMeetingTimeLists,
+    { onDelete: 'CASCADE' },
+  )
+  businessMeetingTimeList: BusinessMeetingTimeList;
 
   @ManyToOne(
     type => UserBuyer,
     userBuyer => userBuyer.userBuyerMeetingTimeLists,
-    { nullable: true },
+    { nullable: true, onDelete: 'CASCADE' },
   )
   userBuyer: UserBuyer;
 }

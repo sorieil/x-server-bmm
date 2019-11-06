@@ -22,6 +22,12 @@ export default class ServiceUser extends BaseService {
         id: businessVendorManager.id,
       },
       relations: [
+        'businessVendor',
+        'businessVendor.businessVendorFieldValues',
+        'businessVendor.businessVendorFieldValues.idx',
+        'businessVendor.businessVendorFieldValues.businessVendorField',
+        'businessVendor.businessVendorFieldValues.businessVendorField.fieldType',
+        'businessVendor.businessVendorFieldValues.businessVendorField.informationType',
         'businessVendorFieldManagerValues',
         'businessVendorFieldManagerValues.businessVendorField',
         'businessVendorFieldManagerValues.businessVendorField.informationType',

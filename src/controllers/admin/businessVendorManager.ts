@@ -254,14 +254,17 @@ const apiPost = [
       console.log('Post result: ', businessVendorQuery);
 
       businessVendorQuery.map((v: any) => {
-        v.businessVendorFieldManagerValues.map(
-          (j: BusinessVendorFieldManagerValue) => {
-            v.value = j.text || j.textarea || j.idx;
-            delete j.text;
-            delete j.textarea;
-            delete j.idx;
-          },
-        );
+        v.businessVendorFieldManagerValues.map((j: any) => {
+          const fieldType = j.businessVendorField.fieldType.columnType;
+          if (fieldType === 'idx') {
+            v.value = j[fieldType].id || null;
+          } else {
+            v.value = j[fieldType] || null;
+          }
+          delete j.text;
+          delete j.textarea;
+          delete j.idx;
+        });
 
         delete v.createdAt;
         delete v.updatedAt;
@@ -349,7 +352,12 @@ const apiPatch = [
         businessVendorManagerValueQuery,
       );
       query.map((v: any) => {
-        v.value = v.text || v.textarea || v.idx;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType].id || null;
+        } else {
+          v.value = v[fieldType] || null;
+        }
         delete v.text;
         delete v.textarea;
         delete v.idx;

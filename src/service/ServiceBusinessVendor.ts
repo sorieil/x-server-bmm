@@ -165,21 +165,46 @@ export default class ServiceBusinessVendor extends BaseService {
     return query;
   }
 
-  public async cloneAtBusinessTimeTableLists(
+  public async cloneFormBusinessTimeTableListsToBusinessVendor(
     businessVendor: BusinessVendor,
     business: Business,
   ) {
-    const cloneTarget = await this.mysqlManager(BusinessMeetingTimeList).find({
-      where: { business: business },
+    // 검증 요소 필요함. 중복 입력 방지 기능
+    const check = await this.mysqlManager(BusinessVendorMeetingTimeList).find({
+      where: {
+        businessVendor: businessVendor,
+      },
     });
 
-    // for(const item )
-    // todo 데이터를 불러와서 for을 돌려서 비즈니스미팅타임리스트를 복사 한다.
-    // 복사를 하는데 use 의 부모 상태 값 변경에 따른 일괄 업데이트를 처리 해줘야 한다.
-    // 부모에도 OneToOne을 해줘야 하나?
+    if (check.length === 0) {
+      const cloneTarget = await this.mysqlManager(BusinessMeetingTimeList).find(
+        {
+          where: { business: business },
+        },
+      );
 
-    const query = this.mysqlManager(BusinessVendorMeetingTimeList).save(
-      cloneTarget,
-    );
+      // for(const item )
+      // todo 데이터를 불러와서 for을 돌려서 비즈니스미팅타임리스트를 복사 한다.
+      // 복사를 하는데 use 의 부모 상태 값 변경에 따른 일괄 업데이트를 처리 해줘야 한다.
+      // 부모에도 OneToOne을 해줘야 하나?
+      const businessVendorMeetingTimeListBucket: BusinessVendorMeetingTimeList[] = [];
+      for (const item of cloneTarget) {
+        const businessVendorMeetingTimeList = new BusinessVendorMeetingTimeList();
+        businessVendorMeetingTimeList.use = item.use;
+        businessVendorMeetingTimeList.businessMeetingTimeList = item;
+        businessVendorMeetingTimeList.timeBlock = item.timeBlock;
+        businessVendorMeetingTimeList.dateBlock = item.dateBlock;
+        businessVendorMeetingTimeList.businessVendor = businessVendor;
+
+        businessVendorMeetingTimeListBucket.push(businessVendorMeetingTimeList);
+      }
+      const query = this.mysqlManager(BusinessVendorMeetingTimeList).save(
+        businessVendorMeetingTimeListBucket,
+      );
+
+      return query;
+    } else {
+      return true;
+    }
   }
 }

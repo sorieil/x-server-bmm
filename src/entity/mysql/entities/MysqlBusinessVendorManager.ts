@@ -1,3 +1,4 @@
+import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
@@ -35,4 +36,11 @@ export class BusinessVendorManager extends Base {
   @OneToOne(type => User, user => user.businessVendorManager)
   @JoinColumn()
   user: User;
+
+  @OneToOne(
+    type => BusinessMeetingRoomReservation,
+    businessMeetingRoomReservation =>
+      businessMeetingRoomReservation.businessVendorManager,
+  )
+  businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
 }

@@ -1,15 +1,26 @@
-import { BusinessCode } from '../entity/mysql/entities/MysqlBusinessCode';
-import { BusinessVendorFavorite } from '../entity/mysql/entities/MysqlBusinessVendorFavorite';
 import { BaseService } from './BaseService';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
-import { In, Like } from 'typeorm';
 import SearchVendor from '../entity/mysql/entities/MysqlSearchVendor';
 export default class ServiceUserVendor extends BaseService {
   constructor() {
     super();
   }
 
+  /**
+   * @description
+   * 비즈니스 아이디로 등록되어 있는 밴더목록을 가져오고,
+   * 키워드 검색 기능
+   * 필더 기능을
+   * 제공한다.
+   *
+   * @param {Business} business
+   * @param {string} [keyword]
+   * @param {string} [filter]
+   * @returns []
+   * @memberof ServiceUserVendor
+   * @target 유저
+   */
   public async _getByBusiness(
     business: Business,
     keyword?: string,
@@ -41,10 +52,19 @@ export default class ServiceUserVendor extends BaseService {
       });
     }
     const query = queryBuilder.getMany();
-    // console.log('before query: \n', await query);
+
     return query;
   }
 
+  /**
+   * @description
+   * 밴더의 디테일한 값을 조회한다.
+   *
+   * @param {BusinessVendor} businessVendor
+   * @returns []
+   * @memberof ServiceUserVendor
+   * @target 유저
+   */
   public get(businessVendor: BusinessVendor) {
     const query = this.mysqlManager(BusinessVendor).findOne({
       where: {
@@ -67,8 +87,17 @@ export default class ServiceUserVendor extends BaseService {
     return query;
   }
 
+  /**
+   * @description
+   * 밴더의 아이디로 배더를 조회 한다.
+   * 밴더 코드가 인증된 밴더를 조회한다.
+   *
+   * @param {BusinessVendor} businessVendor
+   * @returns
+   * @memberof ServiceUserVendor
+   * @target 유저
+   */
   public verityVendorCode(businessVendor: BusinessVendor) {
-    console.log('verify vendor code:', businessVendor);
     const query = this.mysqlConnection
       .getRepository(BusinessVendor)
       .createQueryBuilder('vendor')

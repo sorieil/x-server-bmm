@@ -7,6 +7,7 @@ import UserBuyer from '../../entity/mysql/entities/MysqlUserBuyer';
 import ServiceUserBuyerPermission from '../../service/ServiceUserBuyerPermission';
 import { User } from '../../entity/mysql/entities/MysqlUser';
 import ServiceUser from '../../service/ServiceUser';
+import business from '../admin/business';
 // 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
 const CheckPermissionBuyerInformation = () =>
   param('userId').custom((value, { req }) => {
@@ -102,7 +103,14 @@ const apiPost = [
       user.type = 'buyer';
       await serviceUser.post(user);
 
-      // BusienssVendorMeetingTimeList 에서 테이블 복사를 한다.
+      // Post 일때만 반응한다.
+      if (method === 'POST') {
+        // Business VendorMeetingTimeList 에서 테이블 복사를 한다.
+        await service.cloneFormBusinessTimeTableListsToUserBuyer(
+          userBuyerQuery,
+          req.user.business,
+        );
+      }
 
       responseJson(res, [query], method, 'success');
     } catch (error) {

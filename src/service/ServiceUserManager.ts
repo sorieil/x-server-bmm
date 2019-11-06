@@ -1,3 +1,4 @@
+import { BusinessVendorManager } from './../entity/mysql/entities/MysqlBusinessVendorManager';
 import { BusinessVendorFieldValue } from './../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { BaseService } from './BaseService';
 import { Code } from '../entity/mysql/entities/MysqlCode';
@@ -40,8 +41,15 @@ export default class ServiceUserManager extends BaseService {
   /**
    * 전체 정보를 가져온다.
    */
-  public async _getsCode() {
-    const query = this.mysqlManager(Code).find();
+  public async _getBusinessVendorByBusinessVendorManager(
+    businessVendorManager: BusinessVendorManager,
+  ) {
+    const query = this.mysqlManager(BusinessVendorManager).findOne({
+      where: {
+        id: businessVendorManager.id,
+      },
+      relations: ['businessVendor'],
+    });
     return query;
   }
 }

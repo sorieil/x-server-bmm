@@ -1,29 +1,28 @@
+import { BusinessVendorManager } from './MysqlBusinessVendorManager';
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
 
 import { Base } from './MysqlBase';
 import {
   Entity,
-  Column,
   ManyToOne,
-  JoinTable,
   JoinColumn,
-  RelationId,
-  OneToMany,
   OneToOne,
   ManyToMany,
+  Column,
 } from 'typeorm';
-import UserBuyer from './MysqlUserBuyer';
 import { UserBuyerMeetingTimeList } from './MysqlUserBuyerMeetingTimeList';
+import { BusinessVendorMeetingTimeList } from './MysqlBusinessVendorMeetingTimeList';
 
 @Entity()
 export class BusinessMeetingRoomReservation extends Base {
-  @ManyToMany(
-    type => BusinessMeetingTimeList,
-    businessMeetingTimeList =>
-      businessMeetingTimeList.businessMeetingRoomReservations,
+  @ManyToOne(
+    type => BusinessVendorMeetingTimeList,
+    businessVendorMeetingTimeList =>
+      businessVendorMeetingTimeList.businessMeetingRoomReservations,
+    { onDelete: 'CASCADE' },
   )
-  businessMeetingTimeLists: BusinessMeetingTimeList[];
+  businessVendorMeetingTimeList: BusinessVendorMeetingTimeList;
 
   @ManyToOne(
     type => BusinessMeetingRoom,
@@ -35,10 +34,18 @@ export class BusinessMeetingRoomReservation extends Base {
     type => UserBuyerMeetingTimeList,
     userBuyerMeetingTimeList =>
       userBuyerMeetingTimeList.businessMeetingRoomReservation,
-    {
-      onDelete: 'CASCADE',
-    },
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn()
   userBuyerMeetingTimeList: UserBuyerMeetingTimeList;
+
+  @Column('text', { nullable: true })
+  memo: string;
+
+  @ManyToOne(
+    type => BusinessVendorManager,
+    businessVendorManager =>
+      businessVendorManager.businessMeetingRoomReservations,
+  )
+  businessVendorManager: BusinessVendorManager;
 }

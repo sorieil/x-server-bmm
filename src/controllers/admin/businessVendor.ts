@@ -316,6 +316,7 @@ const apiPost = [
 
       const query: BusinessVendorFieldValue[] = [];
 
+      // 필드 조회 및 데이터 버킷 저장
       for (let field of body) {
         console.log('field------------------------>', field);
         const businessVendorFieldValue = new BusinessVendorFieldValue();
@@ -357,7 +358,7 @@ const apiPost = [
         query.push(businessVendorFieldValue);
       }
 
-      // 매니저는 별도로 저장한다.
+      // 입력한 필드의 값을 기준으로 데이터를 저장해주면, search를 위해서 데이터를 시리얼라이즈 해준다. 그리고 별도의 테이블에 저장한다.
       await service._postVendorFieldValue(query);
       const businessVendorQuery = await service.get(businessVendor);
       businessVendorQuery.businessCode = businessVendorQuery.businessCode
@@ -365,7 +366,12 @@ const apiPost = [
       businessVendorQuery.businessVendorFieldValues.map((v: any) => {
         delete v.createdAt;
         delete v.updatedAt;
-        v.value = v.text || v.textarea || v.idx;
+        const fieldType = v.businessVendorField.fieldType.columnType;
+        if (fieldType === 'idx') {
+          v.value = v[fieldType].id || null;
+        } else {
+          v.value = v[fieldType] || null;
+        }
         delete v.text;
         delete v.textarea;
         delete v.idx;
@@ -378,6 +384,10 @@ const apiPost = [
       });
 
       // 타임 테이블을 저장한다.
+      await service.cloneFormBusinessTimeTableListsToBusinessVendor(
+        businessVendorQuery,
+        business,
+      );
 
       responseJson(res, [businessVendorQuery], method, 'success');
     } catch (error) {
@@ -496,7 +506,12 @@ const apiPatch = [
         );
         query.map((v: any) => {
           delete v.businessVendor;
-          v.value = v.text || v.textarea || v.idx;
+          const fieldType = v.businessVendorField.fieldType.columnType;
+          if (fieldType === 'idx') {
+            v.value = v[fieldType].id || null;
+          } else {
+            v.value = v[fieldType] || null;
+          }
           delete v.text;
           delete v.textarea;
           delete v.idx;

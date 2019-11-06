@@ -1,89 +1,95 @@
-import { BusinessMeetingTimeList } from '../../entity/mysql/entities/MysqlBusinessMeetingTimeList';
-import { Business } from '../../entity/mysql/entities/MysqlBusiness';
-import { BusinessMeetingTime } from '../../entity/mysql/entities/MysqlBusinessMeetingTime';
+import { BusinessVendorManager } from './../../entity/mysql/entities/MysqlBusinessVendorManager';
+import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
+import { BusinessMeetingTimeList } from './../../entity/mysql/entities/MysqlBusinessMeetingTimeList';
 import { Request, Response } from 'express';
 import { RequestRole, responseJson, tryCatch } from '../../util/common';
-import { check, validationResult, param } from 'express-validator';
-import {
-  CheckPermissionGetUserDataForUser,
-  CheckPermissionUserTypeForUser,
-} from '../../util/permission';
-import { ServiceBusinessTimeList } from '../../service/ServiceBusinessTimeList';
+import { validationResult, param } from 'express-validator';
+import { CheckPermissionGetUserDataForUser } from '../../util/permission';
 import moment = require('moment');
+import ServiceUserBusinessTime from '../../service/ServiceUserBusinessTime';
+import { User } from '../../entity/mysql/entities/MysqlUser';
+import UserBuyer from '../../entity/mysql/entities/MysqlUserBuyer';
+import ServiceUserManager from '../../service/ServiceUserManager';
 
-const apiPatch = [
-  [
-    param('timeListId')
-      .not()
-      .isEmpty()
-      .isNumeric(),
-    check('use')
-      .not()
-      .isEmpty(),
-  ],
-  async (req: Request, res: Response) => {
-    const method: RequestRole = req.method.toString() as any;
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      responseJson(res, errors.array(), method, 'invalid');
-      return;
-    }
-
-    const body = req.body;
-    const businessMeetingTimeList = new BusinessMeetingTimeList();
-    businessMeetingTimeList.id = req.params.timeListId;
-
-    const service = new ServiceBusinessTimeList();
-    const businessTimeListQuery = await service.get(businessMeetingTimeList);
-
-    if (!businessTimeListQuery) {
-      responseJson(
-        res,
-        [{ message: 'You don`t have permission or invalid data.' }],
-        method,
-        'invalid',
-      );
-      return;
-    }
-
-    businessTimeListQuery.use = body.use;
-
-    const query = await service.update(businessTimeListQuery);
-    responseJson(res, [query], method, 'success');
-  },
-];
-
+/**
+ * @description
+ * 날짜 별로 타임 리스트를 가져온다.
+ * 중요한 내용은 유저의 타입을 구분지어 바이어와, 밴더 매니저를 분기를 태워서 데이터를 가져와야 한다.
+ * @data 2019-01-02 식으로 데이터를 넣는다.
+ */
 const apiGet = [
   [
-    CheckPermissionUserTypeForUser.apply(this),
-    check('date').custom((value, { req }) => {
-      const date = moment(value).isValid();
-      if (!date) {
-        return Promise.reject('Invalid inserted date');
+    CheckPermissionGetUserDataForUser.apply(this),
+    param('date').custom((value, { req }) => {
+      const dateValid = moment(value).format('YYYY-MM-DD');
+      console.log('test result:', dateValid);
+      if (dateValid === 'Invalid date') {
+        return Promise.reject('Please input date format.');
+      } else {
+        return Promise.resolve(true);
       }
     }),
   ],
   async (req: Request, res: Response) => {
-    const method: RequestRole = req.method.toString() as any;
-    const errors = validationResult(req);
     try {
+      const method: RequestRole = req.method.toString() as any;
+      const errors = validationResult(req);
+      console.log('errors.isEmpty():', errors.isEmpty());
       if (!errors.isEmpty()) {
         responseJson(res, errors.array(), method, 'invalid');
         return;
       }
+      const serviceUserBusinessTime = new ServiceUserBusinessTime();
+      const serviceUserManager = new ServiceUserManager();
+      const businessMeetingTimeList = new BusinessMeetingTimeList();
 
-      // TODO 여기에서 중요한 것은 바이어의 데이터와 매니저의 데이터를 구분지어야 한다.
-      console.log('user type:', req.user);
+      businessMeetingTimeList.dateBlock = req.params.date;
+      const user = new User();
+      user.id = req.user.id;
+      const result = {};
+      let query: any[] = [];
+      // const userType = await serviceBusinessVendor._getByUser(user);
+      console.log('User type:', req.user.users[0].type);
+      if (req.user.users[0].type === 'buyer') {
+        const userBuyer = new UserBuyer();
+        userBuyer.id = req.user.users[0].userBuyer.id;
 
-      const service = new ServiceBusinessTimeList();
-      const business = new Business();
-      business.id = req.user.business.id;
-      console.log('business :', business);
+        query = await serviceUserBusinessTime._getTimeListByDateBlockForBuyer(
+          userBuyer,
+          businessMeetingTimeList,
+        );
 
-      // const query = await service._getBusinessMeetingTImeByBusiness(business);
+        // 있으면, 바이어
+      } else {
+        const businessVendorManager = new BusinessVendorManager();
+        businessVendorManager.id = req.user.users[0].businessVendorManager.id;
+        const businessVendorQuery = await serviceUserManager._getBusinessVendorByBusinessVendorManager(
+          businessVendorManager,
+        );
 
-      responseJson(res, [], method, 'success');
+        const businessVendor = new BusinessVendor();
+        businessVendor.id = businessVendorQuery.businessVendor.id;
+
+        // 그럼 이 화면은 passport 에서 결정되어야 할거 같은데...
+        query = await serviceUserBusinessTime._getTimeListByDateBlockForManger(
+          businessVendor,
+          businessMeetingTimeList,
+        );
+      }
+
+      //
+
+      // 날짜와 타임 테이블의 아이디 값을 기준으로 타임 테이블의 상태를 보여준다.
+      // 여기에서 중요한것은 타임테이블에는 미팅룸의 갯수만큼 예약을 할 수 있다.
+      // 또한 여기에서 중요한것은 벤더 일경우 벤더의 타엠테이블이 보여야 하고,
+      // 바이어인 경우 바이어의 개인의 스케쥴이 보여야 한다.
+
+      // const business = new Business();
+      // business.id = req.user.business.id;
+      // console.log('business:', business);
+      // const query = await service.get(business);
+
+      responseJson(res, query, method, 'success');
     } catch (error) {
       tryCatch(res, error);
     }
@@ -92,5 +98,4 @@ const apiGet = [
 
 export default {
   apiGet,
-  apiPatch,
 };

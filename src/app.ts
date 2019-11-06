@@ -33,6 +33,7 @@ import userBusinessTimeList from './controllers/user/userBusinessTimeList';
 import userBuyer from './controllers/user/userBuyer';
 import userVendorManager from './controllers/user/userVendorManager';
 import user from './controllers/user/user';
+import userBusinessTime from './controllers/user/userBusinessTime';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -372,21 +373,15 @@ connections(process.env)
     );
 
     // Vendor schedule
-    app.get(
-      RouterRole['/api/v1/user/schedule'],
-      clientCheck,
-      ...userBusinessTimeList.apiGet,
-    );
+    // app.get(
+    //   RouterRole['/api/v1/user/schedule'],
+    //   clientCheck,
+    //   ...userBusinessTimeList.apiGet,
+    // );
     app.get(
       RouterRole['/api/v1/user/schedule/:date'],
       clientCheck,
       ...userBusinessTimeList.apiGet,
-    );
-
-    app.patch(
-      RouterRole['/api/v1/user/schedule/:date'],
-      clientCheck,
-      ...userBusinessTimeList.apiPatch,
     );
 
     // Vendor filter lists
@@ -410,6 +405,12 @@ connections(process.env)
       ...userBusiness.apiGet,
     );
 
+    // Business time
+    app.get(
+      RouterRole['/api/v1/user/business-time'],
+      clientCheck,
+      ...userBusinessTime.apiGet,
+    );
     // Buyer
     app.get(RouterRole['/api/v1/user/buyer'], clientCheck, ...userBuyer.apiGet);
     app.post(
