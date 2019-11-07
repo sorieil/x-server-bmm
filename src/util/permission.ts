@@ -85,7 +85,7 @@ export const CheckPermissionAdminBusinessVendorForAdmin = () =>
       // 로그인할때 이벤트 아이디로 req.user 에 담겨져 있다. (req.user.business)
 
       business.id = req.user.business.id;
-      const query = await service._getBusinessVendorByBusinessVendorWithBusiness(
+      const query = await service._getBusinessVendorByBusinessVendorWithBusinessId(
         businessVendor,
         business,
       );
@@ -223,7 +223,7 @@ export const CheckPermissionBusinessVendorForUser = () => {
     businessVendor.id = value;
     console.log('business:', req.user.business);
     console.log('businessVendor:', value);
-    const query = await serviceUserPermission._getBusinessVendorByBusinessVendorWithBusiness(
+    const query = await serviceUserPermission._getBusinessVendorByBusinessVendorWithBusinessId(
       businessVendor,
       business,
     );

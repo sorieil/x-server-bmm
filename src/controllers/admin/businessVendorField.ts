@@ -587,9 +587,9 @@ const apiDelete = [
       }
 
       const service = new ServiceBusinessVendorField();
-      const vendorInformation = new BusinessVendorField();
-      vendorInformation.id = req.user.vendorField.id;
-      const query = await service.delete(vendorInformation);
+      const businessVendorField = new BusinessVendorField();
+      businessVendorField.id = req.user.vendorField.id;
+      const query = await service.delete(businessVendorField);
       responseJson(res, [query], method, 'delete');
     } catch (error) {
       tryCatch(res, error);

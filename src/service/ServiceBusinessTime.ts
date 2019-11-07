@@ -1,3 +1,4 @@
+import { BusinessVendorManager } from './../entity/mysql/entities/MysqlBusinessVendorManager';
 import { BusinessMeetingTime } from './../entity/mysql/entities/MysqlBusinessMeetingTime';
 import { BusinessMeetingRoom } from '../entity/mysql/entities/MysqlBusinessMeetingRoom';
 import { AdminLogin } from '../entity/mysql/entities/MysqlAdminLogin';
@@ -36,6 +37,25 @@ export class ServiceBusinessTime extends BaseService {
         business: business,
       },
     });
+    return query;
+  }
+
+  public async _getBusinessVendorManagerByBusinessVendorManager(
+    businessVendorManager: BusinessVendorManager,
+  ) {
+    const query = this.mysqlManager(BusinessVendorManager).findOne({
+      where: {
+        id: businessVendorManager.id,
+      },
+      relations: [
+        'businessVendorFieldManagerValues',
+        'businessVendorFieldManagerValues.idx',
+        'businessVendorFieldManagerValues.businessVendorField',
+        'businessVendorFieldManagerValues.businessVendorField.informationType',
+        'businessVendorFieldManagerValues.businessVendorField.fieldType',
+      ],
+    });
+
     return query;
   }
 }

@@ -22,6 +22,7 @@ export class BusinessVendorFieldManagerValue extends Base {
     businessVendorField => businessVendorField.businessVendorFieldValues,
     {
       nullable: false,
+      onDelete: 'CASCADE',
     },
   )
   businessVendorField: BusinessVendorField;

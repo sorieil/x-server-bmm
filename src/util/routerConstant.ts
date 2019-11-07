@@ -42,4 +42,5 @@ export enum RouterRole {
   '/api/v1/user/vendor-manager/:vendorId' = '/api/v1/user/vendor-manager/:vendorId',
   '/api/v1/user/vendor-manager/:vendorManagerId' = '/api/v1/user/vendor-manager/:vendorManagerId',
   '/api/v1/user/business-time' = '/api/v1/user/business-time',
+  '/api/v1/user/business-time/:requestType' = '/api/v1/user/business-time/:requestType',
 }

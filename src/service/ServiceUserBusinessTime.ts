@@ -41,7 +41,36 @@ export default class ServiceUserBusinessTime extends BaseService {
 
   public _getTimeListByDateBlockForManger(
     businessVendor: BusinessVendor,
-    businessMeetingTimeList: BusinessMeetingTimeList,
+    businessMeetingTimeList?: BusinessMeetingTimeList,
+  ) {
+    const queryBuilder = this.mysqlConnection
+      .getRepository(BusinessVendorMeetingTimeList)
+      .createQueryBuilder('vendorTime')
+      .leftJoinAndSelect('vendorTime.businessMeetingTimeList', 'businessTime')
+      .leftJoinAndSelect(
+        'vendorTime.businessMeetingRoomReservations',
+        'reservation',
+      );
+
+    if (businessMeetingTimeList.dateBlock) {
+      queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {
+        dateBlock: businessMeetingTimeList.dateBlock,
+      });
+    }
+
+    if (businessVendor.id) {
+      queryBuilder.andWhere('businessVendorId = :businessVendorId', {
+        businessVendorId: businessVendor.id,
+      });
+    }
+
+    const query = queryBuilder.getMany();
+    return query;
+  }
+
+  public _getTimeListByDateBlockForAllBuyer(
+    businessVendor: BusinessVendor,
+    businessMeetingTimeList?: BusinessMeetingTimeList,
   ) {
     const queryBuilder = this.mysqlConnection
       .getRepository(BusinessVendorMeetingTimeList)
@@ -51,14 +80,21 @@ export default class ServiceUserBusinessTime extends BaseService {
         'vendorTime.businessMeetingRoomReservations',
         'reservation',
       )
-      // .leftJoinAndSelect('vendorTime.businessVendor', 'vendor')
-      // .leftJoinAndSelect('vendor.businessVendorManagers', 'manager')
-      .andWhere('businessTime.dateBlock = :dateBlock', {
+      .leftJoinAndSelect('vendorTime.businessVendor', 'vendor')
+      .leftJoinAndSelect('vendor.businessVendorManagers', 'manager');
+
+    if (businessMeetingTimeList.dateBlock) {
+      queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {
         dateBlock: businessMeetingTimeList.dateBlock,
-      })
-      .andWhere('businessVendorId = :businessVendorId', {
+      });
+    }
+
+    if (businessVendor.id) {
+      queryBuilder.andWhere('businessVendorId = :businessVendorId', {
         businessVendorId: businessVendor.id,
       });
+    }
+
     const query = queryBuilder.getMany();
     return query;
   }

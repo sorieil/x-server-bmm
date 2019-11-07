@@ -82,7 +82,7 @@ const CheckPermissionBusinessVendor = () =>
   });
 
 /**
- * 비즈니스의 상태 값을 가져온다. Header, status
+ * 밴더의 정보를 가져온다.
  */
 const apiGet = [
   [
@@ -106,7 +106,7 @@ const apiGet = [
       const businessVendorManager = new BusinessVendorManager();
       businessVendorManager.id = vendorId;
 
-      const query = await serviceBusinessVendorManager._getBusinessVendorManagerByBusinessVendorManager(
+      const query = await serviceBusinessVendorManager._getBusinessVendorManagerByBusinessVendorManagerId(
         businessVendorManager,
       );
 

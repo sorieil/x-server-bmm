@@ -121,7 +121,7 @@ export default class ServiceBusinessVendorManager extends BaseService {
    * BusinessVendorManager 의 아이디로 매니저를 조회 한다.
    * @returns BusinessVendorManager
    */
-  public async _getBusinessVendorManagerByBusinessVendorManager(
+  public async _getBusinessVendorManagerByBusinessVendorManagerId(
     businessVendorManager: BusinessVendorManager,
   ) {
     const query = this.mysqlManager(BusinessVendorManager).findOne({
@@ -142,23 +142,6 @@ export default class ServiceBusinessVendorManager extends BaseService {
     return query;
   }
 
-  public async _getByVendor(businessVendor: BusinessVendor) {
-    const query = this.mysqlManager(BusinessVendor).findOne({
-      relations: [
-        'businessCode',
-        'businessVendorFieldManagerValues',
-        'businessVendorFieldManagerValues.idx',
-        'businessVendorFieldManagerValues.businessVendorField',
-        'businessVendorFieldManagerValues.businessVendorField.informationType',
-        'businessVendorFieldManagerValues.businessVendorField.fieldType',
-      ],
-      where: {
-        id: businessVendor.id,
-      },
-    });
-
-    return query;
-  }
   /**
    * 매니저는 삭제는 밴더의 아이디와, 매니저 값 그룹 코드가 필요하다.
    * TODO: 권한 체크 부분에서는 해당 토큰의 값이 벤더를 소유하고 있어야 한다.

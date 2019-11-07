@@ -407,10 +407,17 @@ connections(process.env)
 
     // Business time
     app.get(
+      RouterRole['/api/v1/user/business-time/:requestType'],
+      clientCheck,
+      ...userBusinessTime.apiGet,
+    );
+
+    app.get(
       RouterRole['/api/v1/user/business-time'],
       clientCheck,
       ...userBusinessTime.apiGet,
     );
+
     // Buyer
     app.get(RouterRole['/api/v1/user/buyer'], clientCheck, ...userBuyer.apiGet);
     app.post(

@@ -34,7 +34,7 @@ export default class ServiceUserPermission extends BaseService {
    * @param business
    * @returns BusinessVendor
    */
-  public async _getBusinessVendorByBusinessVendorWithBusiness(
+  public async _getBusinessVendorByBusinessVendorWithBusinessId(
     businessVendor: BusinessVendor,
     business: Business,
   ) {
