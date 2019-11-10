@@ -15,6 +15,5 @@ export class BusinessCategory extends Base {
   @Column('varchar')
   name: string;
   @ManyToOne(type => Code, code => code)
-  @JoinColumn()
   code: Code;
 }

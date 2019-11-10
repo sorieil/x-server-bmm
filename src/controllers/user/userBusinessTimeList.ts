@@ -51,6 +51,7 @@ const apiGet = [
       // const userType = await serviceBusinessVendor._getByUser(user);
       console.log('User type:', req.user.users[0].type);
       if (req.user.users[0].type === 'buyer') {
+        // 있으면, 바이어
         const userBuyer = new UserBuyer();
         userBuyer.id = req.user.users[0].userBuyer.id;
 
@@ -58,8 +59,6 @@ const apiGet = [
           userBuyer,
           businessMeetingTimeList,
         );
-
-        // 있으면, 바이어
       } else {
         const businessVendorManager = new BusinessVendorManager();
         businessVendorManager.id = req.user.users[0].businessVendorManager.id;
@@ -76,18 +75,6 @@ const apiGet = [
           businessMeetingTimeList,
         );
       }
-
-      //
-
-      // 날짜와 타임 테이블의 아이디 값을 기준으로 타임 테이블의 상태를 보여준다.
-      // 여기에서 중요한것은 타임테이블에는 미팅룸의 갯수만큼 예약을 할 수 있다.
-      // 또한 여기에서 중요한것은 벤더 일경우 벤더의 타엠테이블이 보여야 하고,
-      // 바이어인 경우 바이어의 개인의 스케쥴이 보여야 한다.
-
-      // const business = new Business();
-      // business.id = req.user.business.id;
-      // console.log('business:', business);
-      // const query = await service.get(business);
 
       responseJson(res, query, method, 'success');
     } catch (error) {
@@ -134,19 +121,6 @@ const apiGetByVendor = [
         businessVendor,
         businessMeetingTimeList,
       );
-
-      //
-
-      // 날짜와 타임 테이블의 아이디 값을 기준으로 타임 테이블의 상태를 보여준다.
-      // 여기에서 중요한것은 타임테이블에는 미팅룸의 갯수만큼 예약을 할 수 있다.
-      // 또한 여기에서 중요한것은 벤더 일경우 벤더의 타엠테이블이 보여야 하고,
-      // 바이어인 경우 바이어의 개인의 스케쥴이 보여야 한다.
-
-      // const business = new Business();
-      // business.id = req.user.business.id;
-      // console.log('business:', business);
-      // const query = await service.get(business);
-
       responseJson(res, query, method, 'success');
     } catch (error) {
       tryCatch(res, error);

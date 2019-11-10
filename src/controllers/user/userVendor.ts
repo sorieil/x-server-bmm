@@ -1,3 +1,5 @@
+import { ServiceBusinessMeetingRoom } from './../../service/ServiceBusinessMeetingRoom';
+import { ServiceBusinessTimeList } from './../../service/ServiceBusinessTimeList';
 import { BusinessCode } from '../../entity/mysql/entities/MysqlBusinessCode';
 import ServiceBusinessVendorField from './../../service/ServiceBusinessVendorField';
 import { responseJson, RequestRole, tryCatch } from '../../util/common';
@@ -145,7 +147,10 @@ const apiGets = [
       }
 
       const service = new ServiceUserVendor();
+      const serviceBusinessTimeList = new ServiceBusinessTimeList();
+      const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
       const business = new Business();
+
       let filter = '';
       let keyword = '';
       if (req.query.filter) {
@@ -158,6 +163,17 @@ const apiGets = [
       // 키워드가 있다면, keyword 변수에 선언해준다.
       if (req.query.keyword) keyword = req.query.keyword;
       business.id = req.user.business.id;
+      const timeCountQuery = await serviceBusinessTimeList._getBusinessMeetingTimeByBusiness(
+        business,
+      );
+
+      const timeListCount = timeCountQuery.businessMeetingTimeLists.length;
+
+      const roomCount = await serviceBusinessMeetingRoom.gets(business);
+
+      const availableReservationCount: Number =
+        timeListCount * roomCount.length;
+
       const query = await service._getByBusiness(business, keyword, filter);
       query.map((v: any) => {
         delete v.createdAt;
@@ -205,10 +221,24 @@ const apiGets = [
           v.businessVendorFavorite = false;
         }
 
-        v.businessVendorMeeting = false;
-
         // 여기에 예약 관련 필드도 삽입
         delete v.businessVendor.businessVendorFavorities;
+        if (v.businessMeetingRoomReservations) {
+          if (
+            v.businessMeetingRoomReservations.length < availableReservationCount
+          ) {
+            v.businessVendorMeeting = true;
+          } else {
+            v.businessVendorMeeting = false;
+          }
+        } else {
+          v.businessVendorMeeting = true;
+        }
+
+        delete v.businessMeetingRoomReservations;
+
+        // 예약 가능 여부
+        // 밴더당 가능한 예약 갯수
         return v;
       });
 

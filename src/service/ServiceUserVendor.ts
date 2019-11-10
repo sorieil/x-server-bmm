@@ -31,6 +31,10 @@ export default class ServiceUserVendor extends BaseService {
       .createQueryBuilder('search')
       .leftJoinAndSelect('search.businessVendor', 'vendor')
       .leftJoinAndSelect('vendor.businessVendorFieldValues', 'value')
+      .leftJoinAndSelect(
+        'vendor.businessMeetingRoomReservations',
+        'reservation',
+      )
       .leftJoinAndSelect('value.idx', 'idx')
       .leftJoinAndSelect('value.businessVendorField', 'field')
       .leftJoinAndSelect('field.fieldType', 'fieldType')

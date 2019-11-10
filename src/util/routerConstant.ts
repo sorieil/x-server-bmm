@@ -30,7 +30,8 @@ export enum RouterRole {
   '/api/v1/user/vendor/:vendorId/verify-vendor-code' = '/api/v1/user/vendor/:vendorId/verify-vendor-code',
   '/api/v1/user/favorite' = '/api/v1/user/favorite',
   '/api/v1/user/favorite/:vendorId' = '/api/v1/user/favorite/:vendorId',
-  '/api/v1/user/meeting-reservation/:blockId' = '/api/v1/user/meeting-reservation/:blockId',
+  '/api/v1/user/meeting-reservation/:reservationId' = '/api/v1/user/meeting-reservation/:reservationId',
+  '/api/v1/user/meeting-reservation' = '/api/v1/user/meeting-reservation',
   '/api/v1/user/schedule' = '/api/v1/user/schedule',
   '/api/v1/user/schedule/:date' = '/api/v1/user/schedule/:date',
   '/api/v1/user/filter' = '/api/v1/user/filter',
@@ -43,4 +44,5 @@ export enum RouterRole {
   '/api/v1/user/vendor-manager/:vendorManagerId' = '/api/v1/user/vendor-manager/:vendorManagerId',
   '/api/v1/user/business-time' = '/api/v1/user/business-time',
   '/api/v1/user/business-time/:requestType' = '/api/v1/user/business-time/:requestType',
+  '/api/v1/user/meeting-room' = '/api/v1/user/meeting-room',
 }

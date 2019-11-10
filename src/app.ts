@@ -34,6 +34,8 @@ import userBuyer from './controllers/user/userBuyer';
 import userVendorManager from './controllers/user/userVendorManager';
 import user from './controllers/user/user';
 import userBusinessTime from './controllers/user/userBusinessTime';
+import userMeetingRoomReservation from './controllers/user/userMeetingRoomReservation';
+import userMeetingRoom from './controllers/user/userMeetingRoom';
 
 // Load NODE_ENV variables from .env file, where API keys and passwords are configured
 // TODO: 배포 버젼을 만들때 배포 버젼 파일과 개발 버젼을 구분한다.
@@ -349,28 +351,32 @@ connections(process.env)
     );
 
     // Meeting reservation
-    app.get(
-      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
+    app.post(
+      RouterRole['/api/v1/user/meeting-reservation'],
       clientCheck,
-      ...userFavorite.apiGets,
+      ...userMeetingRoomReservation.apiPost,
     );
     app.patch(
-      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
+      RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
     app.delete(
-      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
+      RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
+      clientCheck,
+      ...userFavorite.apiGets,
+    );
+    app.get(
+      RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
       clientCheck,
       ...userFavorite.apiGets,
     );
 
-    // Meeting Lists
-    app.get(
-      RouterRole['/api/v1/user/meeting-reservation/:blockId'],
-      clientCheck,
-      ...userFavorite.apiGets,
-    );
+    // app.get(
+    //   RouterRole['/api/v1/user/meeting-reservation/:blockId'],
+    //   clientCheck,
+    //   ...userFavorite.apiGets,
+    // );
 
     // Vendor schedule
     // app.get(
@@ -455,6 +461,12 @@ connections(process.env)
     // app.post('/api/v1/user/buyer', clientCheck, ...userVendorManager.apiPost);
     // app.patch('/api/v1/user/buyer/:businessVendorManagerId', clientCheck, ...userVendorManager.apiPatch);
 
+    // User MeetingRoom
+    app.get(
+      RouterRole['/api/v1/user/meeting-room'],
+      clientCheck,
+      ...userMeetingRoom.apiGet,
+    );
     /**
      * Error Handler. Provides full stack - remove for production
      */

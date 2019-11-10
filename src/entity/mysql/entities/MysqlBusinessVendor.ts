@@ -1,4 +1,4 @@
-import { User } from './MysqlUser';
+import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 import { BusinessVendorManager } from './MysqlBusinessVendorManager';
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
 import { Business } from './MysqlBusiness';
@@ -57,4 +57,11 @@ export class BusinessVendor extends Base {
       businessVendorMeetingTimeList.businessVendor,
   )
   businessVendorMeetingTimeLists: BusinessVendorMeetingTimeList[];
+
+  @OneToMany(
+    type => BusinessMeetingRoomReservation,
+    businessMeetingRoomReservation =>
+      businessMeetingRoomReservation.businessVendor,
+  )
+  businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
 }
