@@ -23,13 +23,21 @@ export default class ServiceUserBusinessTime extends BaseService {
     const queryBuilder = this.mysqlConnection
       .getRepository(UserBuyerMeetingTimeList)
       .createQueryBuilder('buyerTime')
-      .leftJoinAndSelect('buyerTime.businessMeetingTimeList', 'businessTime')
+      .leftJoinAndSelect(
+        'buyerTime.businessMeetingTimeList',
+        'businessTimeList',
+      )
       .leftJoinAndSelect(
         'buyerTime.businessMeetingRoomReservation',
         'reservation',
       )
-      // .leftJoinAndSelect('buyerTime.userBuyer', 'userBuyer')
-      .andWhere('businessTime.dateBlock = :dateBlock', {
+      .leftJoinAndSelect('reservation.businessMeetingRoom', 'room')
+      .leftJoinAndSelect('reservation.businessVendor', 'vendor')
+      .leftJoinAndSelect('vendor.businessVendorFieldValues', 'fieldValue')
+      .leftJoinAndSelect('fieldValue.businessVendorField', 'field')
+      .leftJoinAndSelect('field.informationType', 'informationType')
+      .leftJoinAndSelect('field.fieldType', 'fieldType')
+      .andWhere('businessTimeList.dateBlock = :dateBlock', {
         dateBlock: businessMeetingTimeList.dateBlock,
       })
       .andWhere('userBuyerId = :userBuyerId', {
@@ -48,18 +56,24 @@ export default class ServiceUserBusinessTime extends BaseService {
       .createQueryBuilder('vendorTime')
       .leftJoinAndSelect('vendorTime.businessMeetingTimeList', 'businessTime')
       .leftJoinAndSelect(
-        'vendorTime.businessMeetingRoomReservations',
+        'businessTime.userBuyerMeetingTimeLists',
+        'userListTime',
+      )
+      .leftJoinAndSelect(
+        'userListTime.businessMeetingRoomReservation',
         'reservation',
-      );
+      )
+      .leftJoinAndSelect('userListTime.userBuyer', 'user');
 
     if (businessMeetingTimeList.dateBlock) {
       queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {
         dateBlock: businessMeetingTimeList.dateBlock,
       });
     }
+    console.log('vendor:', businessVendor);
 
     if (businessVendor.id) {
-      queryBuilder.andWhere('businessVendorId = :businessVendorId', {
+      queryBuilder.andWhere('vendorTime.businessVendorId = :businessVendorId', {
         businessVendorId: businessVendor.id,
       });
     }
@@ -76,12 +90,13 @@ export default class ServiceUserBusinessTime extends BaseService {
       .getRepository(BusinessVendorMeetingTimeList)
       .createQueryBuilder('vendorTime')
       .leftJoinAndSelect('vendorTime.businessMeetingTimeList', 'businessTime')
+      .leftJoinAndSelect('vendorTime.businessVendor', 'vendor')
       .leftJoinAndSelect(
-        'vendorTime.businessMeetingRoomReservations',
+        'vendor.businessMeetingRoomReservations',
         'reservation',
       )
-      .leftJoinAndSelect('vendorTime.businessVendor', 'vendor')
-      .leftJoinAndSelect('vendor.businessVendorManagers', 'manager');
+      .leftJoinAndSelect('reservation.userBuyerMeetingTimeList', 'userTimeList')
+      .leftJoinAndSelect('userTimeList.userBuyer', 'userBuyer');
 
     if (businessMeetingTimeList.dateBlock) {
       queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {

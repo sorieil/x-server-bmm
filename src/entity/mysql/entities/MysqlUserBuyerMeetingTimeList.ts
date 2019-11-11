@@ -1,8 +1,10 @@
+import { BusinessVendorMeetingTimeList } from './MysqlBusinessVendorMeetingTimeList';
 import { Base } from './MysqlBase';
 import { Entity, ManyToOne, OneToOne } from 'typeorm';
 import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 import UserBuyer from './MysqlUserBuyer';
 import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
+import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 
 @Entity()
 export class UserBuyerMeetingTimeList extends Base {
@@ -38,4 +40,11 @@ export class UserBuyerMeetingTimeList extends Base {
     { nullable: true, onDelete: 'CASCADE' },
   )
   userBuyer: UserBuyer;
+
+  @ManyToOne(
+    type => BusinessVendorMeetingTimeList,
+    businessVendorMeetingTimeList =>
+      businessVendorMeetingTimeList.userBuyerMeetingTimeLists,
+  )
+  businessVendorMeetingTimeList: BusinessVendorMeetingTimeList;
 }

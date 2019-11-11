@@ -3,7 +3,7 @@ import { Response } from 'express';
 import logger from './logger';
 import { isArray } from 'util';
 export type RequestRole = 'POST' | 'GET' | 'PATCH' | 'DELETE';
-type ResponseRole = 'success' | 'invalid' | 'delete';
+type ResponseRole = 'success' | 'invalid' | 'delete' | 'fails';
 export const responseRole = {
   POST: {
     success: 201,

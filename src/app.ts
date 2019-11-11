@@ -359,17 +359,17 @@ connections(process.env)
     app.patch(
       RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
       clientCheck,
-      ...userFavorite.apiGets,
+      ...userMeetingRoomReservation.apiPatch,
     );
     app.delete(
       RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
       clientCheck,
-      ...userFavorite.apiGets,
+      ...userMeetingRoomReservation.apiDelete,
     );
     app.get(
       RouterRole['/api/v1/user/meeting-reservation/:reservationId'],
       clientCheck,
-      ...userFavorite.apiGets,
+      ...userMeetingRoomReservation.apiGet,
     );
 
     // app.get(

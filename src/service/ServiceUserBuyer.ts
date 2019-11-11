@@ -55,6 +55,7 @@ export default class ServiceUserBuyer extends BaseService {
       for (const item of cloneTarget) {
         const userBuyerMeetingTimeList = new UserBuyerMeetingTimeList();
         userBuyerMeetingTimeList.businessMeetingTimeList = item;
+        // userBuyerMeetingTimeList;
         userBuyerMeetingTimeList.userBuyer = userBuyer;
 
         userBuyerMeetingTimeListBucket.push(userBuyerMeetingTimeList);

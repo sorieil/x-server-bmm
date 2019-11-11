@@ -223,9 +223,10 @@ const apiGets = [
 
         // 여기에 예약 관련 필드도 삽입
         delete v.businessVendor.businessVendorFavorities;
-        if (v.businessMeetingRoomReservations) {
+        if (v.businessVendor.businessMeetingRoomReservations) {
           if (
-            v.businessMeetingRoomReservations.length < availableReservationCount
+            v.businessVendor.businessMeetingRoomReservations.length <
+            availableReservationCount
           ) {
             v.businessVendorMeeting = true;
           } else {
@@ -235,7 +236,9 @@ const apiGets = [
           v.businessVendorMeeting = true;
         }
 
-        delete v.businessMeetingRoomReservations;
+        // v.availableReservationCount = availableReservationCount;
+
+        delete v.businessVendor.businessMeetingRoomReservations;
 
         // 예약 가능 여부
         // 밴더당 가능한 예약 갯수

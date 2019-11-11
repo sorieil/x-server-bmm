@@ -10,6 +10,8 @@ import ServiceUserBusinessTime from '../../service/ServiceUserBusinessTime';
 import { User } from '../../entity/mysql/entities/MysqlUser';
 import UserBuyer from '../../entity/mysql/entities/MysqlUserBuyer';
 import ServiceUserManager from '../../service/ServiceUserManager';
+import { ServiceBusinessMeetingRoom } from '../../service/ServiceBusinessMeetingRoom';
+import { Business } from '../../entity/mysql/entities/MysqlBusiness';
 
 /**
  * @description
@@ -42,6 +44,10 @@ const apiGet = [
       const serviceUserBusinessTime = new ServiceUserBusinessTime();
       const serviceUserManager = new ServiceUserManager();
       const businessMeetingTimeList = new BusinessMeetingTimeList();
+      const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
+      const business = new Business();
+      business.id = req.user.business.id;
+      const roomCount = await serviceBusinessMeetingRoom.gets(business);
 
       businessMeetingTimeList.dateBlock = req.params.date;
       const user = new User();
@@ -59,6 +65,43 @@ const apiGet = [
           userBuyer,
           businessMeetingTimeList,
         );
+
+        query.map((v: any) => {
+          if (v.businessMeetingRoomReservation) {
+            if (v.businessMeetingRoomReservation.length < roomCount) {
+              v.meetingAvailable = true;
+            } else {
+              v.meetingAvailable = false;
+            }
+          } else {
+            v.meetingAvailable = true;
+          }
+
+          // 회사명
+          if (v.businessMeetingRoomReservation) {
+            v.businessMeetingRoomReservation.businessVendor.businessVendorFieldValues.map(
+              (j: any) => {
+                if (j.businessVendorField.name === '기업명') {
+                  const columnType = j.businessVendorField.fieldType.columnType;
+
+                  if (columnType === 'text') {
+                    v.companyName = j.text || null;
+                  } else if (columnType === 'textarea') {
+                    v.companyName = j.textarea || null;
+                  } else if (columnType === 'idx') {
+                    v.companyName = j.idx || null;
+                  } else {
+                    v.companyName = null;
+                  }
+                }
+              },
+            );
+          } else {
+            v.companyName = null;
+          }
+
+          return v;
+        });
       } else {
         const businessVendorManager = new BusinessVendorManager();
         businessVendorManager.id = req.user.users[0].businessVendorManager.id;
@@ -74,6 +117,25 @@ const apiGet = [
           businessVendor,
           businessMeetingTimeList,
         );
+
+        query.map((v: any) => {
+          v.userName = '';
+          v.businessMeetingTimeList.userBuyerMeetingTimeLists.map((j: any) => {
+            v.userName += ` ${j.userBuyer.name}`;
+          });
+
+          if (v.businessMeetingTimeList.userBuyerMeetingTimeLists) {
+            if (v.businessMeetingTimeList.length < roomCount) {
+              v.meetingAvailable = true;
+            } else {
+              v.meetingAvailable = false;
+            }
+          } else {
+            v.meetingAvailable = true;
+          }
+
+          return v;
+        });
       }
 
       responseJson(res, query, method, 'success');

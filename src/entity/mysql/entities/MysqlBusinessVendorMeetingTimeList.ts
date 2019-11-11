@@ -29,6 +29,7 @@ export class BusinessVendorMeetingTimeList extends Base {
   @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
   use: StatusTypeRole;
 
+  // 예약테이블에 입력할 방도가 없어서 사용못함.. 어렵다.
   @OneToMany(
     type => BusinessMeetingRoomReservation,
     businessMeetingRoomReservation =>
@@ -50,4 +51,11 @@ export class BusinessVendorMeetingTimeList extends Base {
       businessMeetingTimeList.businessVendorMeetingTimeLists,
   )
   businessMeetingTimeList: BusinessMeetingTimeList;
+
+  @OneToMany(
+    type => UserBuyerMeetingTimeList,
+    userBuyerMeetingTimeList =>
+      userBuyerMeetingTimeList.businessVendorMeetingTimeList,
+  )
+  userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
 }
