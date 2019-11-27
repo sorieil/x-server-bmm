@@ -26,13 +26,8 @@ const apiGets = [
       const query = await service.get(business);
 
       await query.map((v: any) => {
-        // console.log('-----------');
-        // console.log(v);
-        // console.log('-----------');
         delete v.createdAt;
         delete v.updatedAt;
-        // v.informationType = v.informationType.id;
-        // v.fieldType = v.fieldType.id;
         v.fieldChildNodes = v.businessVendorFieldChildNodes;
         delete v.businessVendorFieldChildNodes;
         return v;

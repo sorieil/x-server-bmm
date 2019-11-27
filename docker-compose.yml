@@ -3,10 +3,7 @@ version: '3.3'
 services:
   # 우선 속도가 느려서... 주석처리 
   # nodejs:
-  #   # build:
-  #   #   context: .
-  #   #   dockerfile: Dockerfile
-  #   image: node:8
+  #   image: node:10.17
   #   container_name: nodejs
   #   restart: unless-stopped
   #   env_file: .env
@@ -35,7 +32,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db // 데이터를 계속 저장하고 싶으면, 주석 제거
+      - mongo-data:/data/db #데이터를 계속 저장하고 싶으면, 주석 제거
       - ./mongo-dump:/home/mongo-dump #덤프파일 디렉토리
       - ./mongo-dump/import.sh:/docker-entrypoint-initdb.d/import.sh #덤프파일 리스토어 및 계정 생성
     networks:

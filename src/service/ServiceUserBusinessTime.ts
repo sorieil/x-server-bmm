@@ -42,7 +42,8 @@ export default class ServiceUserBusinessTime extends BaseService {
       })
       .andWhere('userBuyerId = :userBuyerId', {
         userBuyerId: userBuyer.id,
-      });
+      })
+      .orderBy('businessTimeList.id');
     const query = queryBuilder.getMany();
     return query;
   }
@@ -77,6 +78,7 @@ export default class ServiceUserBusinessTime extends BaseService {
         businessVendorId: businessVendor.id,
       });
     }
+    // queryBuilder.orderBy('businessTimeList.id');
 
     const query = queryBuilder.getMany();
     return query;
