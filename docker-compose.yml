@@ -1,28 +1,22 @@
-version: '3.3'
+version: '3.7'
 
 services:
-  # 우선 속도가 느려서... 주석처리 
-  # nodejs:
-  #   image: node:10.17
-  #   container_name: nodejs
-  #   restart: unless-stopped
+  # xsync-bmm-back-development:
+  #   build: 
+  #     context: .
+  #     target: development
+  #   working_dir: /usr/src/app
   #   env_file: .env
-  #   environment:
-  #     - MONGO_USERNAME=$MONGO_USERNAME
-  #     - MONGO_PASSWORD=$MONGO_PASSWORD
-  #     - MONGO_HOSTNAME=db
-  #     - MONGO_PORT=$MONGO_PORT
-  #     - MONGO_DB=$MONGO_DB
-  #   ports:
-  #     - "8080:3001"
+  #   container_name: xsync-bmm-back-development
+  #   restart: unless-stopped
   #   volumes:
-  #     - .:/home/app
-  #     - ./node_modules:/home/app/node_modules
+  #     - .:/usr/src/app
+  #     - app_back_node_modules:/user/src/app/node_modules
+  #   ports:
+  #     - '8989:8989'
   #   networks:
   #     - app-network
-  #   depends_on:
-  #     - db
-  #   command: /home/app/node_modules/.bin/nodemon /home/app/bin/api.js
+  #   command: npm run dev
     
   mongo-db:
     image: mongo:latest
@@ -42,7 +36,7 @@ services:
     container_name: mysql-db
     privileged: true
     command: --default-authentication-plugin=mysql_native_password #If a password error occurs, use the command.
-    restart: always
+    restart: unless-stopped
     env_file: .env
     environment:
       MYSQL_DATABASE: $MYSQL_DATABASE
@@ -63,9 +57,10 @@ services:
     
 networks:
   app-network:
-    driver: bridge
+    driver: host
 
 # 데이터를 계속 유지 하고 싶으면, 생성
 volumes:
   mysql-data:
   mongo-data:
+  app_back_node_modules:

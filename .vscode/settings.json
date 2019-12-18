@@ -12,7 +12,6 @@
   "tslint.ignoreDefinitionFiles": false,
   "typescript.format.enable": false,
   // "prettier.eslintIntegration": true,
-  "eslint.autoFixOnSave": true,
   "tslint.exclude": "**/node_modules/**/*",
   "formattingToggle.activateFor": ["formatOnSave"],
   "appService.zipIgnorePattern": [".vscode{,/**}"],
@@ -20,9 +19,11 @@
     "extensions": [".js", ".json"]
   },
   "[javascript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
   "prettier.requireConfig": true,
@@ -35,19 +36,23 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
-  "eslint.validate": [
-    "javascript",
-    {
-      "language": "typescript",
-      "autoFix": true
-    },
-    {
-      "language": "typescriptreact",
-      "autoFix": true
-    }
-  ],
+  // "eslint.validate": [
+  //   "javascript",
+  //   {
+  //     "language": "typescript",
+  //     "autoFix": true
+  //   },
+  //   {
+  //     "language": "typescriptreact",
+  //     "autoFix": true
+  //   }
+  // ],
   "cSpell.words": [
+    "BMTL",
     "typeorm"
   ],
-  "rest-client.fontSize": 11
+  "rest-client.fontSize": 11,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

@@ -1,5 +1,4 @@
 import { BusinessVendorMeetingTimeList } from './MysqlBusinessVendorMeetingTimeList';
-import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { Base, StatusTypeRole } from './MysqlBase';
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';

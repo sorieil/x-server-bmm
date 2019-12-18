@@ -8,7 +8,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { IoTJobsDataPlane } from 'aws-sdk';
 export type StatusTypeRole = 'no' | 'yes';
 export type UserTypeRole = 'buyer' | 'manager' | null;
 export class Base {

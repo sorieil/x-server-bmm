@@ -20,243 +20,251 @@ import logger from '../util/logger';
 
 export type TokenLevelRole = 'admin' | 'user';
 export default class ServiceAccount extends BaseService {
-  constructor() {
-    super();
-  }
-
-  public async getUserId(id: any) {
-    const mongoQuery = await this.mongoManager(Accounts).findOne(id);
-    const user = new User();
-    const login = new Login();
-    const mongoBridge = new MongoBridge();
-    await this.queryRunner.connect();
-    await this.queryRunner.startTransaction();
-    let bridgeQuery = await this.queryRunner.manager.findOne(MongoBridge, {
-      where: { mongodbID: `${mongoQuery.id.toString()}` },
-      relations: ['login'],
-    });
-
-    if (bridgeQuery) {
-      // console.log('User 업데이트');
-      mongoBridge.id = bridgeQuery.id;
-      login.id = bridgeQuery.login.id;
-      const userQuery = await this.queryRunner.manager.findOne(User, {
-        where: {
-          login: bridgeQuery.login,
-        },
-        relations: ['userBuyer', 'businessVendorManager'],
-      });
-      Object.assign(user, userQuery);
-
-      // const loginQuery = mysqlManager
-      //     .getRepository(Login)
-      //     .find({ where: { id: bridge.login.id, relations: ['user', 'user.permission', 'user.event'] } });
-    } else {
-      console.log('User 추가 됐습니다.', bridgeQuery);
+    constructor() {
+        super();
     }
 
-    // 퍼미션 정리
-    // const permissionSave = query.permission.reduce((acc: Array<UserPermission>, cur: Permission): Array<
-    //     UserPermission
-    // > => {
-    //     const permission = new UserPermission();
-    //     permission.permissionName = cur.permissionName;
-    //     permission.isChecked = cur.isChecked;
-    //     acc.push(permission);
-    //     return acc;
-    // }, []);
+    public async getUserId(id: any) {
+        const mongoQuery = await this.mongoManager(Accounts).findOne(id);
+        const user = new User();
+        const login = new Login();
+        const mongoBridge = new MongoBridge();
+        await this.queryRunner.connect();
+        await this.queryRunner.startTransaction();
+        let bridgeQuery = await this.queryRunner.manager.findOne(MongoBridge, {
+            where: { mongodbID: `${mongoQuery.id.toString()}` },
+            relations: ['login'],
+        });
 
-    // // 이벤트 정리
-    // const eventSave = query.eventList.reduce((acc: Array<UserEvent>, cur: EventList): Array<UserEvent> => {
-    //     const event = new UserEvent();
-    //     event.eventId = cur.eventId.toString();
-    //     event.isPushOn = cur.isPushOn;
-    //     event.name = cur.name;
-    //     event.pushToken = cur.pushToken;
-    //     event.mobileType = cur.mobileType;
-    //     event.point = cur.point;
-    //     event.createdAt = cur.joinDt;
-    //     acc.push(event);
-    //     return acc;
-    // }, []);
+        if (bridgeQuery) {
+            // console.log('User 업데이트');
+            mongoBridge.id = bridgeQuery.id;
+            login.id = bridgeQuery.login.id;
+            const userQuery = await this.queryRunner.manager.findOne(User, {
+                where: {
+                    login: bridgeQuery.login,
+                },
+                relations: ['userBuyer', 'businessVendorManager'],
+            });
+            Object.assign(user, userQuery);
 
-    // 유저 정리
-    try {
-      user.isInactive = mongoQuery.isInactive ? 'yes' : 'no';
-      user.isWithdrawal = mongoQuery.isWithdrawal ? 'yes' : 'no';
-      user.createdAt = mongoQuery.createDt;
-      user.profileImg = mongoQuery.profiles.profileImg;
-
-      // TODO: 바이어인지 매니저인지 설정해준다. 하지만 추후 매니저의 인증 방법이 달라 진다면,
-      // TODO: 웹에서 매니저를 인증하는 방식으로하고, 모바일에서는 모두 바이어로 설정 될 가능성도 있다.
-      // TODO: 추후 변경될 수 있다. user.type은 변경될거 같지 않음. ㅎㅎ
-      if (user.type === null) {
-        if (user.userBuyer) {
-          user.type = 'buyer';
-          // console.log('buyer');
-        } else if (user.businessVendorManager) {
-          // console.log('manager');
-          user.type = 'manager';
+            // const loginQuery = mysqlManager
+            //     .getRepository(Login)
+            //     .find({ where: { id: bridge.login.id, relations: ['user', 'user.permission', 'user.event'] } });
+        } else {
+            console.log('User 추가 됐습니다.', bridgeQuery);
         }
-      }
-      // user.permission = permissionSave;
-      // user.event = eventSave;
 
-      await this.queryRunner.manager.save(user);
+        // 퍼미션 정리
+        // const permissionSave = query.permission.reduce((acc: Array<UserPermission>, cur: Permission): Array<
+        //     UserPermission
+        // > => {
+        //     const permission = new UserPermission();
+        //     permission.permissionName = cur.permissionName;
+        //     permission.isChecked = cur.isChecked;
+        //     acc.push(permission);
+        //     return acc;
+        // }, []);
 
-      // 로그인 정리
-      login.emailVerified = mongoQuery.emailVerified ? 'yes' : 'no';
-      login.email = mongoQuery.email ? mongoQuery.email : null;
-      login.password = mongoQuery.password;
-      login.createdAt = mongoQuery.createDt;
-      login.users = [user];
+        // // 이벤트 정리
+        // const eventSave = query.eventList.reduce((acc: Array<UserEvent>, cur: EventList): Array<UserEvent> => {
+        //     const event = new UserEvent();
+        //     event.eventId = cur.eventId.toString();
+        //     event.isPushOn = cur.isPushOn;
+        //     event.name = cur.name;
+        //     event.pushToken = cur.pushToken;
+        //     event.mobileType = cur.mobileType;
+        //     event.point = cur.point;
+        //     event.createdAt = cur.joinDt;
+        //     acc.push(event);
+        //     return acc;
+        // }, []);
 
-      await this.queryRunner.manager.save(login);
+        // 유저 정리
+        try {
+            user.isInactive = mongoQuery.isInactive ? 'yes' : 'no';
+            user.isWithdrawal = mongoQuery.isWithdrawal ? 'yes' : 'no';
+            user.createdAt = mongoQuery.createDt;
+            user.profileImg = mongoQuery.profiles.profileImg;
 
-      mongoBridge.login = login;
-      mongoBridge.mongodbID = mongoQuery.id.toString();
-      await this.queryRunner.manager.save(mongoBridge);
+            // TODO: 바이어인지 매니저인지 설정해준다. 하지만 추후 매니저의 인증 방법이 달라 진다면,
+            // TODO: 웹에서 매니저를 인증하는 방식으로하고, 모바일에서는 모두 바이어로 설정 될 가능성도 있다.
+            // TODO: 추후 변경될 수 있다. user.type은 변경될거 같지 않음. ㅎㅎ
+            if (user.type === null) {
+                if (user.userBuyer) {
+                    user.type = 'buyer';
+                    // console.log('buyer');
+                } else if (user.businessVendorManager) {
+                    // console.log('manager');
+                    user.type = 'manager';
+                }
+            }
+            // user.permission = permissionSave;
+            // user.event = eventSave;
 
-      // commit transaction now:
-      await this.queryRunner.commitTransaction();
-    } catch (err) {
-      // since we have errors lets rollback changes we made
-      logger.error('Transaction error: ', err);
-      console.error('유저 회원정보 트랜젝션 에러');
-      await this.queryRunner.rollbackTransaction();
-      return err;
-    } finally {
-      // you need to release query runner which is manually created:
-      await this.queryRunner.release();
-      return login;
-    }
-  }
+            await this.queryRunner.manager.save(user);
 
-  public async getAdminId(id: any) {
-    const mongoQuery = await this.mongoManager(Admins).findOne(id);
-    const admin = new Admin();
-    const adminLogin = new AdminLogin();
-    const mongoBridge = new MongoBridge();
-    await this.queryRunner.connect();
-    await this.queryRunner.startTransaction();
-    const bridgeQuery = await this.queryRunner.manager.findOne(MongoBridge, {
-      where: { mongodbID: `${mongoQuery._id.toString()}` },
-      relations: ['adminLogin'],
-    });
+            // 로그인 정리
+            login.emailVerified = mongoQuery.emailVerified ? 'yes' : 'no';
+            login.email = mongoQuery.email ? mongoQuery.email : null;
+            login.password = mongoQuery.password;
+            login.createdAt = mongoQuery.createDt;
+            login.users = [user];
 
-    if (bridgeQuery) {
-      // console.log('업데이트');
-      mongoBridge.id = bridgeQuery.id;
-      adminLogin.id = bridgeQuery.adminLogin.id;
-      const adminQuery = await this.queryRunner.manager.findOne(Admin, {
-        where: {
-          adminLogin: bridgeQuery.adminLogin,
-        },
-      });
-      Object.assign(admin, adminQuery);
-    } else {
-      // console.log('추가', bridgeQuery);
-    }
+            await this.queryRunner.manager.save(login);
 
-    try {
-      // execute some operations on this transaction:
+            mongoBridge.login = login;
+            mongoBridge.mongodbID = mongoQuery.id.toString();
+            await this.queryRunner.manager.save(mongoBridge);
 
-      admin.name = mongoQuery.name || 'anonymous';
-      admin.phone = mongoQuery.phone;
-
-      await this.queryRunner.manager.save(admin);
-
-      adminLogin.email = mongoQuery.id;
-      adminLogin.emailVerified = mongoQuery.verified ? 'yes' : 'no';
-      adminLogin.password = mongoQuery.password;
-      adminLogin.admins = [admin];
-
-      await this.queryRunner.manager.save(adminLogin);
-
-      mongoBridge.adminLogin = adminLogin;
-      mongoBridge.mongodbID = mongoQuery._id.toString();
-      await this.queryRunner.manager.save(mongoBridge);
-
-      // commit transaction now:
-      await this.queryRunner.commitTransaction();
-    } catch (err) {
-      // since we have errors lets rollback changes we made
-      logger.error('Transaction error: ', err);
-      console.error('관리자 회원정보 트랜젝션 에러');
-      await this.queryRunner.rollbackTransaction();
-      return err;
-    } finally {
-      // you need to release query runner which is manually created:
-      await this.queryRunner.release();
-      return adminLogin;
+            // commit transaction now:
+            await this.queryRunner.commitTransaction();
+        } catch (err) {
+            // since we have errors lets rollback changes we made
+            logger.error('Transaction error: ', err);
+            console.error('유저 회원정보 트랜젝션 에러');
+            await this.queryRunner.rollbackTransaction();
+            setTimeout(() => {
+                getManager('mysqlDB').connection.close();
+            }, 0);
+            return err;
+        } finally {
+            // you need to release query runner which is manually created:
+            await this.queryRunner.release();
+            return login;
+        }
     }
 
-    // 로그인을 하게 되면 무조건 Mysql 에 동기화를 시킨다.
-    // return await this.mysqlConnection
-    //   .transaction(async transactionalEntityManager => {
-    //     return mongoQuery.then(async query => {
+    public async getAdminId(id: any) {
+        const mongoQuery = await this.mongoManager(Admins).findOne(id);
+        const admin = new Admin();
+        const adminLogin = new AdminLogin();
+        const mongoBridge = new MongoBridge();
 
-    //     });
-    //   })
-    //   .catch(e => {
-    //     logger.error('passport token verity error:', e);
-    //     return e;
-    //   });
-  }
+        // Begin Transaction
+        await this.queryRunner.connect();
+        await this.queryRunner.startTransaction();
+        const bridgeQuery = await this.queryRunner.manager.findOne(
+            MongoBridge,
+            {
+                where: { mongodbID: `${mongoQuery._id.toString()}` },
+                relations: ['adminLogin'],
+            },
+        );
 
-  /**
-   * generateToken
-   */
+        if (bridgeQuery) {
+            // console.log('업데이트');
+            mongoBridge.id = bridgeQuery.id;
+            adminLogin.id = bridgeQuery.adminLogin.id;
+            const adminQuery = await this.queryRunner.manager.findOne(Admin, {
+                where: {
+                    adminLogin: bridgeQuery.adminLogin,
+                },
+            });
+            Object.assign(admin, adminQuery);
+        } else {
+            // console.log('추가', bridgeQuery);
+        }
 
-  public async generateToken(secretKey: secretNameType) {
-    const query = await getMongoManager(connectionMongoDB)
-      .getMongoRepository(Admins)
-      .findOne({
-        order: {
-          _id: 'DESC',
-        },
-      });
-    const token = jwt.sign(
-      {
-        _id: query._id,
-        id: query.id,
-        name: query.name,
-        level: 'admin',
-      },
-      secretKey,
-      { algorithm: 'HS256', expiresIn: 99999999 },
-    );
-    return {
-      token: 'JWT ' + token,
-      id: query._id,
-      name: query.name,
-      level: 'admin',
-    };
-  }
+        try {
+            // execute some operations on this transaction:
 
-  public async generateUserToken(secretKey: secretNameType) {
-    const query: any = await getMongoManager(connectionMongoDB)
-      .getMongoRepository(Accounts)
-      .findOne({
-        order: {
-          id: 'DESC',
-        },
-      });
-    const token = jwt.sign(
-      {
-        id: query.id,
-        name: query.name,
-        level: 'user',
-        eventId: query.eventList[0],
-      },
-      secretKey,
-      { expiresIn: 99999999 },
-    );
-    return {
-      token: 'JWT ' + token,
-      id: query._id,
-      name: query.name,
-      level: 'eUser',
-    };
-  }
+            admin.name = mongoQuery.name || 'anonymous';
+            admin.phone = mongoQuery.phone;
+
+            await this.queryRunner.manager.save(admin);
+
+            adminLogin.email = mongoQuery.id;
+            adminLogin.emailVerified = mongoQuery.verified ? 'yes' : 'no';
+            adminLogin.password = mongoQuery.password;
+            adminLogin.admins = [admin];
+
+            await this.queryRunner.manager.save(adminLogin);
+
+            mongoBridge.adminLogin = adminLogin;
+            mongoBridge.mongodbID = mongoQuery._id.toString();
+            await this.queryRunner.manager.save(mongoBridge);
+
+            // commit transaction now:
+            await this.queryRunner.commitTransaction();
+        } catch (err) {
+            // since we have errors lets rollback changes we made
+            logger.error('Transaction error: ', err);
+            console.error('관리자 회원정보 트랜젝션 에러');
+            await this.queryRunner.rollbackTransaction();
+            return err;
+        } finally {
+            // you need to release query runner which is manually created:
+            await this.queryRunner.release();
+            return adminLogin;
+        }
+
+        // 로그인을 하게 되면 무조건 Mysql 에 동기화를 시킨다.
+        // return await this.mysqlConnection
+        //   .transaction(async transactionalEntityManager => {
+        //     return mongoQuery.then(async query => {
+
+        //     });
+        //   })
+        //   .catch(e => {
+        //     logger.error('passport token verity error:', e);
+        //     return e;
+        //   });
+    }
+
+    /**
+     * generateToken
+     */
+
+    public async generateToken(secretKey: secretNameType) {
+        const query = await getMongoManager(connectionMongoDB)
+            .getMongoRepository(Admins)
+            .findOne({
+                order: {
+                    _id: 'DESC',
+                },
+            });
+        const token = jwt.sign(
+            {
+                _id: query._id,
+                id: query.id,
+                name: query.name,
+                level: 'admin',
+            },
+            secretKey,
+            { algorithm: 'HS256', expiresIn: 99999999 },
+        );
+        return {
+            token: 'JWT ' + token,
+            id: query._id,
+            name: query.name,
+            level: 'admin',
+        };
+    }
+
+    public async generateUserToken(secretKey: secretNameType) {
+        const query: any = await getMongoManager(connectionMongoDB)
+            .getMongoRepository(Accounts)
+            .findOne({
+                order: {
+                    id: 'DESC',
+                },
+            });
+        const token = jwt.sign(
+            {
+                id: query.id,
+                name: query.name,
+                level: 'user',
+                eventId: query.eventList[0],
+            },
+            secretKey,
+            { expiresIn: 99999999 },
+        );
+        return {
+            token: 'JWT ' + token,
+            id: query._id,
+            name: query.name,
+            level: 'eUser',
+        };
+    }
 }

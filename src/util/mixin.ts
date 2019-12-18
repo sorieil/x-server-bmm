@@ -6,12 +6,12 @@ import path from 'path';
     시간 기준으로 파일명을 생성해준다.
 */
 export const generateFileNameWithTime = (fileName: string): string => {
-  const time = moment()
-    .format('YYYYMMDDHHmmssSSSZZ')
-    .replace(/(\+|-)/gi, '_');
-  const uuid = uuidV4().replace(/-/gi, '');
-  const extname = path.extname(fileName);
-  return `${time}_${uuid}${extname}`;
+    const time = moment()
+        .format('YYYYMMDDHHmmssSSSZZ')
+        .replace(/(\+|-)/gi, '_');
+    const uuid = uuidV4().replace(/-/gi, '');
+    const extname = path.extname(fileName);
+    return `${time}_${uuid}${extname}`;
 };
 
 // const;

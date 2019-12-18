@@ -5,21 +5,17 @@
     "prettier",
     "prettier/@typescript-eslint"
   ],
+  "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 2018, // Allows for the parsing of modern ECMAScript features
     "sourceType": "module", // Allows for the use of imports
     "project": "./tsconfig.json" // 코드 컴벤션이 중복되서 주석처리
   },
   "rules": {
-    "explicit-function-return-type": "off",
-    "explicit-member-accessibility": "off",
-    "accessibility": "explicit",
-    "overrides": {
-      "accessors": "explicit",
-      "constructors": "no-public",
-      "methods": "explicit",
-      "properties": "off",
-      "parameterProperties": "explicit"
-    }
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "prettier/prettier": ["error"]
   }
 }

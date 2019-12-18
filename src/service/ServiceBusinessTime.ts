@@ -12,50 +12,50 @@ import { read, write, utils } from 'xlsx';
  * 비즈니스 관련 서비스 클래스이다.
  */
 export class ServiceBusinessTime extends BaseService {
-  constructor() {
-    super();
-  }
-  /**
-   * 시간을 저장한다.
-   * @param businessMeetingTime  businessMeetingTime
-   */
-  public async post(businessMeetingTime: BusinessMeetingTime) {
-    const query = await this.mysqlManager(BusinessMeetingTime).save(
-      businessMeetingTime,
-    );
-    delete query.business;
-    return query;
-  }
+    constructor() {
+        super();
+    }
+    /**
+     * 시간을 저장한다.
+     * @param businessMeetingTime  businessMeetingTime
+     */
+    public async post(businessMeetingTime: BusinessMeetingTime) {
+        const query = await this.mysqlManager(BusinessMeetingTime).save(
+            businessMeetingTime,
+        );
+        delete query.business;
+        return query;
+    }
 
-  /**
-   * 비즈니스 아이디로 설정한 타임을 조회 한다.
-   * @param business business.id
-   */
-  public async get(business: Business) {
-    const query = await this.mysqlManager(BusinessMeetingTime).findOne({
-      where: {
-        business: business,
-      },
-    });
-    return query;
-  }
+    /**
+     * 비즈니스 아이디로 설정한 타임을 조회 한다.
+     * @param business business.id
+     */
+    public async get(business: Business) {
+        const query = await this.mysqlManager(BusinessMeetingTime).findOne({
+            where: {
+                business: business,
+            },
+        });
+        return query;
+    }
 
-  public async _getBusinessVendorManagerByBusinessVendorManager(
-    businessVendorManager: BusinessVendorManager,
-  ) {
-    const query = this.mysqlManager(BusinessVendorManager).findOne({
-      where: {
-        id: businessVendorManager.id,
-      },
-      relations: [
-        'businessVendorFieldManagerValues',
-        'businessVendorFieldManagerValues.idx',
-        'businessVendorFieldManagerValues.businessVendorField',
-        'businessVendorFieldManagerValues.businessVendorField.informationType',
-        'businessVendorFieldManagerValues.businessVendorField.fieldType',
-      ],
-    });
+    public async _getBusinessVendorManagerByBusinessVendorManager(
+        businessVendorManager: BusinessVendorManager,
+    ) {
+        const query = this.mysqlManager(BusinessVendorManager).findOne({
+            where: {
+                id: businessVendorManager.id,
+            },
+            relations: [
+                'businessVendorFieldManagerValues',
+                'businessVendorFieldManagerValues.idx',
+                'businessVendorFieldManagerValues.businessVendorField',
+                'businessVendorFieldManagerValues.businessVendorField.informationType',
+                'businessVendorFieldManagerValues.businessVendorField.fieldType',
+            ],
+        });
 
-    return query;
-  }
+        return query;
+    }
 }
