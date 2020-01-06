@@ -1,3 +1,4 @@
+import { BusinessEventBridge } from './../../entity/mysql/entities/MysqlBusinessEventBridge';
 import { BusinessVendorFieldChildNode } from './../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
 import { Request, Response } from 'express';
@@ -15,7 +16,7 @@ import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVe
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
-import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
+import ServiceCode from '../../service/ServiceCode';
 
 /**
  * @requires fieldId
@@ -81,30 +82,32 @@ const CheckPermissionBusinessVendorChild = () =>
             return Promise.reject('Invalid insert data.');
         }
 
-        const service = new ServiceBusinessVendorField();
+        const serviceBusinessVendorField = new ServiceBusinessVendorField();
         const childService = new ServiceBusinessVendorFieldChildNode();
-        const business = new Business();
-        const admin = new Admin();
+        const serviceBusinessPermission = new ServiceBusinessPermission();
         const businessVendorFieldChildNode = new BusinessVendorFieldChildNode();
         const businessVendorField = new BusinessVendorField();
 
-        admin.id = req.user.admins[0];
         businessVendorFieldChildNode.id = value;
 
-        const r = await new Promise(async resolve => {
-            const businessQuery = await new ServiceBusinessPermission()._getBusinessByAdmin(
-                admin,
+        const result = await new Promise(async resolve => {
+            const businessQuery = await serviceBusinessPermission._getBusinessById(
+                req.user.business,
             );
+            // 비즈니스 정보가 있는지 체크 없으면, null 보낸다.
             if (!businessQuery) {
                 resolve(null);
             }
 
-            business.id = businessQuery.id;
-            const fieldQuery = await service.get(business);
+            const fieldQuery = await serviceBusinessVendorField._getByBusiness(
+                businessQuery,
+            );
 
+            // 설정한 필드가 없으면, null 을 보낸다.
             if (!fieldQuery) {
                 resolve(null);
             }
+
             businessVendorField.id = fieldQuery[0].id;
             const vendorFieldChildNodeQuery = await childService.getByBusinessVendorField(
                 businessVendorField,
@@ -112,14 +115,14 @@ const CheckPermissionBusinessVendorChild = () =>
             );
             resolve(vendorFieldChildNodeQuery);
         });
-        if (r === null) {
+        if (result === null) {
             return Promise.reject(
                 'You don`t have permission or first insert business or vendor default data.',
             );
         }
 
-        if (r) {
-            Object.assign(req.user, { business: business, filedChildNode: r });
+        if (result) {
+            Object.assign(req.user, { filedChildNode: result });
         } else {
             return Promise.reject(
                 'You don`t have permission or first insert vendor child fields..',
@@ -132,6 +135,9 @@ const apiInit = [
         try {
             const errors = validationResult(req);
             const method: RequestRole = req.method.toString() as any;
+            const initCodeTable = JSON.stringify(
+                require('../../../init-data-code-table.json'),
+            );
 
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
@@ -140,10 +146,12 @@ const apiInit = [
 
             const service = new ServiceBusinessVendorField();
             const serviceChild = new ServiceBusinessVendorInformationChildNode();
+            const serviceCode = new ServiceCode();
 
             const business = new Business();
             business.id = req.user.business.id;
             const informationType = new Code();
+            // TODO: 여기에서 비즈니스가 없다면, 생성해주고, 이벤트 아이디와 매칭을 해준다.
 
             const initFields: BusinessVendorFieldType[] = [
                 {
@@ -213,6 +221,11 @@ const apiInit = [
                     fieldType: 1,
                 },
             ];
+
+            // 코드가 없으면 기본적으로 세팅을 해준다.
+            // let codeTables: Code[];
+            console.log('initCodeTable:', initCodeTable);
+            // await serviceCode.post(initCodeTable.data as Code[]);
 
             // 중복 체크
             return await new Promise(async resolve => {
@@ -521,7 +534,7 @@ const apiGets = [
             const business = new Business();
             business.id = req.user.business.id;
 
-            const query = await service.get(business);
+            const query = await service._getByBusiness(business);
 
             await query.map((v: any) => {
                 // console.log('-----------');
@@ -619,7 +632,7 @@ const apiDeleteAll = [
             const business = new Business();
             business.id = req.user.business.id;
 
-            const informationQuery = await service.get(business);
+            const informationQuery = await service._getByBusiness(business);
             if (informationQuery) {
                 const query = await service.deleteAll(business);
                 // console.log('query:', query);

@@ -34,19 +34,13 @@ const businessVendorInformationPermission = () =>
             }
 
             business.id = businessQuery.id;
-            const fieldQuery = await service.get(business);
+            const fieldQuery = await service._getByBusiness(business);
             if (!fieldQuery || fieldQuery.length === 0) {
                 resolve(null);
             }
 
-            console.log('fieldQuery:', fieldQuery);
-
             businessVendorField.id = fieldQuery[0].id;
-            console.log(
-                'field child permission:',
-                businessVendorField.id,
-                businessVendorFieldChildNode.id,
-            );
+
             const vendorFieldChildNodeQuery = await childService.getByBusinessVendorField(
                 businessVendorField, // TODO 적용 안함. 개선 필요함. 현재 인증은 이뤄지지 않음
                 businessVendorFieldChildNode,

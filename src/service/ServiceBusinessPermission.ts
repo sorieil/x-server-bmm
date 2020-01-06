@@ -1,3 +1,4 @@
+import { BusinessEventBridge } from './../entity/mysql/entities/MysqlBusinessEventBridge';
 import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { BaseService } from './BaseService';
@@ -45,6 +46,25 @@ export class ServiceBusinessPermission extends BaseService {
             // 같이 where 절로 검색하기 때문에 에러가 난다.
             where: { admin: admin.id },
         });
+        return query;
+    }
+
+    public _getBusinessByEventId(businessEventBridge: BusinessEventBridge) {
+        const query = this.mysqlManager(BusinessEventBridge).findOne({
+            where: { eventId: businessEventBridge.eventId },
+            relations: ['business'],
+        });
+
+        return query;
+    }
+
+    public _getBusinessById(business: Business) {
+        const query = this.mysqlManager(Business).findOne({
+            where: {
+                id: business.id,
+            },
+        });
+
         return query;
     }
 }

@@ -1,11 +1,14 @@
 import { Base } from './MysqlBase';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 import { BusinessVendorField } from './MysqlBusinessVendorField';
 import { BusinessVendorFieldValue } from './MysqlBusinessVendorFieldValue';
 import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManagerValue';
 
 @Entity()
-export class Code extends Base {
+export class Code {
+ @PrimaryColumn()
+  id: number;
+
   @Column('varchar', { nullable: false })
   name: string;
 

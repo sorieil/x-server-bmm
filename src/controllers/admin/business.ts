@@ -18,9 +18,20 @@ const apiGet = [
             const query = await new ServiceBusiness().get(req.user.admins[0]);
             const method: RequestRole = req.method.toString() as any;
             if (query) {
+                Object.assign(query, { eventId: req.user });
                 responseJson(res, [query], method, 'success');
             } else {
-                responseJson(res, [], method, 'success');
+                responseJson(
+                    res,
+                    [
+                        {
+                            message:
+                                'Please input your company information first.',
+                        },
+                    ],
+                    method,
+                    'success',
+                );
             }
         } catch (error) {
             tryCatch(res, error);
@@ -61,11 +72,17 @@ const apiPost = [
                 business.businessEventBridge = eventBridgeQuery;
                 business.admin = admin;
             }
+            // TODO 비즈니스 계정을 매핑 시켜주는건...EventID 로만 해야 하는데 여기에서 AdminID 로 해주면...
+            // TODO 안된다...... 흠..최초로 누가 만들었지만 등록하고,... 그리고 수정을 누가 했는지도 체크를 하는 로그를
+            // TODO 쌓는것도 추가를 해놓으면 좋을거 같다...
+
+            // EventId 가 없으면, 저장을 해준다.
 
             business.title = body.title;
             business.subTitle = body.subTitle;
             business.status = body.status;
 
+            // 비즈니스 정보를 입력/수정을 해준다.
             const query = await new ServiceBusiness().post(business);
             responseJson(res, [query], method, 'success');
         } catch (error) {

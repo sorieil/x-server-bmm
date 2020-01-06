@@ -1,5 +1,5 @@
-/* eslint no-use-before-define: 0 */
-var path = require('path');
+// 지금 사용은 하지 않음.
+// 하지만 지우기 아까워서 ....ㅋㅋ 여튼 코드 정리할때 완전히 필요 하지 않게 되면, 삭제 해도 상관없음.  ~`asdfasdf
 var webpack = require('webpack');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 // const nodeExternals = require('webpack-node-externals');
@@ -38,8 +38,7 @@ module.exports = {
     plugins: [new webpack.ProgressPlugin(), new CleanWebpackPlugin()],
 
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /.(ts|tsx)?$/,
                 loader: 'ts-loader',
                 include: [path.resolve(__dirname, 'src')],

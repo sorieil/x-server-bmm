@@ -26,15 +26,25 @@ export default class ServiceBusinessVendorField extends BaseService {
         return query;
     }
 
-    public async post(vendorInformation: BusinessVendorField) {
+    public async post(businessVendorField: BusinessVendorField) {
         const query = await this.mysqlManager(BusinessVendorField).save(
-            vendorInformation,
+            businessVendorField,
         );
         delete query.business;
         return query;
     }
 
-    public async get(business: Business) {
+    public get(businessVendorField: BusinessVendorField) {
+        const query = this.mysqlManager(BusinessVendorField).findOne({
+            where: {
+                id: businessVendorField.id,
+            },
+        });
+
+        return query;
+    }
+
+    public async _getByBusiness(business: Business) {
         const query = this.mysqlManager(BusinessVendorField).find({
             where: {
                 business: business,

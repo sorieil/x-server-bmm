@@ -1,8 +1,8 @@
-version: '3.7'
+version: "3.7"
 
 services:
   # xsync-bmm-back-development:
-  #   build: 
+  #   build:
   #     context: .
   #     target: development
   #   working_dir: /usr/src/app
@@ -11,13 +11,12 @@ services:
   #   restart: unless-stopped
   #   volumes:
   #     - .:/usr/src/app
-  #     - app_back_node_modules:/user/src/app/node_modules
+  #     - node_modules:/user/src/app/node_modules
   #   ports:
-  #     - '8989:8989'
+  #     - "8989:8989"
   #   networks:
   #     - app-network
   #   command: npm run dev
-    
   mongo-db:
     image: mongo:latest
     container_name: mongo-db
@@ -30,7 +29,7 @@ services:
       - ./mongo-dump:/home/mongo-dump #덤프파일 디렉토리
       - ./mongo-dump/import.sh:/docker-entrypoint-initdb.d/import.sh #덤프파일 리스토어 및 계정 생성
     networks:
-      - app-network  
+      - app-network
   mysql-db:
     image: mysql:latest
     container_name: mysql-db
@@ -47,20 +46,17 @@ services:
       # Password for root access
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_ALLOW_EMPTY_PASSWORD: $MYSQL_ALLOW_EMPTY_PASSWORD
-
-    volumes: 
+    volumes:
       - mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
-      - app-network  
-    
+      - app-network
+
 networks:
   app-network:
-    driver: host
-
 # 데이터를 계속 유지 하고 싶으면, 생성
 volumes:
   mysql-data:
   mongo-data:
-  app_back_node_modules:
+  node_modules:

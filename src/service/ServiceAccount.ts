@@ -1,8 +1,9 @@
+import { BusinessEventBridge } from './../entity/mysql/entities/MysqlBusinessEventBridge';
 import { TokenLevelRole } from './ServiceAccount';
 import { AdminLogin } from './../entity/mysql/entities/MysqlAdminLogin';
 import { Admins } from './../entity/mongodb/entities/MongoAdmin';
 import { MongoBridge } from '../entity/mysql/entities/MysqlMongoBridge';
-import { connectionMysql, connectionMongoDB } from './../util/db';
+import { connectionMongoDB } from './../util/db';
 import { getMongoManager, getManager } from 'typeorm';
 import { Accounts } from '../entity/mongodb/entities/MongoAccounts';
 import { BaseService } from './BaseService';
@@ -36,8 +37,8 @@ export default class ServiceAccount extends BaseService {
             relations: ['login'],
         });
 
+        // If the exist Mongodb accounts.
         if (bridgeQuery) {
-            // console.log('User 업데이트');
             mongoBridge.id = bridgeQuery.id;
             login.id = bridgeQuery.login.id;
             const userQuery = await this.queryRunner.manager.findOne(User, {
@@ -135,16 +136,20 @@ export default class ServiceAccount extends BaseService {
         }
     }
 
-    public async getAdminId(id: any) {
+    public async getAdminId(jwt: any) {
+        const id = jwt._id;
+        const eventId = jwt.eventId;
+        console.log('id:', id);
         const mongoQuery = await this.mongoManager(Admins).findOne(id);
         const admin = new Admin();
         const adminLogin = new AdminLogin();
         const mongoBridge = new MongoBridge();
-
         // Begin Transaction
         await this.queryRunner.connect();
         await this.queryRunner.startTransaction();
-        const bridgeQuery = await this.queryRunner.manager.findOne(
+
+        // 회원의 몽고 디비 아이디를 가지고 회원정보를 조회한다.
+        const bridgeMongoQuery = await this.queryRunner.manager.findOne(
             MongoBridge,
             {
                 where: { mongodbID: `${mongoQuery._id.toString()}` },
@@ -152,26 +157,35 @@ export default class ServiceAccount extends BaseService {
             },
         );
 
-        if (bridgeQuery) {
-            // console.log('업데이트');
-            mongoBridge.id = bridgeQuery.id;
-            adminLogin.id = bridgeQuery.adminLogin.id;
+        const businessBridgeEventQuery = await this.queryRunner.manager.findOne(
+            BusinessEventBridge,
+            {
+                where: { eventId: eventId },
+                relations: ['business'],
+            },
+        );
+
+        if (bridgeMongoQuery) {
+            mongoBridge.id = bridgeMongoQuery.id;
+            adminLogin.id = bridgeMongoQuery.adminLogin.id;
             const adminQuery = await this.queryRunner.manager.findOne(Admin, {
                 where: {
-                    adminLogin: bridgeQuery.adminLogin,
+                    adminLogin: bridgeMongoQuery.adminLogin,
                 },
             });
-            Object.assign(admin, adminQuery);
+            // 여기에선 불러온 adminQuery 를 빈 admin 객체어 넣어준다.
+            Object.assign(admin, adminQuery, {
+                business: businessBridgeEventQuery.business,
+            });
         } else {
             // console.log('추가', bridgeQuery);
         }
 
         try {
-            // execute some operations on this transaction:
-
             admin.name = mongoQuery.name || 'anonymous';
             admin.phone = mongoQuery.phone;
 
+            // 접속한 관리자 정보 등록
             await this.queryRunner.manager.save(admin);
 
             adminLogin.email = mongoQuery.id;
@@ -179,18 +193,19 @@ export default class ServiceAccount extends BaseService {
             adminLogin.password = mongoQuery.password;
             adminLogin.admins = [admin];
 
+            // 로그인 정보 등록
             await this.queryRunner.manager.save(adminLogin);
 
             mongoBridge.adminLogin = adminLogin;
             mongoBridge.mongodbID = mongoQuery._id.toString();
+
+            // 몽고 디비와, 연결 정보 등록
             await this.queryRunner.manager.save(mongoBridge);
 
             // commit transaction now:
             await this.queryRunner.commitTransaction();
         } catch (err) {
-            // since we have errors lets rollback changes we made
             logger.error('Transaction error: ', err);
-            console.error('관리자 회원정보 트랜젝션 에러');
             await this.queryRunner.rollbackTransaction();
             return err;
         } finally {
@@ -198,18 +213,6 @@ export default class ServiceAccount extends BaseService {
             await this.queryRunner.release();
             return adminLogin;
         }
-
-        // 로그인을 하게 되면 무조건 Mysql 에 동기화를 시킨다.
-        // return await this.mysqlConnection
-        //   .transaction(async transactionalEntityManager => {
-        //     return mongoQuery.then(async query => {
-
-        //     });
-        //   })
-        //   .catch(e => {
-        //     logger.error('passport token verity error:', e);
-        //     return e;
-        //   });
     }
 
     /**

@@ -29,4 +29,9 @@ export default class ServiceCode extends BaseService {
         const query = this.mysqlManager(Code).find();
         return query;
     }
+
+    public async post(codes: Code[]) {
+        const query = this.mysqlManager(Code).save(codes);
+        return query;
+    }
 }

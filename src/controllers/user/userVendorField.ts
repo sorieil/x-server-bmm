@@ -23,7 +23,7 @@ const apiGets = [
             const business = new Business();
             business.id = req.user.business.id;
 
-            const query = await service.get(business);
+            const query = await service._getByBusiness(business);
 
             await query.map((v: any) => {
                 delete v.createdAt;

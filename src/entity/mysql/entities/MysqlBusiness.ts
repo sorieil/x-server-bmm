@@ -1,5 +1,4 @@
 import { BusinessVendorFavorite } from './MysqlBusinessVendorFavorite';
-import { BusinessCode } from './MysqlBusinessCode';
 import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
 import { BusinessMeetingRoom } from './MysqlBusinessMeetingRoom';
 import { BusinessDetail } from './MysqlBusinessDetail';
@@ -9,7 +8,6 @@ import {
   Entity,
   Column,
   OneToMany,
-  JoinColumn,
   OneToOne,
   ManyToOne,
   ManyToMany,

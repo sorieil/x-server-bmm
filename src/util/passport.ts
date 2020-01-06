@@ -10,7 +10,6 @@ export type secretNameType =
     | 'xsync-super'
     | 'xsync-admin'
     | 'xsync-user'
-    | 'xsync-guest'
     | 'xsync-scanner'
     | 'xsync-eUser';
 export const auth = (secretName: secretNameType) => {
@@ -26,16 +25,16 @@ export const auth = (secretName: secretNameType) => {
             try {
                 const serviceAccount = new ServiceAccount();
                 const level = jwtPayload.level;
+                console.log('jwt payload: ', jwtPayload);
 
                 // 이벤트 아이디가 있어야지만 이용 할 수 있다.
                 if (typeof jwtPayload.eventId === 'undefined') {
-                    console.log('jwtPayload.eventId:', jwtPayload.eventId);
+                    console.log('No eventId');
                     // 토큰에 이벤트 아이디가 없으면, 사용을 할 수 없다.
                     return done('noEventId', null);
                 }
                 // 토큰의 상태가 유저인지 관리자인지 체크 한다.
                 // 관리자 모드와, 앱/웹 모드를 구분 짓는다.
-
                 if (level === 'eUser') {
                     // 유저 모드
                     const user = serviceAccount.getUserId(jwtPayload._id);
@@ -80,7 +79,8 @@ export const auth = (secretName: secretNameType) => {
                             return done('dbError', null);
                         });
                 } else if (level === 'eAdmin') {
-                    const admin = serviceAccount.getAdminId(jwtPayload._id);
+                    // If the event ID is different, a new business ID is created.
+                    const admin = serviceAccount.getAdminId(jwtPayload);
                     return admin.then(adminResult => {
                         /**
                          *  유저와 같이 eventId 기준으로 Business 를 라우터에넣주지 않는 이유는 비즈니스 인증이 필요 없는 경우도
@@ -88,13 +88,6 @@ export const auth = (secretName: secretNameType) => {
                          */
 
                         if (adminResult) {
-                            Object.assign(adminResult, {
-                                eventId: jwtPayload.eventId,
-                            });
-                            // 여기에서 setTimeout 으로 처리하는 이유는 위 오브젝트의 연산시 패스하고
-                            // 바로 결과로 넘어 갈 수 있어서 확실히 하기 위해서 setTimeout은 코어 스크립트
-                            // 에서 제일 마지막에 실행되기 때문에 코드를 이렇게 해놨다. (그냥 혹시나 하는 마음에..)
-                            // 혹시라도 불안해서.. node 의 불안요소때문에..ㅎㅎ
                             return setTimeout(() => {
                                 return done(undefined, adminResult);
                             }, 0);
