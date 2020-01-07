@@ -1,7 +1,8 @@
+import { BusinessEventBridge } from './../entity/mysql/entities/MysqlBusinessEventBridge';
+import ServiceBusinessEventBridge from './../service/ServiceBusinessEventBridge';
 import { BusinessVendor } from './../entity/mysql/entities/MysqlBusinessVendor';
 import { ServiceBusinessPermission } from './../service/ServiceBusinessPermission';
 import { param } from 'express-validator';
-import { Admin } from '../entity/mysql/entities/MysqlAdmin';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { Login } from '../entity/mysql/entities/MysqlLogin';
 import ServiceUserPermission from '../service/ServiceUserPermission';
@@ -22,13 +23,16 @@ import ServiceUserBuyerPermission from '../service/ServiceUserBuyerPermission';
  */
 export const CheckPermissionBusinessForAdmin = () => {
     return param('permission').custom((value, { req }) => {
-        const admin = req.user.admins[0]; // passport 에서 주입한다.
-        const query = new ServiceBusinessPermission()._getBusinessByAdmin(
-            admin,
-        );
-        return query.then((businessResult: Business) => {
+        const eventId = req.user.eventId;
+        const businessEventBridge = new BusinessEventBridge();
+        businessEventBridge.eventId = eventId;
+        const query = new ServiceBusinessEventBridge().get(businessEventBridge);
+        return query.then((businessResult: BusinessEventBridge) => {
+            console.log('==================\n');
+            console.log(businessResult);
+            console.log('==================\n');
             if (businessResult) {
-                Object.assign(req.user, { business: businessResult });
+                Object.assign(req.user, { business: businessResult.business });
             } else {
                 return Promise.reject(
                     'You don`t have permission or first insert business information..',

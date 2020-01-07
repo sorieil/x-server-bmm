@@ -54,6 +54,7 @@ export const auth = (secretName: secretNameType) => {
                                         if (eventResult) {
                                             Object.assign(userResult, {
                                                 business: eventResult.business,
+                                                eventId: jwtPayload.eventId,
                                             });
                                             return setTimeout(() => {
                                                 return done(
@@ -88,6 +89,9 @@ export const auth = (secretName: secretNameType) => {
                          */
 
                         if (adminResult) {
+                            Object.assign(adminResult, {
+                                eventId: jwtPayload.eventId,
+                            });
                             return setTimeout(() => {
                                 return done(undefined, adminResult);
                             }, 0);
@@ -155,6 +159,7 @@ export const auth = (secretName: secretNameType) => {
                     // req.user = user;
                     // 여기에서 login 으로 할 수 있는데 login 은 express 의 내부 함수이기도 해서 user 로 했다.
                     // 그리서 req 로 불러 올때  req.user.users[0] or req.user.admin[0] 이런식으로 사용해야 한다.
+                    // console.log('============= :', user);
                     Object.assign(req, { user: user });
                     // 맨 마지막에 실행 되게 하기 위해서
                     setTimeout(() => {

@@ -180,52 +180,55 @@ const apiGets = [
 
         const query = await service._getBusinessMeetingTimeByBusiness(business);
         let cursor = 0;
-        const times: any[] = query.businessMeetingTimeLists.reduce(
-            (aa, cc, index) => {
-                if (index === 0) {
-                    aa[cursor] = {
-                        date: cc.dateBlock,
-                        times: [
-                            {
-                                time: cc.timeBlock,
-                                status: cc.use,
-                                id: cc.id || null,
-                            },
-                        ],
-                    };
+        if (query) {
+            const times: any[] = query.businessMeetingTimeLists.reduce(
+                (aa, cc, index) => {
+                    if (index === 0) {
+                        aa[cursor] = {
+                            date: cc.dateBlock,
+                            times: [
+                                {
+                                    time: cc.timeBlock,
+                                    status: cc.use,
+                                    id: cc.id || null,
+                                },
+                            ],
+                        };
+
+                        return aa;
+                    }
+
+                    const target = aa[cursor];
+                    if (target.date === cc.dateBlock) {
+                        target.times.push({
+                            status: cc.use,
+                            time: cc.timeBlock,
+                            id: cc.id || null,
+                        });
+                    } else {
+                        cursor++;
+                        aa[cursor] = {
+                            date: cc.dateBlock,
+                            times: [
+                                {
+                                    time: cc.timeBlock,
+                                    status: cc.use,
+                                    id: cc.id || null,
+                                },
+                            ],
+                        };
+                    }
 
                     return aa;
-                }
-
-                const target = aa[cursor];
-                if (target.date === cc.dateBlock) {
-                    target.times.push({
-                        status: cc.use,
-                        time: cc.timeBlock,
-                        id: cc.id || null,
-                    });
-                } else {
-                    cursor++;
-                    aa[cursor] = {
-                        date: cc.dateBlock,
-                        times: [
-                            {
-                                time: cc.timeBlock,
-                                status: cc.use,
-                                id: cc.id || null,
-                            },
-                        ],
-                    };
-                }
-
-                return aa;
-            },
-            [],
-        );
-        Object.assign(query, { timeLists: times });
-        delete query.businessMeetingTimeLists;
-
-        responseJson(res, [query], method, 'success');
+                },
+                [],
+            );
+            Object.assign(query, { timeLists: times });
+            delete query.businessMeetingTimeLists;
+            responseJson(res, [query], method, 'success');
+        } else {
+            responseJson(res, [], method, 'success');
+        }
     },
 ];
 

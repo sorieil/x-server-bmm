@@ -1,3 +1,4 @@
+import { ServiceBusiness } from './../../service/ServiceBusiness';
 import { BusinessEventBridge } from './../../entity/mysql/entities/MysqlBusinessEventBridge';
 import { BusinessVendorFieldChildNode } from './../../entity/mysql/entities/MysqlBusinessVendorFieldChildNode';
 import { BusinessVendorFieldValue } from './../../entity/mysql/entities/MysqlBusinessVendorFieldValue';
@@ -17,6 +18,7 @@ import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
 import ServiceCode from '../../service/ServiceCode';
+import ServiceBusinessEventBridge from '../../service/ServiceBusinessEventBridge';
 
 /**
  * @requires fieldId
@@ -130,27 +132,75 @@ const CheckPermissionBusinessVendorChild = () =>
         }
     });
 const apiInit = [
-    [CheckPermissionBusinessForAdmin.apply(this)],
     async (req: Request, res: Response) => {
         try {
             const errors = validationResult(req);
             const method: RequestRole = req.method.toString() as any;
-            const initCodeTable = JSON.stringify(
-                require('../../../init-data-code-table.json'),
-            );
+            // const initCodeTable = JSON.stringify(
+            //     require('../../../init-data-code-table.json'),
+            // );
 
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
 
-            const service = new ServiceBusinessVendorField();
-            const serviceChild = new ServiceBusinessVendorInformationChildNode();
-            const serviceCode = new ServiceCode();
+            const serviceBusinessVendorField = new ServiceBusinessVendorField();
+            const serviceBusiness = new ServiceBusiness();
+            const serviceBusinessEventBridge = new ServiceBusinessEventBridge();
 
-            const business = new Business();
-            business.id = req.user.business.id;
-            const informationType = new Code();
+            // const serviceChild = new ServiceBusinessVendorInformationChildNode();
+            // const serviceCode = new ServiceCode();
+            // 애시당초 비즈니스 아이디가 있다면, 이벤트 아이디가 있다는 이야기라서 business 가 존재한다는건
+            // 이 프로세스를 다시 한번 진행 할 필요가 없다는 ..의미..
+
+            if (req.user.business) {
+                responseJson(
+                    res,
+                    [
+                        {
+                            message: 'Already exists',
+                        },
+                    ],
+                    method,
+                    'success',
+                );
+            }
+
+            if (!req.user.eventId) {
+                responseJson(
+                    res,
+                    [
+                        {
+                            message: 'You do not have eventId.',
+                        },
+                    ],
+                    method,
+                    'success',
+                );
+            }
+
+            const eventInitProcess = await serviceBusinessVendorField.initBusinessEvent(
+                req,
+            );
+
+            const businessQuery = eventInitProcess.business;
+            if (!businessQuery) {
+                if (!req.user.eventId) {
+                    responseJson(
+                        res,
+                        [
+                            {
+                                message: 'Event init process fails',
+                            },
+                        ],
+                        method,
+                        'invalid',
+                    );
+                }
+            }
+
+            // const informationType = new Code();
             // TODO: 여기에서 비즈니스가 없다면, 생성해주고, 이벤트 아이디와 매칭을 해준다.
 
             const initFields: BusinessVendorFieldType[] = [
@@ -224,14 +274,16 @@ const apiInit = [
 
             // 코드가 없으면 기본적으로 세팅을 해준다.
             // let codeTables: Code[];
-            console.log('initCodeTable:', initCodeTable);
+            // console.log('initCodeTable:', initCodeTable);
             // await serviceCode.post(initCodeTable.data as Code[]);
 
             // 중복 체크
             return await new Promise(async resolve => {
                 const promiseBucket: any[] = [];
                 initFields.forEach(element => {
-                    promiseBucket.push(service.checkDuplicate(element));
+                    promiseBucket.push(
+                        serviceBusinessVendorField.checkDuplicate(element),
+                    );
                 });
 
                 resolve(promiseBucket);
@@ -258,13 +310,15 @@ const apiInit = [
                         const fieldType = new Code();
                         fieldType.id = v.fieldType;
                         businessVendorField.name = v.name;
-                        businessVendorField.business = business;
+                        businessVendorField.business = businessQuery;
                         businessVendorField.require = 'yes';
                         businessVendorField.informationType = informationType;
                         businessVendorField.fieldType = fieldType;
                         return businessVendorField;
                     });
-                    const query = await service.postArray(insertData);
+                    const query = await serviceBusinessVendorField.postArray(
+                        insertData,
+                    );
                     responseJson(res, query, method, 'success');
                 }
             });

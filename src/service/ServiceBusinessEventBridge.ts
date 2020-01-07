@@ -5,15 +5,15 @@ export default class ServiceBusinessEventBridge extends BaseService {
         super();
     }
 
-    public post(businessEventBridge: BusinessEventBridge) {
-        const query = this.mysqlManager(BusinessEventBridge).save(
+    public async post(businessEventBridge: BusinessEventBridge) {
+        const query = await this.mysqlManager(BusinessEventBridge).save(
             businessEventBridge,
         );
         return query;
     }
 
-    public get(businessEventBridge: BusinessEventBridge) {
-        const query = this.mysqlManager(BusinessEventBridge).findOne({
+    public async get(businessEventBridge: BusinessEventBridge) {
+        const query = await this.mysqlManager(BusinessEventBridge).findOne({
             where: {
                 eventId: businessEventBridge.eventId,
             },

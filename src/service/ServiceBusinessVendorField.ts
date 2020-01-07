@@ -1,7 +1,10 @@
+import { BusinessEventBridge } from './../entity/mysql/entities/MysqlBusinessEventBridge';
 import { BaseService } from './BaseService';
 import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { Business } from '../entity/mysql/entities/MysqlBusiness';
 import { StatusTypeRole } from '../entity/mysql/entities/MysqlBase';
+import logger from '../util/logger';
+import { getManager } from 'typeorm';
 export interface BusinessVendorFieldType {
     name: string;
     require: StatusTypeRole;
@@ -107,5 +110,55 @@ export default class ServiceBusinessVendorField extends BaseService {
         });
 
         return query;
+    }
+
+    public async initBusinessEvent(req: any) {
+        const businessEventBridge = new BusinessEventBridge();
+        businessEventBridge.eventId = req.user.eventId;
+
+        await this.queryRunner.connect();
+        await this.queryRunner.startTransaction();
+        let businessEventBridgeQuery = await this.queryRunner.manager.findOne(
+            BusinessEventBridge,
+            { where: { eventId: req.user.eventId } },
+        );
+
+        try {
+            if (!businessEventBridgeQuery) {
+                const business = new Business();
+                business.status = 'no';
+                business.title = '';
+                business.subTitle = '';
+                business.admin = req.user.admins[0];
+                const saveBusiness = await this.queryRunner.manager.save(
+                    business,
+                );
+                businessEventBridge.business = saveBusiness;
+                await this.queryRunner.manager.save(businessEventBridge);
+                businessEventBridgeQuery = await this.queryRunner.manager.findOne(
+                    BusinessEventBridge,
+                    {
+                        where: { eventId: req.user.eventId },
+                        relations: ['business'],
+                    },
+                );
+            }
+
+            // commit transaction now:
+            await this.queryRunner.commitTransaction();
+        } catch (err) {
+            // since we have errors lets rollback changes we made
+            logger.error('Transaction error: ', err);
+            console.error('유저 회원정보 트랜젝션 에러');
+            await this.queryRunner.rollbackTransaction();
+            setTimeout(() => {
+                getManager('mysqlDB').connection.close();
+            }, 0);
+            return err;
+        } finally {
+            // you need to release query runner which is manually created:
+            await this.queryRunner.release();
+            return businessEventBridgeQuery;
+        }
     }
 }

@@ -138,12 +138,16 @@ export default class ServiceAccount extends BaseService {
 
     public async getAdminId(jwt: any) {
         const id = jwt._id;
-        const eventId = jwt.eventId;
-        console.log('id:', id);
         const mongoQuery = await this.mongoManager(Admins).findOne(id);
         const admin = new Admin();
         const adminLogin = new AdminLogin();
         const mongoBridge = new MongoBridge();
+        // const businessEventBridge = new BusinessEventBridge();
+        // businessEventBridge.eventId = eventId;
+        // const serviceBusinessEventBridge = new ServiceBusinessEventBridge();
+        // const businessEventBridgeQuery = serviceBusinessEventBridge.get(
+        //     businessEventBridge,
+        // );
         // Begin Transaction
         await this.queryRunner.connect();
         await this.queryRunner.startTransaction();
@@ -157,15 +161,8 @@ export default class ServiceAccount extends BaseService {
             },
         );
 
-        const businessBridgeEventQuery = await this.queryRunner.manager.findOne(
-            BusinessEventBridge,
-            {
-                where: { eventId: eventId },
-                relations: ['business'],
-            },
-        );
-
         if (bridgeMongoQuery) {
+            // 조회된 데이터가 있으면, 융합을 해준다.
             mongoBridge.id = bridgeMongoQuery.id;
             adminLogin.id = bridgeMongoQuery.adminLogin.id;
             const adminQuery = await this.queryRunner.manager.findOne(Admin, {
@@ -173,12 +170,9 @@ export default class ServiceAccount extends BaseService {
                     adminLogin: bridgeMongoQuery.adminLogin,
                 },
             });
-            // 여기에선 불러온 adminQuery 를 빈 admin 객체어 넣어준다.
-            Object.assign(admin, adminQuery, {
-                business: businessBridgeEventQuery.business,
-            });
+            Object.assign(admin, adminQuery);
         } else {
-            // console.log('추가', bridgeQuery);
+            // 조회된 데이터가 없으면 새로 들어간다.
         }
 
         try {
