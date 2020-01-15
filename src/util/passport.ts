@@ -147,6 +147,8 @@ export const auth = (secretName: secretNameType) => {
                     return;
                 }
 
+                console.log('User:', user);
+
                 // 정상 토큰이 아닙니다.
                 if (user === null || !user || typeof info !== 'undefined') {
                     res.status(401).json({
