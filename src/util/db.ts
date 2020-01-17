@@ -31,7 +31,7 @@ export const connections = (env: any) => {
             debug: false,
             insecureAuth: true,
             logging: ['error'],
-            // logger: 'file',
+            logger: 'file',
             extra: {
                 connectionLimit: 1,
             },

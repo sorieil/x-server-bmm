@@ -147,10 +147,16 @@ export const auth = (secretName: secretNameType) => {
                     return;
                 }
 
-                console.log('User:', user);
+                if (typeof user === 'undefined' || user === null || !user) {
+                    res.status(403).json({
+                        resCode: 403,
+                        message: 'Members only.',
+                    });
+                    return;
+                }
 
                 // 정상 토큰이 아닙니다.
-                if (user === null || !user || typeof info !== 'undefined') {
+                if (typeof info !== 'undefined') {
                     res.status(401).json({
                         resCode: 401,
                         message: 'No auth token',
