@@ -557,22 +557,22 @@ const apiDelete = [
             const service = new ServiceBusinessVendor();
 
             const deleteBucket: BusinessVendor[] = [];
-            console.log('vendors:', vendors);
+            // console.log('vendors:', vendors);
             for (let vendor of vendors) {
-                console.log('vendor:', typeof vendor, parseInt(vendor, 10));
+                // console.log('vendor:', typeof vendor, parseInt(vendor, 10));
                 const businessVendor = new BusinessVendor();
                 businessVendor.id = parseInt(vendor, 10);
                 businessVendor.business = req.user.business;
                 deleteBucket.push(businessVendor);
             }
 
-            console.log('deleteBucket:', deleteBucket.length);
+            // console.log('deleteBucket:', deleteBucket.length);
 
             const query = service.remove(deleteBucket);
 
             query
                 .then(result => {
-                    console.log('삭제된 데이터가 있는지: ', result.length);
+                    // console.log('삭제된 데이터가 있는지: ', result.length);
                     responseJson(res, result, method, 'delete');
                 })
                 .catch(() => {

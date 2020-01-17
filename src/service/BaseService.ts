@@ -11,7 +11,7 @@ export class BaseService {
         try {
             return getManager(connectionMysql).getRepository(entity);
         } catch (error) {
-            getManager('mysqlDB').connection.close();
+            // getManager('mysqlDB').connection.close();
             logger.error('Base service error:', error);
             return;
         }
@@ -23,7 +23,7 @@ export class BaseService {
             );
         } catch (error) {
             logger.error('Base service error:', error);
-            getManager('mysqlDB').connection.close();
+            // getManager('mysqlDB').connection.close();
             return;
         }
     };

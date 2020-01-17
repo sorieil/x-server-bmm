@@ -78,7 +78,7 @@ export const responseJson = (
 
 export const tryCatch = (res: Response, error: any): Response => {
     logger.error('try catch error: ' + error);
-    getManager('mysqlDB').connection.close();
+    // getManager('mysqlDB').connection.close();
     return res.status(500).json({
         resCode: 500,
         message: 'Server error',

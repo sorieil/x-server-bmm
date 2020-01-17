@@ -56,35 +56,32 @@ export default class ServiceUserBusinessTime extends BaseService {
             .getRepository(BusinessVendorMeetingTimeList)
             .createQueryBuilder('vendorTime')
             .leftJoinAndSelect(
-                'vendorTime.businessMeetingTimeList',
-                'businessTime',
+                'vendorTime.userBuyerMeetingTimeLists',
+                'vendorTime',
             )
             .leftJoinAndSelect(
-                'businessTime.userBuyerMeetingTimeLists',
-                'userListTime',
-            )
-            .leftJoinAndSelect(
-                'userListTime.businessMeetingRoomReservation',
+                'vendorTime.businessMeetingRoomReservation',
                 'reservation',
             )
-            .leftJoinAndSelect('userListTime.userBuyer', 'user');
+            .leftJoinAndSelect('reservation.businessMeetingRoom', 'room')
+            .leftJoinAndSelect('reservation.userBuyer', 'user')
+            .leftJoinAndSelect('user.businessVendorFieldValues', 'fieldValue')
+            .leftJoinAndSelect('fieldValue.businessVendorField', 'field')
+            .leftJoinAndSelect('field.informationType', 'informationType')
+            .leftJoinAndSelect('field.fieldType', 'fieldType');
 
-        if (businessMeetingTimeList.dateBlock) {
-            queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {
-                dateBlock: businessMeetingTimeList.dateBlock,
-            });
-        }
-        console.log('vendor:', businessVendor);
+        queryBuilder.andWhere('vendorTime.dateBlock = :dateBlock', {
+            dateBlock: businessMeetingTimeList.dateBlock,
+        });
 
-        if (businessVendor.id) {
-            queryBuilder.andWhere(
-                'vendorTime.businessVendorId = :businessVendorId',
-                {
-                    businessVendorId: businessVendor.id,
-                },
-            );
-        }
-        // queryBuilder.orderBy('businessTimeList.id');
+        queryBuilder.andWhere(
+            'vendorTime.businessVendorId = :businessVendorId',
+            {
+                businessVendorId: businessVendor.id,
+            },
+        );
+
+        queryBuilder.orderBy('vendorTime.id');
 
         const query = queryBuilder.getMany();
         return query;

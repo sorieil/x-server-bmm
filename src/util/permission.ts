@@ -186,7 +186,7 @@ export const CheckPermissionBuyerInformationForUser = () =>
  */
 export const CheckPermissionUserTypeForUser = () => {
     return param('userType').custom((value, { req }) => {
-        console.log('Check permission user type:', req.user.users[0].userBuyer);
+        // console.log('Check permission user type:', req.user.users[0].userBuyer);
         if (req.user.users[0].type === 'null') {
             return Promise.reject(
                 'You did not have completed user profile. Please complete your profile.',
@@ -243,3 +243,20 @@ export const CheckPermissionBusinessVendorForUser = () => {
         }
     });
 };
+// 여기서부터는 예약인데 buyer의 상세 정보가 있어야지만, 진행이 가능하기 때문에 체크 해야 한다.
+const CheckPermissionBuyerInformation = () =>
+    param('userId').custom((value, { req }) => {
+        const service = new ServiceUserBuyerPermission();
+        const user = req.user;
+
+        return new Promise(async resolve => {
+            const query = await service._getUserBuyerByUser(user);
+            resolve(query);
+        }).then(r => {
+            if (r) {
+                Object.assign(req.user, { buyer: r });
+            } else {
+                return Promise.reject('Please enter buyer information first.');
+            }
+        });
+    });

@@ -24,7 +24,7 @@ const apiGet = [
         CheckPermissionGetUserDataForUser.apply(this),
         param('date').custom((value, { req }) => {
             const dateValid = moment(value).format('YYYY-MM-DD');
-            console.log('test result:', dateValid);
+            // console.log('test result:', dateValid);
             if (dateValid === 'Invalid date') {
                 return Promise.reject('Please input date format.');
             } else {
@@ -36,26 +36,24 @@ const apiGet = [
         try {
             const method: RequestRole = req.method.toString() as any;
             const errors = validationResult(req);
-            console.log('errors.isEmpty():', errors.isEmpty());
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
                 return;
             }
             const serviceUserBusinessTime = new ServiceUserBusinessTime();
             const serviceUserManager = new ServiceUserManager();
-            const businessMeetingTimeList = new BusinessMeetingTimeList();
             const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
             const business = new Business();
+            const businessMeetingTimeList = new BusinessMeetingTimeList();
             business.id = req.user.business.id;
             const roomCount = await serviceBusinessMeetingRoom.gets(business);
 
             businessMeetingTimeList.dateBlock = req.params.date;
             const user = new User();
             user.id = req.user.id;
-            const result = {};
             let query: any[] = [];
             // const userType = await serviceBusinessVendor._getByUser(user);
-            console.log('User type:', req.user.users[0].type);
+            // console.log('User type:', req.user.users[0].type);
             if (req.user.users[0].type === 'buyer') {
                 // 있으면, 바이어
                 const userBuyer = new UserBuyer();
@@ -65,6 +63,7 @@ const apiGet = [
                     userBuyer,
                     businessMeetingTimeList,
                 );
+                console.log('UserBUsinessTimeLists:', query);
 
                 query.map((v: any) => {
                     if (v.businessMeetingRoomReservation) {
@@ -157,7 +156,7 @@ const apiGetByVendor = [
         CheckPermissionGetUserDataForUser.apply(this),
         query('date').custom((value, { req }) => {
             const dateValid = moment(value).format('YYYY-MM-DD');
-            console.log('test result:', dateValid);
+            // console.log('test result:', dateValid);
             if (dateValid === 'Invalid date') {
                 return Promise.reject('Please input date format.');
             } else {
@@ -172,7 +171,6 @@ const apiGetByVendor = [
         try {
             const method: RequestRole = req.method.toString() as any;
             const errors = validationResult(req);
-            console.log('errors.isEmpty():', errors.isEmpty());
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
                 return;

@@ -9,35 +9,35 @@ import { UserBuyerMeetingTimeList } from './MysqlUserBuyerMeetingTimeList';
  */
 @Entity()
 export class BusinessMeetingTimeList extends Base {
-  @Column('varchar', { nullable: false })
-  timeBlock: string;
+    @Column('varchar', { nullable: false })
+    timeBlock: string;
 
-  @Column('varchar', { nullable: false })
-  dateBlock: string;
+    @Column('varchar', { nullable: false })
+    dateBlock: string;
 
-  @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
-  use: StatusTypeRole;
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
+    use: StatusTypeRole;
 
-  @ManyToOne(
-    type => BusinessMeetingTime,
-    businessMeetingTime => businessMeetingTime.businessMeetingTimeLists,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
-  businessMeetingTime: BusinessMeetingTime;
+    @ManyToOne(
+        type => BusinessMeetingTime,
+        businessMeetingTime => businessMeetingTime.businessMeetingTimeLists,
+        {
+            onDelete: 'CASCADE',
+        },
+    )
+    businessMeetingTime: BusinessMeetingTime;
 
-  @OneToMany(
-    type => UserBuyerMeetingTimeList,
-    userBuyerMeetingTimeList =>
-      userBuyerMeetingTimeList.businessMeetingTimeList,
-  )
-  userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
+    @OneToMany(
+        type => UserBuyerMeetingTimeList,
+        userBuyerMeetingTimeList =>
+            userBuyerMeetingTimeList.businessMeetingTimeList,
+    )
+    userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
 
-  @OneToMany(
-    type => BusinessVendorMeetingTimeList,
-    businessVendorMeetingTimeList =>
-      businessVendorMeetingTimeList.businessMeetingTimeList,
-  )
-  businessVendorMeetingTimeLists: BusinessVendorMeetingTimeList[];
+    @OneToMany(
+        type => BusinessVendorMeetingTimeList,
+        businessVendorMeetingTimeList =>
+            businessVendorMeetingTimeList.businessMeetingTimeList,
+    )
+    businessVendorMeetingTimeLists: BusinessVendorMeetingTimeList[];
 }

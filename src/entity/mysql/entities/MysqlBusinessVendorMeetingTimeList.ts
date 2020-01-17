@@ -1,17 +1,7 @@
 import { UserBuyerMeetingTimeList } from './MysqlUserBuyerMeetingTimeList';
 import { BusinessMeetingTimeList } from './MysqlBusinessMeetingTimeList';
 import { Base, StatusTypeRole } from './MysqlBase';
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-  JoinColumn,
-  OneToOne,
-  OneToMany,
-} from 'typeorm';
-import { BusinessMeetingTime } from './MysqlBusinessMeetingTime';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { BusinessMeetingRoomReservation } from './MysqlBusinessMeetingRoomReservation';
 import { BusinessVendor } from './MysqlBusinessVendor';
 
@@ -20,42 +10,42 @@ import { BusinessVendor } from './MysqlBusinessVendor';
  */
 @Entity()
 export class BusinessVendorMeetingTimeList extends Base {
-  @Column('varchar', { nullable: false })
-  timeBlock: string;
+    @Column('varchar', { nullable: false })
+    timeBlock: string;
 
-  @Column('varchar', { nullable: false })
-  dateBlock: string;
+    @Column('varchar', { nullable: false })
+    dateBlock: string;
 
-  @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
-  use: StatusTypeRole;
+    @Column({ type: 'enum', enum: ['no', 'yes'], default: 'yes' })
+    use: StatusTypeRole;
 
-  // 예약테이블에 입력할 방도가 없어서 사용못함.. 어렵다.
-  @OneToMany(
-    type => BusinessMeetingRoomReservation,
-    businessMeetingRoomReservation =>
-      businessMeetingRoomReservation.businessVendorMeetingTimeList,
-    { nullable: true },
-  )
-  businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
+    // 예약테이블에 입력할 방도가 없어서 사용못함.. 어렵다.
+    @OneToMany(
+        type => BusinessMeetingRoomReservation,
+        businessMeetingRoomReservation =>
+            businessMeetingRoomReservation.businessVendorMeetingTimeList,
+        { nullable: true },
+    )
+    businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
 
-  @ManyToOne(
-    type => BusinessVendor,
-    businessVendor => businessVendor.businessVendorMeetingTimeLists,
-    { onDelete: 'CASCADE' },
-  )
-  businessVendor: BusinessVendor;
+    @ManyToOne(
+        type => BusinessVendor,
+        businessVendor => businessVendor.businessVendorMeetingTimeLists,
+        { onDelete: 'CASCADE' },
+    )
+    businessVendor: BusinessVendor;
 
-  @ManyToOne(
-    type => BusinessMeetingTimeList,
-    businessMeetingTimeList =>
-      businessMeetingTimeList.businessVendorMeetingTimeLists,
-  )
-  businessMeetingTimeList: BusinessMeetingTimeList;
+    @ManyToOne(
+        type => BusinessMeetingTimeList,
+        businessMeetingTimeList =>
+            businessMeetingTimeList.businessVendorMeetingTimeLists,
+    )
+    businessMeetingTimeList: BusinessMeetingTimeList;
 
-  @OneToMany(
-    type => UserBuyerMeetingTimeList,
-    userBuyerMeetingTimeList =>
-      userBuyerMeetingTimeList.businessVendorMeetingTimeList,
-  )
-  userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
+    @OneToMany(
+        type => UserBuyerMeetingTimeList,
+        userBuyerMeetingTimeList =>
+            userBuyerMeetingTimeList.businessVendorMeetingTimeList,
+    )
+    userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
 }

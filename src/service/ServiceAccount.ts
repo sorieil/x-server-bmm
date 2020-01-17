@@ -126,7 +126,7 @@ export default class ServiceAccount extends BaseService {
             console.error('유저 회원정보 트랜젝션 에러');
             await this.queryRunner.rollbackTransaction();
             setTimeout(() => {
-                getManager('mysqlDB').connection.close();
+                // getManager('mysqlDB').connection.close();
             }, 0);
             return err;
         } finally {

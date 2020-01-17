@@ -508,9 +508,9 @@ connections(process.env)
             },
         );
 
-        // process.on('SIGINT', (e: any) => {
-        //    console.error(e)
-        // });
+        process.on('SIGINT', () => {
+            console.log('Received SIGINT. Press Control-D to exit.');
+        });
 
         app.listen(app.get('port'), () => {
             console.clear();
@@ -521,8 +521,6 @@ connections(process.env)
             );
             console.log('  Press CTRL-C to stop\n');
         });
-
-        // await connect[0].close();
     })
     .catch(error => {
         console.log('DB error:', error);

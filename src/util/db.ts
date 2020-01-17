@@ -33,7 +33,7 @@ export const connections = (env: any) => {
             logging: ['error'],
             logger: 'file',
             extra: {
-                connectionLimit: 1,
+                connectionLimit: 4,
             },
         },
         {
