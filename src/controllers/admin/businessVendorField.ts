@@ -629,7 +629,7 @@ const apiGets = [
                     'success',
                 );
             } else {
-                responseJson(res, [], method, 'fails');
+                responseJson(res, [], method, 'success');
             }
         } catch (error) {
             tryCatch(res, error);
