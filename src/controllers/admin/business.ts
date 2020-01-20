@@ -7,6 +7,10 @@ import { validationResult } from 'express-validator';
 import { Admin } from '../../entity/mysql/entities/MysqlAdmin';
 import { BusinessEventBridge } from '../../entity/mysql/entities/MysqlBusinessEventBridge';
 import ServiceBusinessEventBridge from '../../service/ServiceBusinessEventBridge';
+import { BusinessVendorFieldType } from '../../service/ServiceBusinessVendorField';
+import ServiceBusinessVendorField from '../../service/ServiceBusinessVendorField';
+import { BusinessVendorField } from '../../entity/mysql/entities/MysqlBusinessVendorField';
+import { Code } from '../../entity/mysql/entities/MysqlCode';
 
 /**
  * 비즈니스의 상태 값을 가져온다. Header, status
@@ -72,18 +76,136 @@ const apiPost = [
                 business.businessEventBridge = eventBridgeQuery;
                 business.admin = admin;
             }
-            // TODO 비즈니스 계정을 매핑 시켜주는건...EventID 로만 해야 하는데 여기에서 AdminID 로 해주면...
-            // TODO 안된다...... 흠..최초로 누가 만들었지만 등록하고,... 그리고 수정을 누가 했는지도 체크를 하는 로그를
-            // TODO 쌓는것도 추가를 해놓으면 좋을거 같다...
 
             // EventId 가 없으면, 저장을 해준다.
-
             business.title = body.title;
             business.subTitle = body.subTitle;
             business.status = body.status;
 
             // 비즈니스 정보를 입력/수정을 해준다.
             const query = await new ServiceBusiness().post(business);
+
+            // 조회된 비즈니스 아이디가 없는 경우 필드 초기화를 해준다.
+            // 새로 생긴 비즈니스 아이디가 있어야 한다.
+            const serviceBusinessVendorField = new ServiceBusinessVendorField();
+            const queryBusinessVendorField = await serviceBusinessVendorField._getByBusiness(
+                query,
+            );
+            console.log('필드 조회 결과', queryBusinessVendorField.length);
+            // 필드를 조회 했을때 필드가 없는 경우 초기화를 해준다.
+            if (queryBusinessVendorField.length === 0) {
+                console.log('필드 초기화 해줌');
+                const initFields: BusinessVendorFieldType[] = [
+                    {
+                        name: '기업명',
+                        require: 'yes',
+                        informationType: 4,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '노출명',
+                        require: 'yes',
+                        informationType: 4,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '대표명',
+                        require: 'no',
+                        informationType: 4,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '설립일',
+                        require: 'no',
+                        informationType: 4,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '업체구분',
+                        require: 'no',
+                        informationType: 5,
+                        fieldType: 3,
+                    },
+                    {
+                        name: '제품/서비스',
+                        require: 'no',
+                        informationType: 5,
+                        fieldType: 3,
+                    },
+                    {
+                        name: '관심분야',
+                        require: 'no',
+                        informationType: 5,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '제품소개',
+                        require: 'no',
+                        informationType: 5,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '담당자명',
+                        require: 'yes',
+                        informationType: 6,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '연락처',
+                        require: 'yes',
+                        informationType: 6,
+                        fieldType: 1,
+                    },
+                    {
+                        name: '이메일',
+                        require: 'yes',
+                        informationType: 6,
+                        fieldType: 1,
+                    },
+                ];
+
+                // 필드 입력
+                return await new Promise(async resolve => {
+                    const promiseBucket: any[] = [];
+                    initFields.forEach(element => {
+                        promiseBucket.push(
+                            serviceBusinessVendorField.checkDuplicate(
+                                element,
+                                query,
+                            ),
+                        );
+                    });
+
+                    resolve(promiseBucket);
+                }).then(async (process: object[]) => {
+                    const result = await Promise.all(process);
+                    const exists = result.filter(v => typeof v !== 'undefined');
+                    if (exists.length === initFields.length) {
+                        console.log('이미 필드가 존재 합니다.');
+                    } else {
+                        const insertData = await initFields.map(v => {
+                            const businessVendorField = new BusinessVendorField();
+                            const informationType = new Code();
+                            informationType.id = v.informationType;
+                            const fieldType = new Code();
+                            fieldType.id = v.fieldType;
+                            businessVendorField.name = v.name;
+                            businessVendorField.business = business;
+                            businessVendorField.require = 'yes';
+                            businessVendorField.informationType = informationType;
+                            businessVendorField.fieldType = fieldType;
+                            return businessVendorField;
+                        });
+                        const queryBusinessVendorField = await serviceBusinessVendorField.postArray(
+                            insertData,
+                        );
+                        console.log(
+                            '필드가 생성되었습니다.',
+                            queryBusinessVendorField,
+                        );
+                    }
+                });
+            }
             responseJson(res, [query], method, 'success');
         } catch (error) {
             tryCatch(res, error);

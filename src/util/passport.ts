@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from 'express';
 import logger from './logger';
 import ServiceAccount from '../service/ServiceAccount';
 import ServiceBusinessEventBridge from '../service/ServiceBusinessEventBridge';
+
 // 발급되는 토큰의 타입들( 기존 2.0 api 에서 발급)
 export type secretNameType =
     | 'xsync-super'
@@ -25,7 +26,7 @@ export const auth = (secretName: secretNameType) => {
             try {
                 const serviceAccount = new ServiceAccount();
                 const level = jwtPayload.level;
-                console.log('jwt payload: ', jwtPayload);
+                console.log(`JWT PAYLOAD <<<<<<<<<<<<< \n`, jwtPayload);
 
                 // 이벤트 아이디가 있어야지만 이용 할 수 있다.
                 if (typeof jwtPayload.eventId === 'undefined') {

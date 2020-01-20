@@ -33,6 +33,7 @@ export const responseJson = (
     requestType: RequestRole,
     responseType: ResponseRole,
 ): void => {
+    console.log('>>>>>>>>>>>>>>>>>', res.req.originalUrl);
     if (responseType === 'success') {
         if (data.length > 0 && isArray(data)) {
             const code = responseRole[requestType].success;

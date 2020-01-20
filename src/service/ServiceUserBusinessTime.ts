@@ -40,7 +40,7 @@ export default class ServiceUserBusinessTime extends BaseService {
             .andWhere('businessTimeList.dateBlock = :dateBlock', {
                 dateBlock: businessMeetingTimeList.dateBlock,
             })
-            .andWhere('userBuyerId = :userBuyerId', {
+            .andWhere('buyerTime.userBuyerId = :userBuyerId', {
                 userBuyerId: userBuyer.id,
             })
             .orderBy('businessTimeList.id');

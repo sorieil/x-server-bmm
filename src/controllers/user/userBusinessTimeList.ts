@@ -24,7 +24,6 @@ const apiGet = [
         CheckPermissionGetUserDataForUser.apply(this),
         param('date').custom((value, { req }) => {
             const dateValid = moment(value).format('YYYY-MM-DD');
-            // console.log('test result:', dateValid);
             if (dateValid === 'Invalid date') {
                 return Promise.reject('Please input date format.');
             } else {
@@ -63,7 +62,7 @@ const apiGet = [
                     userBuyer,
                     businessMeetingTimeList,
                 );
-                console.log('UserBUsinessTimeLists:', query);
+                // console.log('UserBUsinessTimeLists:', query);
 
                 query.map((v: any) => {
                     if (v.businessMeetingRoomReservation) {

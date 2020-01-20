@@ -17,8 +17,6 @@ import ServiceBusinessVendorFieldChildNode from '../../service/ServiceBusinessVe
 import { Code } from '../../entity/mysql/entities/MysqlCode';
 import { CheckPermissionBusinessForAdmin } from '../../util/permission';
 import ServiceBusinessVendor from '../../service/ServiceBusinessVendor';
-import ServiceCode from '../../service/ServiceCode';
-import ServiceBusinessEventBridge from '../../service/ServiceBusinessEventBridge';
 
 /**
  * @requires fieldId
@@ -146,13 +144,6 @@ const apiInit = [
             }
 
             const serviceBusinessVendorField = new ServiceBusinessVendorField();
-            const serviceBusiness = new ServiceBusiness();
-            const serviceBusinessEventBridge = new ServiceBusinessEventBridge();
-
-            // const serviceChild = new ServiceBusinessVendorInformationChildNode();
-            // const serviceCode = new ServiceCode();
-            // 애시당초 비즈니스 아이디가 있다면, 이벤트 아이디가 있다는 이야기라서 business 가 존재한다는건
-            // 이 프로세스를 다시 한번 진행 할 필요가 없다는 ..의미..
 
             if (req.user.business) {
                 responseJson(
@@ -282,7 +273,10 @@ const apiInit = [
                 const promiseBucket: any[] = [];
                 initFields.forEach(element => {
                     promiseBucket.push(
-                        serviceBusinessVendorField.checkDuplicate(element),
+                        serviceBusinessVendorField.checkDuplicate(
+                            element,
+                            req.user.business,
+                        ),
                     );
                 });
 
@@ -591,13 +585,8 @@ const apiGets = [
             const query = await service._getByBusiness(business);
 
             await query.map((v: any) => {
-                // console.log('-----------');
-                // console.log(v);
-                // console.log('-----------');
                 delete v.createdAt;
                 delete v.updatedAt;
-                // v.informationType = v.informationType.id;
-                // v.fieldType = v.fieldType.id;
                 v.fieldChildNodes = v.businessVendorFieldChildNodes;
                 delete v.businessVendorFieldChildNodes;
                 return v;

@@ -100,12 +100,16 @@ export default class ServiceBusinessVendorField extends BaseService {
         return query;
     }
 
-    public async checkDuplicate(field: BusinessVendorFieldType) {
+    public async checkDuplicate(
+        field: BusinessVendorFieldType,
+        business: Business,
+    ) {
         const query = this.mysqlManager(BusinessVendorField).findOne({
             where: {
                 name: field.name,
                 informationType: field.informationType,
                 fieldType: field.fieldType,
+                business: business,
             },
         });
 
