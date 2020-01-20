@@ -5,33 +5,12 @@ DIRECTORY=server-xsync-api-2.0-bmm
 
 cd /home/centos
 
-sudo yum remove docker \
-  docker-client \
-  docker-client-latest \
-  docker-common \
-  docker-latest \
-  docker-latest-logrotate \
-  docker-logrotate \
-  docker-engine
-
-sudo yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
-
-sudo yum-config-manager \
-  --add-repo \
-  https://download.docker.com/linux/centos/docker-ce.repo
-
-sudo yum install docker-ce docker-ce-cli containerd.io
-
-sudo systemctl start docker
-
-sudo docker load -i bmm-frontend.tar
-sudo docker run bmm-frontend v
-
 if ! command -v node >/dev/null; then
-  sudo npm cache clean -f
-  sudo npm install -g npm
+  sudo npm install -g yarn
+fi
+
+if [ ! -d "$DIRECTORY" ]; then
+  git clone git@bitbucket.org:xsync_development/server-xsync-api-2.0-bmm.git
 fi
 
 cd $DIRECTORY
@@ -39,6 +18,22 @@ cd $DIRECTORY
 printf "================================\n "
 git pull >/dev/null
 printf "  Git pull done \n "
+printf "================================\n "
+
+yarn --ignore-engines >/dev/null
+printf "  Yarn Done \n "
+printf "================================\n "
+
+npx pm2 install typescript
+printf "  PM2 install typescript Done \n "
+printf "================================\n "
+
+npx pm2 link k503tcw92v6rrc9 26epi1y5ctn6xd2 'BMM API(ec2)'
+printf "  PM2 plus setup \n "
+printf "================================\n "
+
+yarn start >/dev/null
+printf "  Server start \n"
 printf "================================\n "
 
 curl https://sentry.io/api/hooks/release/builtin/1503535/df72bba18d3e5e725c6f0f6365101807337eaf29adf117b978853eb5b24db8de/ \
