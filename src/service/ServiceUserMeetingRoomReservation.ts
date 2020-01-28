@@ -5,6 +5,7 @@ import { BusinessMeetingRoomReservation } from './../entity/mysql/entities/Mysql
 import { BusinessMeetingTimeList } from './../entity/mysql/entities/MysqlBusinessMeetingTimeList';
 import { BaseService } from './BaseService';
 import { BusinessMeetingRoom } from '../entity/mysql/entities/MysqlBusinessMeetingRoom';
+import UserBuyer from '../entity/mysql/entities/MysqlUserBuyer';
 
 export default class ServiceUserMeetingRoomReservation extends BaseService {
     constructor() {
@@ -87,12 +88,12 @@ export default class ServiceUserMeetingRoomReservation extends BaseService {
      * @memberof ServiceUserMeetingRoomReservation
      */
     public _getUserMeetingTimeListByBusinessVendorBusinessMeetingTimeLists(
-        businessVendor: BusinessVendor,
+        userBuyer: UserBuyer,
         businessMeetingTimeList: BusinessMeetingTimeList,
     ) {
         const query = this.mysqlManager(UserBuyerMeetingTimeList).findOne({
             where: {
-                businessVendor: businessVendor,
+                userBuyer: userBuyer,
                 businessMeetingTimeList: businessMeetingTimeList,
             },
         });

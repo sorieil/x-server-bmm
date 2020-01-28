@@ -32,6 +32,11 @@ export default class ServiceAccount extends BaseService {
         const mongoBridge = new MongoBridge();
         await this.queryRunner.connect();
         await this.queryRunner.startTransaction();
+
+        if (!mongoQuery) {
+            console.log('회원가입을 해주세요. 없는 계정입니다.');
+            return false;
+        }
         let bridgeQuery = await this.queryRunner.manager.findOne(MongoBridge, {
             where: { mongodbID: `${mongoQuery.id.toString()}` },
             relations: ['login'],

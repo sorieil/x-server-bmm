@@ -52,11 +52,14 @@ const apiGet = [
             user.id = req.user.id;
             let query: any[] = [];
             // const userType = await serviceBusinessVendor._getByUser(user);
-            // console.log('User type:', req.user.users[0].type);
+            // buyer
             if (req.user.users[0].type === 'buyer') {
                 // 있으면, 바이어
                 const userBuyer = new UserBuyer();
                 userBuyer.id = req.user.users[0].userBuyer.id;
+                console.log(
+                    '------------------------------ user business time lists',
+                );
 
                 query = await serviceUserBusinessTime._getTimeListByDateBlockForBuyer(
                     userBuyer,
@@ -67,7 +70,8 @@ const apiGet = [
                 query.map((v: any) => {
                     if (v.businessMeetingRoomReservation) {
                         if (
-                            v.businessMeetingRoomReservation.length < roomCount
+                            v.businessMeetingRoomReservation.length <
+                            roomCount.length
                         ) {
                             v.meetingAvailable = true;
                         } else {
@@ -105,6 +109,7 @@ const apiGet = [
                     return v;
                 });
             } else {
+                // Manager
                 const businessVendorManager = new BusinessVendorManager();
                 businessVendorManager.id =
                     req.user.users[0].businessVendorManager.id;
@@ -130,7 +135,9 @@ const apiGet = [
                     );
 
                     if (v.businessMeetingTimeList.userBuyerMeetingTimeLists) {
-                        if (v.businessMeetingTimeList.length < roomCount) {
+                        if (
+                            v.businessMeetingTimeList.length < roomCount.length
+                        ) {
                             v.meetingAvailable = true;
                         } else {
                             v.meetingAvailable = false;
@@ -153,7 +160,7 @@ const apiGet = [
 const apiGetByVendor = [
     [
         CheckPermissionGetUserDataForUser.apply(this),
-        query('date').custom((value, { req }) => {
+        param('date').custom((value, { req }) => {
             const dateValid = moment(value).format('YYYY-MM-DD');
             // console.log('test result:', dateValid);
             if (dateValid === 'Invalid date') {
@@ -177,7 +184,9 @@ const apiGetByVendor = [
             const serviceUserBusinessTime = new ServiceUserBusinessTime();
             const businessMeetingTimeList = new BusinessMeetingTimeList();
             const businessVendor = new BusinessVendor();
-            const searchDate = req.query.date;
+            const searchDate = req.params.date;
+            const business = new Business();
+            business.id = req.user.business.id;
             businessVendor.id = Number(req.params.vendorId);
 
             businessMeetingTimeList.dateBlock = searchDate;
@@ -187,6 +196,51 @@ const apiGetByVendor = [
                 businessVendor,
                 businessMeetingTimeList,
             );
+            const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
+            const roomCount = await serviceBusinessMeetingRoom.gets(business);
+            console.log(query.length, businessMeetingTimeList);
+            query.map((v: any) => {
+                if (v.businessMeetingRoomReservations) {
+                    if (
+                        v.businessMeetingRoomReservations.length <
+                        roomCount.length
+                    ) {
+                        v.meetingAvailable = true;
+                    } else {
+                        v.meetingAvailable = false;
+                    }
+                } else {
+                    v.meetingAvailable = true;
+                }
+
+                // 매니저가 조회 할때 보여줘야 겠지...?
+                // // 회사명
+                // if (v.businessMeetingRoomReservations) {
+                //     v.businessMeetingRoomReservations.businessVendor.businessVendorFieldValues.map(
+                //         (j: any) => {
+                //             if (j.businessVendorField.name === '기업명') {
+                //                 const columnType =
+                //                     j.businessVendorField.fieldType.columnType;
+
+                //                 if (columnType === 'text') {
+                //                     v.companyName = j.text || null;
+                //                 } else if (columnType === 'textarea') {
+                //                     v.companyName = j.textarea || null;
+                //                 } else if (columnType === 'idx') {
+                //                     v.companyName = j.idx || null;
+                //                 } else {
+                //                     v.companyName = null;
+                //                 }
+                //             }
+                //         },
+                //     );
+                // } else {
+                //     v.companyName = null;
+                // }
+
+                return v;
+            });
+
             responseJson(res, query, method, 'success');
         } catch (error) {
             tryCatch(res, error);

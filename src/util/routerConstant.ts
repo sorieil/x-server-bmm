@@ -45,4 +45,5 @@ export enum RouterRole {
     '/api/v1/user/business-time' = '/api/v1/user/business-time',
     '/api/v1/user/business-time/:requestType' = '/api/v1/user/business-time/:requestType',
     '/api/v1/user/meeting-room' = '/api/v1/user/meeting-room',
+    '/api/v1/user/vendor/:vendorId/schedule/:date' = '/api/v1/user/vendorId/:vendor/schedule/:date',
 }

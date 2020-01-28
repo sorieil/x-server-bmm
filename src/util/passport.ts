@@ -6,6 +6,12 @@ import logger from './logger';
 import ServiceAccount from '../service/ServiceAccount';
 import ServiceBusinessEventBridge from '../service/ServiceBusinessEventBridge';
 
+const responsePrint = (res: Response) => {
+    console.log('-----------------\n');
+    console.log('Request body-----* \n', res.req.body);
+    console.log('>>>>>>>>>>>>>>>>>', res.req.originalUrl);
+};
+
 // 발급되는 토큰의 타입들( 기존 2.0 api 에서 발급)
 export type secretNameType =
     | 'xsync-super'
@@ -26,7 +32,10 @@ export const auth = (secretName: secretNameType) => {
             try {
                 const serviceAccount = new ServiceAccount();
                 const level = jwtPayload.level;
-                console.log(`JWT PAYLOAD <<<<<<<<<<<<< \n`, jwtPayload);
+                console.log(
+                    `[JWT PAYLOAD]\n>>>>>>>>>>>> Log Start >>>>>>>>>>>> \n`,
+                    jwtPayload,
+                );
 
                 // 이벤트 아이디가 있어야지만 이용 할 수 있다.
                 if (typeof jwtPayload.eventId === 'undefined') {
@@ -41,6 +50,7 @@ export const auth = (secretName: secretNameType) => {
                     const user = serviceAccount.getUserId(jwtPayload._id);
                     return user
                         .then(userResult => {
+                            // console.log('eUser result:', userResult);
                             if (userResult) {
                                 const eventId = jwtPayload.eventId;
                                 const service = new ServiceBusinessEventBridge();
@@ -133,6 +143,7 @@ export const auth = (secretName: secretNameType) => {
             { session: false },
             (err, user, info) => {
                 if (err === 'dbError') {
+                    responsePrint(res);
                     res.status(500).json({
                         resCode: 500,
                         message: '관리자에게 문의해주세요.',
@@ -141,6 +152,7 @@ export const auth = (secretName: secretNameType) => {
                 }
                 // 이벤트 아이디가 없으면, 정지
                 if (err === 'noEventId') {
+                    responsePrint(res);
                     res.status(401).json({
                         resCode: 401,
                         message: 'No allow token. It is not event token.',
@@ -149,6 +161,7 @@ export const auth = (secretName: secretNameType) => {
                 }
 
                 if (typeof user === 'undefined' || user === null || !user) {
+                    responsePrint(res);
                     res.status(403).json({
                         resCode: 403,
                         message: 'Members only.',
@@ -158,6 +171,7 @@ export const auth = (secretName: secretNameType) => {
 
                 // 정상 토큰이 아닙니다.
                 if (typeof info !== 'undefined') {
+                    responsePrint(res);
                     res.status(401).json({
                         resCode: 401,
                         message: 'No auth token',

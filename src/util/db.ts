@@ -30,7 +30,7 @@ export const connections = (env: any) => {
             synchronize: true,
             debug: false,
             insecureAuth: true,
-            logging: ['error'],
+            logging: ['error', 'query'],
             logger: 'file',
             extra: {
                 connectionLimit: 4,

@@ -87,6 +87,14 @@ export default class ServiceUserBusinessTime extends BaseService {
         return query;
     }
 
+    /**
+     * 벤더의 스케쥴도 가져오고, 유저의 스케쥴도 조인해서 가져와야 한다.
+     *
+     * @param {BusinessVendor} businessVendor
+     * @param {BusinessMeetingTimeList} [businessMeetingTimeList]
+     * @returns
+     * @memberof ServiceUserBusinessTime
+     */
     public _getTimeListByDateBlockForAllBuyer(
         businessVendor: BusinessVendor,
         businessMeetingTimeList?: BusinessMeetingTimeList,
@@ -94,20 +102,22 @@ export default class ServiceUserBusinessTime extends BaseService {
         const queryBuilder = this.mysqlConnection
             .getRepository(BusinessVendorMeetingTimeList)
             .createQueryBuilder('vendorTime')
+            // 비즈니스의 타임블럭 활성화와. 밴더의 활성화가 다를 경우를 대비해서..
             .leftJoinAndSelect(
                 'vendorTime.businessMeetingTimeList',
                 'businessTime',
             )
             .leftJoinAndSelect('vendorTime.businessVendor', 'vendor')
             .leftJoinAndSelect(
-                'vendor.businessMeetingRoomReservations',
-                'reservation',
-            )
-            .leftJoinAndSelect(
-                'reservation.userBuyerMeetingTimeList',
-                'userTimeList',
-            )
-            .leftJoinAndSelect('userTimeList.userBuyer', 'userBuyer');
+                'vendorTime.businessMeetingRoomReservations',
+                'reservations',
+            );
+        // 예약자의 정보를 가져온다. 아마도 매니저가 조회 할때 사용해야 겠지?
+        // .leftJoinAndSelect(
+        //     'reservation.userBuyerMeetingTimeList',
+        //     'userTimeList',
+        // )
+        // .leftJoinAndSelect('userTimeList.userBuyer', 'userBuyer');
 
         if (businessMeetingTimeList.dateBlock) {
             queryBuilder.andWhere('businessTime.dateBlock = :dateBlock', {
@@ -116,9 +126,12 @@ export default class ServiceUserBusinessTime extends BaseService {
         }
 
         if (businessVendor.id) {
-            queryBuilder.andWhere('businessVendorId = :businessVendorId', {
-                businessVendorId: businessVendor.id,
-            });
+            queryBuilder.andWhere(
+                'vendorTime.businessVendorId = :businessVendorId',
+                {
+                    businessVendorId: businessVendor.id,
+                },
+            );
         }
 
         const query = queryBuilder.getMany();

@@ -9,6 +9,9 @@ import ServiceUserMeetingRoomReservation from '../../service/ServiceUserMeetingR
 import { BusinessVendorMeetingTimeList } from '../../entity/mysql/entities/MysqlBusinessVendorMeetingTimeList';
 import { BusinessVendor } from '../../entity/mysql/entities/MysqlBusinessVendor';
 import { Business } from '../../entity/mysql/entities/MysqlBusiness';
+import UserBuyer from '../../entity/mysql/entities/MysqlUserBuyer';
+import ServiceUserBuyer from '../../service/ServiceUserBuyer';
+import { User } from '../../entity/mysql/entities/MysqlUser';
 
 const apiDelete = [
     [
@@ -146,15 +149,13 @@ const apiPost = [
         body('vendorTimeListId')
             .not()
             .isEmpty(),
-        body('businessMeetingTimeList')
-            .not()
-            .isEmpty(),
         body('memo')
             .not()
             .isEmpty(),
     ],
     async (req: Request, res: Response) => {
         try {
+            // Check request validation process.
             const method: RequestRole = req.method.toString() as any;
             const errors = validationResult(req);
 
@@ -163,30 +164,44 @@ const apiPost = [
                 return;
             }
 
-            const service = new ServiceUserMeetingRoomReservation();
+            // Simplify request data.
             const body = req.body;
-            const businessMeetingRoomReservation = new BusinessMeetingRoomReservation();
-            const businessVendorMeetingTimeList = new BusinessVendorMeetingTimeList();
-            const businessVendor = new BusinessVendor();
-            const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
+
+            // Model declaration.
+            const userBuyer = new UserBuyer();
+            const user = new User();
             const business = new Business();
+            const businessVendor = new BusinessVendor();
+            const businessVendorMeetingTimeList = new BusinessVendorMeetingTimeList();
+            const businessMeetingRoomReservation = new BusinessMeetingRoomReservation();
+
+            // Service declaration.
+            const serviceBusinessMeetingRoom = new ServiceBusinessMeetingRoom();
+            const serviceUserMeetingRoomReservation = new ServiceUserMeetingRoomReservation();
+            const serviceUserBuyer = new ServiceUserBuyer();
+
+            // Model data injection.
+            user.id = req.user.id;
+            const queryUserBuyer = await serviceUserBuyer._getUserBuyerByUser(
+                user,
+            );
+            business.id = req.user.business.id;
             businessVendor.id = parseInt(body.vendorId, 10);
             businessVendorMeetingTimeList.id = parseInt(
                 body.vendorTimeListId,
                 10,
             );
-            business.id = req.user.business.id;
 
-            // 개설된 미팅방을 가져온다.
+            // Get load open room data.
             const businessMeetingRoomQuery = await serviceBusinessMeetingRoom.gets(
                 business,
             );
 
-            // 밴더의 미팅 리스트 아이디를 가져온다.
-
+            // Get room availability data.
             let businessMeetingRoomCount = 0;
-            // 개설된 미팅방이 있으면 카운트를 해준다.
+
             if (businessMeetingRoomQuery) {
+                // Declared availability room count data.
                 businessMeetingRoomCount = businessMeetingRoomQuery.length;
             }
 
@@ -195,50 +210,64 @@ const apiPost = [
             businessMeetingTimeList.id = body.businessMeetingTimeList;
 
             // 밴더의 예약 정보를 가져온다.
-            const userVendorMeetingTimeListQuery = await service._getVendorMeetingTimeListBySelf(
+            const userVendorMeetingTimeListQuery = await serviceUserMeetingRoomReservation._getVendorMeetingTimeListBySelf(
                 businessVendorMeetingTimeList,
             );
 
             // 유저의 타임리스트 번호를 알아낸다.
-            const userBuyerMeetingTimeListQuery = await service._getUserMeetingTimeListByBusinessVendorBusinessMeetingTimeLists(
-                businessVendor,
+            const userBuyerMeetingTimeListQuery = await serviceUserMeetingRoomReservation._getUserMeetingTimeListByBusinessVendorBusinessMeetingTimeLists(
+                queryUserBuyer,
                 businessMeetingTimeList,
             );
 
             let vendorReservationCount = 0;
+
             if (userVendorMeetingTimeListQuery) {
+                // 밴더의 타임 블럭 기준으로 예약기 되어 있는 예약 갯수를 저장해준다.
                 vendorReservationCount =
                     userVendorMeetingTimeListQuery
                         .businessMeetingRoomReservations.length;
             }
 
-            // console.log('vendorReservationCount:', vendorReservationCount);
-            // return;
-            // 바이어가 타임테이블이 존재 할 경우
-            // 비즈니스 미팅룸경우 룸을 조회 한다.
-            // 그리고 비즈니스 미팅룸 기준으로
-            // 밴더아이디/미팅룸/비즈니스블럭 아이디 기준으로 조회를 하고 데이터가 있으면,
+            // 유저의 타임블럭이 비어 있고, 밴더의 타임 블럭이 비어 있고, 예약 가능한 방이 있다면, 예약 진행
             if (userBuyerMeetingTimeListQuery && businessMeetingRoomCount > 0) {
                 // 예약 검증 들어간다.
                 // 우선 방 리스트를 가져오고,
                 // 불러온 데이터중, filter 로 데이터를 남은 데이터중 첫번째 방으로 방을 지정해주고, 만약 남지 안으면, 예약이 안되는것고,
 
+                // 예약 갯수가 0개 인경우 예약 프로세스 시작
                 if (vendorReservationCount === 0) {
                     // 예약이 무조건 가능
                     businessMeetingRoomReservation.memo = body.memo;
+
                     businessMeetingRoomReservation.userBuyerMeetingTimeList = userBuyerMeetingTimeListQuery;
-                    // businessMeetingRoomReservation.businessVendorMeetingTimeList = businessVendorMeetingTimeList;
+                    businessMeetingRoomReservation.businessVendorMeetingTimeList = businessVendorMeetingTimeList;
+                    // 비즈니스 시간이랑 싱크를 해야 한다면....
                     businessMeetingRoomReservation.businessMeetingRoom =
                         businessMeetingRoomQuery[0];
                     businessMeetingRoomReservation.businessVendor = businessVendor;
-                    const saveReservation = await service.post(
+
+                    // 예약 저장
+                    const saveReservation = await serviceUserMeetingRoomReservation.post(
                         businessMeetingRoomReservation,
                     );
                     // 예약 완료
                     responseJson(res, [saveReservation], method, 'success');
                 } else {
-                    // 예약이 가능한지 검증해야 한다.
+                    responseJson(
+                        res,
+                        [
+                            {
+                                message: '이미 예약이 존재 합니다.',
+                            },
+                        ],
+                        method,
+                        'fails',
+                    );
 
+                    console.log('예약이 존재 합니다. 지금부터는 중복 예약...');
+                    // 예약이 가능한지 검증해야 한다.
+                    // 예약이 1개 이상있는 경우
                     const reservationAvailable = businessMeetingRoomQuery.filter(
                         (room, index) => {
                             console.log(
@@ -270,7 +299,7 @@ const apiPost = [
                                 },
                             ],
                             method,
-                            'success',
+                            'fails',
                         );
                     }
                 }
@@ -280,12 +309,11 @@ const apiPost = [
                     res,
                     [
                         {
-                            message:
-                                '밴더의 타임 테이블에 문제가 생겼습니다. 관리자에게 문의해주세요.',
+                            message: '밴더의 사정으로 예약이 불가능합니다.',
                         },
                     ],
                     method,
-                    'success',
+                    'fails',
                 );
             }
         } catch (error) {

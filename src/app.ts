@@ -394,10 +394,12 @@ connections(process.env)
         //   clientCheck,
         //   ...userBusinessTimeList.apiGet,
         // );
+
         app.get(
-            RouterRole['/api/v1/user/schedule/:date'],
+            // RouterRole['/api/v1/user/vendor/:vendorId/schedule/:date'],
+            '/api/v1/user/vendor/:vendorId/schedule/:date',
             clientCheck,
-            ...userBusinessTimeList.apiGet,
+            ...userBusinessTimeList.apiGetByVendor,
         );
 
         // Vendor filter lists
@@ -435,6 +437,12 @@ connections(process.env)
         );
 
         // Buyer
+        app.get(
+            RouterRole['/api/v1/user/schedule/:date'],
+            clientCheck,
+            ...userBusinessTimeList.apiGet,
+        );
+
         app.get(
             RouterRole['/api/v1/user/buyer'],
             clientCheck,

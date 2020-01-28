@@ -33,7 +33,16 @@ export const responseJson = (
     requestType: RequestRole,
     responseType: ResponseRole,
 ): void => {
-    console.log('>>>>>>>>>>>>>>>>>', res.req.originalUrl);
+    console.log('-----------------\n');
+    // if (typeof res.req.user.business !== undefined) {
+    // console.log('Business id: ', typeof res.req.user.business);
+    // }
+    console.log('Request body-----* \n', res.req.body);
+    // console.log('Response body-----* \n', data);
+    console.log(
+        `<<<<<<<<<<<<< Log End <<<<<<<<<<<< URL => [${res.req.originalUrl}]`,
+    );
+
     if (responseType === 'success') {
         if (data.length > 0 && isArray(data)) {
             const code = responseRole[requestType].success;
