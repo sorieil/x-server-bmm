@@ -134,6 +134,8 @@ export default class ServiceUserBusinessTime extends BaseService {
             );
         }
 
+        queryBuilder.orderBy('businessTime.dateBlock', 'DESC');
+
         const query = queryBuilder.getMany();
         return query;
     }
