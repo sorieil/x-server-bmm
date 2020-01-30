@@ -89,6 +89,15 @@ export const responseJson = (
 export const tryCatch = (res: Response, error: any): Response => {
     logger.error('try catch error: ' + error);
     // getManager('mysqlDB').connection.close();
+    console.log('-----------------\n');
+    // if (typeof res.req.user.business !== undefined) {
+    // console.log('Business id: ', typeof res.req.user.business);
+    // }
+    console.log('Request body-----* \n', res.req.body);
+    // console.log('Response body-----* \n', data);
+    console.log(
+        `<<<<<<<<<<<<< Log End <<<<<<<<<<<< URL => [${res.req.originalUrl}]`,
+    );
     return res.status(500).json({
         resCode: 500,
         message: 'Server error',

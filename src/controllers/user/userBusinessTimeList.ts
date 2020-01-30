@@ -51,7 +51,6 @@ const apiGet = [
             const user = new User();
             user.id = req.user.id;
             let query: any[] = [];
-            // const userType = await serviceBusinessVendor._getByUser(user);
             // buyer
             if (req.user.users[0].type === 'buyer') {
                 // 있으면, 바이어
@@ -126,24 +125,45 @@ const apiGet = [
                     businessMeetingTimeList,
                 );
 
+                // console.log('query:', query);
+
                 query.map((v: any) => {
                     v.userName = '';
-                    v.businessMeetingTimeList.userBuyerMeetingTimeLists.map(
-                        (j: any) => {
-                            v.userName += ` ${j.userBuyer.name}`;
-                        },
-                    );
-
-                    if (v.businessMeetingTimeList.userBuyerMeetingTimeLists) {
+                    // 예약한 바이어가 있으면,
+                    if (v.businessMeetingRoomReservations.length > 0) {
+                        v.meetingAvailable = false;
+                        v.userName = '';
+                        v.userPhone = '';
+                        v.userEmail = '';
+                        v.userMemo = '';
+                        // console.log(
+                        //     'businessMeetingRoomReservations:',
+                        //     v.businessMeetingRoomReservations,
+                        // );
                         if (
-                            v.businessMeetingTimeList.length < roomCount.length
+                            v.businessMeetingRoomReservations[0]
+                                .userBuyerMeetingTimeList
                         ) {
+                            console.log(
+                                v.businessMeetingRoomReservations[0]
+                                    .userBuyerMeetingTimeList.userBuyer,
+                            );
+                            v.userName =
+                                v.businessMeetingRoomReservations[0].userBuyerMeetingTimeList.userBuyer.name;
+                            v.userPhone =
+                                v.businessMeetingRoomReservations[0].userBuyerMeetingTimeList.userBuyer.phone;
+
+                            v.userEmail =
+                                v.businessMeetingRoomReservations[0].userBuyerMeetingTimeList.userBuyer.phone;
+                            v.userMemo =
+                                v.businessMeetingRoomReservations[0].memo;
+                        }
+                    } else {
+                        if (v.use === 'yes') {
                             v.meetingAvailable = true;
                         } else {
                             v.meetingAvailable = false;
                         }
-                    } else {
-                        v.meetingAvailable = true;
                     }
 
                     return v;

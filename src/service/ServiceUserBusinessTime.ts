@@ -48,6 +48,14 @@ export default class ServiceUserBusinessTime extends BaseService {
         return query;
     }
 
+    /**
+     * 매니저가 모든 스케쥴을 불러오는 함수
+     *
+     * @param {BusinessVendor} businessVendor
+     * @param {BusinessMeetingTimeList} [businessMeetingTimeList]
+     * @returns
+     * @memberof ServiceUserBusinessTime
+     */
     public _getTimeListByDateBlockForManger(
         businessVendor: BusinessVendor,
         businessMeetingTimeList?: BusinessMeetingTimeList,
@@ -56,19 +64,20 @@ export default class ServiceUserBusinessTime extends BaseService {
             .getRepository(BusinessVendorMeetingTimeList)
             .createQueryBuilder('vendorTime')
             .leftJoinAndSelect(
-                'vendorTime.userBuyerMeetingTimeLists',
-                'vendorTime',
+                'vendorTime.businessMeetingTimeList',
+                'businessTime',
             )
             .leftJoinAndSelect(
-                'vendorTime.businessMeetingRoomReservation',
-                'reservation',
+                'vendorTime.businessMeetingRoomReservations',
+                'reservations',
             )
-            .leftJoinAndSelect('reservation.businessMeetingRoom', 'room')
-            .leftJoinAndSelect('reservation.userBuyer', 'user')
-            .leftJoinAndSelect('user.businessVendorFieldValues', 'fieldValue')
-            .leftJoinAndSelect('fieldValue.businessVendorField', 'field')
-            .leftJoinAndSelect('field.informationType', 'informationType')
-            .leftJoinAndSelect('field.fieldType', 'fieldType');
+            .leftJoinAndSelect('reservations.businessMeetingRoom', 'room')
+            .leftJoinAndSelect(
+                'reservations.userBuyerMeetingTimeList',
+                'userSchedule',
+            )
+            .leftJoinAndSelect('userSchedule.userBuyer', 'buyer')
+            .leftJoinAndSelect('buyer.user', 'user');
 
         queryBuilder.andWhere('vendorTime.dateBlock = :dateBlock', {
             dateBlock: businessMeetingTimeList.dateBlock,
@@ -81,13 +90,14 @@ export default class ServiceUserBusinessTime extends BaseService {
             },
         );
 
-        queryBuilder.orderBy('vendorTime.id');
+        queryBuilder.orderBy('vendorTime.timeBlock');
 
         const query = queryBuilder.getMany();
         return query;
     }
 
     /**
+     * 바이어가 밴더의 스케쥴을 가져오는 함수
      * 벤더의 스케쥴도 가져오고, 유저의 스케쥴도 조인해서 가져와야 한다.
      *
      * @param {BusinessVendor} businessVendor
@@ -134,12 +144,19 @@ export default class ServiceUserBusinessTime extends BaseService {
             );
         }
 
-        queryBuilder.orderBy('businessTime.dateBlock', 'DESC');
+        queryBuilder.orderBy('vendorTime.timeBlock', 'DESC');
 
         const query = queryBuilder.getMany();
         return query;
     }
 
+    /**
+     * 유저의 정보로 바이어의 정보를 가져오는 함수
+     *
+     * @param {User} user
+     * @returns
+     * @memberof ServiceUserBusinessTime
+     */
     public _getByUser(user: User) {
         const query = this.mysqlManager(UserBuyer).findOne({
             where: {
