@@ -144,7 +144,7 @@ export default class ServiceUserBusinessTime extends BaseService {
             );
         }
 
-        queryBuilder.orderBy('vendorTime.timeBlock', 'DESC');
+        queryBuilder.orderBy('vendorTime.timeBlock', 'ASC');
 
         const query = queryBuilder.getMany();
         return query;
