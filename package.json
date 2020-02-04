@@ -12,8 +12,8 @@
         "test": "jest --forceExit --coverage --verbose",
         "build": "tsc",
         "dev-pm2": " pm2 startOrRestart ./build/ecosystem.config.js ts-node -- -P tsconfig.json ./src/app.ts --watch && pm2 logs API",
-        "live-start-nodemon": "NODE_ENV=production  nodemon --exec ts-node ./src/app.ts",
-        "webpack-dev": "webpack --config webpack.config.js",
+        "dev-live-start-nodemon": "NODE_ENV=production  nodemon --exec ts-node ./src/app.ts",
+        "dev-webpack-dev": "webpack --config webpack.config.js",
         "stop": " pm2 stop all",
         "lint": "tsc --noEmit && eslint '*/**/*.{ts,tsx}' --quiet --fix"
     },
