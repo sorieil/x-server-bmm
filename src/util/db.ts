@@ -16,7 +16,8 @@ export type connectionType = 'mongoDB' | 'mysqlDB';
 export const connectionMongoDB: connectionType = 'mongoDB';
 export const connectionMysql: connectionType = 'mysqlDB';
 export const connections = (env: any) => {
-    const mongoDBConn = `mongodb://${env.MONGO_INITDB_ROOT_USERNAME}:${env.MONGO_INITDB_ROOT_PASSWORD}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_INITDB_DATABASE}?retryWrites=true&w=majority`;
+    const mongoDBConn = `mongodb+srv://${env.MONGO_INITDB_ROOT_USERNAME}:${env.MONGO_INITDB_ROOT_PASSWORD}@${env.MONGO_HOST}/${env.MONGO_INITDB_DATABASE}?retryWrites=true&w=majority`;
+    console.log('mongoDBConn:', mongoDBConn);
     return createConnections([
         {
             name: 'mysqlDB',
