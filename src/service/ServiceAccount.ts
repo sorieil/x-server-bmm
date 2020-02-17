@@ -25,6 +25,15 @@ export default class ServiceAccount extends BaseService {
         super();
     }
 
+    /**
+     *  토큰에서 추출한 유저의 아이디 값으로 Mysql에 정보가 있는지 체크를 하고,
+     *  없으면 정보를 넣어주고, 있으면 정보를 불러온다.
+     *  Business id에 따라서 바이어인지 / 매니저인지 타입을 불러온다.
+     *
+     * @param {*} id Mongodb accounts _id 값
+     * @returns
+     * @memberof ServiceAccount
+     */
     public async getUserId(id: any) {
         const mongoQuery = await this.mongoManager(Accounts).findOne(id);
         const user = new User();
@@ -96,14 +105,14 @@ export default class ServiceAccount extends BaseService {
             // TODO: 바이어인지 매니저인지 설정해준다. 하지만 추후 매니저의 인증 방법이 달라 진다면,
             // TODO: 웹에서 매니저를 인증하는 방식으로하고, 모바일에서는 모두 바이어로 설정 될 가능성도 있다.
             // TODO: 추후 변경될 수 있다. user.type은 변경될거 같지 않음. ㅎㅎ
-            if (user.type === null) {
-                if (user.userBuyer) {
-                    user.type = 'buyer';
-                    // console.log('buyer');
-                } else if (user.businessVendorManager) {
-                    // console.log('manager');
-                    user.type = 'manager';
-                }
+            // TODO: 바이어나 매니저는 비즈니스마다 프로필을 가져야 한다.
+            // TODO: 비즈니스를 어떻게 체크 하지..?
+            if (user.userBuyers.length) {
+                user.type = 'buyer';
+                // console.log('buyer');
+            } else if (user.businessVendorManagers) {
+                // console.log('manager');
+                user.type = 'manager';
             }
             // user.permission = permissionSave;
             // user.event = eventSave;

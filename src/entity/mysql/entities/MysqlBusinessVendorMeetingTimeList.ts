@@ -39,13 +39,7 @@ export class BusinessVendorMeetingTimeList extends Base {
         type => BusinessMeetingTimeList,
         businessMeetingTimeList =>
             businessMeetingTimeList.businessVendorMeetingTimeLists,
+        { onDelete: 'CASCADE' },
     )
     businessMeetingTimeList: BusinessMeetingTimeList;
-
-    @OneToMany(
-        type => UserBuyerMeetingTimeList,
-        userBuyerMeetingTimeList =>
-            userBuyerMeetingTimeList.businessVendorMeetingTimeList,
-    )
-    userBuyerMeetingTimeLists: UserBuyerMeetingTimeList[];
 }

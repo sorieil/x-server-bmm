@@ -168,7 +168,7 @@ const apiPost = [
             // BusinessVendorManager 도 입력해준다.
             const user = new User();
             user.id = req.user.users[0].id;
-            user.businessVendorManager = businessVendorQuery[0];
+            user.businessVendorManagers = businessVendorQuery;
             await service._changeUserTypeManager(user);
 
             responseJson(res, businessVendorQuery, method, 'success');

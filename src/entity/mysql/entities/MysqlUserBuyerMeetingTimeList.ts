@@ -40,11 +40,4 @@ export class UserBuyerMeetingTimeList extends Base {
         { nullable: true, onDelete: 'CASCADE' },
     )
     userBuyer: UserBuyer;
-
-    @ManyToOne(
-        type => BusinessVendorMeetingTimeList,
-        businessVendorMeetingTimeList =>
-            businessVendorMeetingTimeList.userBuyerMeetingTimeLists,
-    )
-    businessVendorMeetingTimeList: BusinessVendorMeetingTimeList;
 }

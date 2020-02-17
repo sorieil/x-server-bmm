@@ -1,16 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { UserTypeList } from './../../../src/entity/mysql/entities/MysqlUserStatus';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column('varchar', { length: 100 })
     firstName: string;
 
-    @Column()
+    @Column('varchar', { length: 100 })
     lastName: string;
 
     @Column()
     age: number;
+
+    @OneToMany(type => UserTypeList, userTypeList => userTypeList.user)
+    userTypeLists: UserTypeList[];
 }

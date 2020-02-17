@@ -8,6 +8,9 @@ const apiGet = [
             const method: RequestRole = req.method.toString() as any;
             const errors = validationResult(req);
 
+            // TODO: 비즈니스에 맞는 유저의 정보를 가져온다.
+            console.log('Business:', req.user);
+
             if (!errors.isEmpty()) {
                 responseJson(res, errors.array(), method, 'invalid');
                 return;

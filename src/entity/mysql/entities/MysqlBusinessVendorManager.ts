@@ -3,12 +3,12 @@ import { BusinessVendorFieldManagerValue } from './MysqlBusinessVendorFieldManag
 import { Base } from './MysqlBase';
 import 'reflect-metadata';
 import {
-  Entity,
-  OneToMany,
-  OneToOne,
-  JoinTable,
-  ManyToOne,
-  JoinColumn,
+    Entity,
+    OneToMany,
+    OneToOne,
+    JoinTable,
+    ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { User } from './MysqlUser';
 import { BusinessVendor } from './MysqlBusinessVendor';
@@ -18,29 +18,28 @@ import { BusinessVendor } from './MysqlBusinessVendor';
  */
 @Entity()
 export class BusinessVendorManager extends Base {
-  @OneToMany(
-    type => BusinessVendorFieldManagerValue,
-    businessVendorFieldManagerValue =>
-      businessVendorFieldManagerValue.businessVendorManager,
-  )
-  businessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
+    @OneToMany(
+        type => BusinessVendorFieldManagerValue,
+        businessVendorFieldManagerValue =>
+            businessVendorFieldManagerValue.businessVendorManager,
+    )
+    businessVendorFieldManagerValues: BusinessVendorFieldManagerValue[];
 
-  @ManyToOne(
-    type => BusinessVendor,
-    businessVendor => businessVendor.businessVendorManagers,
-    { onDelete: 'CASCADE' },
-  )
-  businessVendor: BusinessVendor;
-  // 나중에 매너저로 된다면, 여기에 유저의 아이디가 들어 가야 한다. 그래서 매칭을 시켜준다.
-  // 유저의 아이디가 들어 간다면, 매니저 매칭 완료
-  @OneToOne(type => User, user => user.businessVendorManager)
-  @JoinColumn()
-  user: User;
+    @ManyToOne(
+        type => BusinessVendor,
+        businessVendor => businessVendor.businessVendorManagers,
+        { onDelete: 'CASCADE' },
+    )
+    businessVendor: BusinessVendor;
+    // 나중에 매너저로 된다면, 여기에 유저의 아이디가 들어 가야 한다. 그래서 매칭을 시켜준다.
+    // 유저의 아이디가 들어 간다면, 매니저 매칭 완료
+    @ManyToOne(type => User, user => user.businessVendorManagers)
+    user: User;
 
-  @OneToOne(
-    type => BusinessMeetingRoomReservation,
-    businessMeetingRoomReservation =>
-      businessMeetingRoomReservation.businessVendorManager,
-  )
-  businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
+    @OneToOne(
+        type => BusinessMeetingRoomReservation,
+        businessMeetingRoomReservation =>
+            businessMeetingRoomReservation.businessVendorManager,
+    )
+    businessMeetingRoomReservations: BusinessMeetingRoomReservation[];
 }
