@@ -1,0 +1,9 @@
+FROM node:lts-alpine as development
+WORKDIR /usr/src/app
+RUN yarn global add pm2
+RUN pm2 install typescript
+COPY package*.json ./
+RUN yarn install
+COPY . .
+CMD [ "pm2-docker", "start", "ecosystem.config.js", "--env=development", "ts-node", "--", "-P", "tsconfig.json", "./src/app.ts","--watch" ]
+

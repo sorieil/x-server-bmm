@@ -22,7 +22,7 @@ export const responseRole = {
         errorMessage: 'Failed to update the request.',
     },
     DELETE: {
-        success: 200,
+        success: 204,
         error: 200,
         errorMessage: 'Failed to delete the request.',
     },

@@ -1,12 +1,19 @@
 module.exports = {
     apps: [
         {
-            name: 'API',
-            script: './src/app.ts',
-            instances: 0,
+            name: 'Bmm-api',
             autorestart: true,
-            watch: false,
-            max_memory_restart: '1G',
+            script: './src/app.ts',
+            env: {
+                instances: 1,
+                watch: true,
+            },
+            env_production: {
+                exec_mode: 'cluster',
+                instances: 0,
+                max_memory_restart: '7G',
+                watch: false,
+            },
         },
     ],
 };

@@ -1,62 +1,26 @@
-version: "3.7"
+version: '3.7'
 
 services:
-  # xsync-bmm-back-development:
-  #   build:
-  #     context: .
-  #     target: development
-  #   working_dir: /usr/src/app
-  #   env_file: .env
-  #   container_name: xsync-bmm-back-development
-  #   restart: unless-stopped
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - node_modules:/user/src/app/node_modules
-  #   ports:
-  #     - "8989:8989"
-  #   networks:
-  #     - app-network
-  #   command: npm run dev
-  mongo-db:
-    image: mongo:latest
-    container_name: mongo-db
-    restart: unless-stopped
-    env_file: .env
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db #데이터를 계속 저장하고 싶으면, 주석 제거
-      - ./mongo-dump:/home/mongo-dump #덤프파일 디렉토리
-      - ./mongo-dump/import.sh:/docker-entrypoint-initdb.d/import.sh #덤프파일 리스토어 및 계정 생성
-    networks:
-      - app-network
-  mysql-db:
-    image: mysql:latest
-    container_name: mysql-db
-    privileged: true
-    command: --default-authentication-plugin=mysql_native_password #If a password error occurs, use the command.
-    restart: unless-stopped
-    env_file: .env
-    environment:
-      MYSQL_DATABASE: $MYSQL_DATABASE
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: $MYSQL_USER
-      # You can use whatever password you like
-      MYSQL_PASSWORD: $MYSQL_PASSWORD
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      MYSQL_ALLOW_EMPTY_PASSWORD: $MYSQL_ALLOW_EMPTY_PASSWORD
-    volumes:
-      - mysql-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-# 데이터를 계속 유지 하고 싶으면, 생성
+    dev:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        container_name: dev-api
+        working_dir: /usr/src/app
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=development
+        restart: unless-stopped
+        networks:
+            - app-network
+        volumes:
+            - .:/usr/src/app
+            - node_modules:/usr/src/app/node_modules
+        ports:
+            - '8989:8989'
 volumes:
-  mysql-data:
-  mongo-data:
-  node_modules:
+    node_modules:
+networks:
+    app-network:
+        driver: bridge

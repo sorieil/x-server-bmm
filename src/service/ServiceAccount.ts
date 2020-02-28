@@ -107,13 +107,13 @@ export default class ServiceAccount extends BaseService {
             // TODO: 추후 변경될 수 있다. user.type은 변경될거 같지 않음. ㅎㅎ
             // TODO: 바이어나 매니저는 비즈니스마다 프로필을 가져야 한다.
             // TODO: 비즈니스를 어떻게 체크 하지..?
-            if (user.userBuyers.length) {
-                user.type = 'buyer';
-                // console.log('buyer');
-            } else if (user.businessVendorManagers) {
-                // console.log('manager');
-                user.type = 'manager';
-            }
+            // if (user.userBuyers.length) {
+            //     user.type = 'buyer';
+            //     // console.log('buyer');
+            // } else if (user.businessVendorManagers) {
+            //     // console.log('manager');
+            //     user.type = 'manager';
+            // }
             // user.permission = permissionSave;
             // user.event = eventSave;
 

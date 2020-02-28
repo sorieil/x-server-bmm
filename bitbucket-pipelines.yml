@@ -1,9 +1,16 @@
- image: atlassian/default-image:latest
- pipelines:
-   default:
-     - step:
-        name: Deploy to BMM API
-        deployment: production
-        script:
-            - ssh centos@52.79.251.52 'bash -s' < ./build/deploy.sh
-            - echo "Deploy step finished"
+image: atlassian/default-image:latest
+pipelines:
+    default:
+        - step:
+              name: Deploy
+              deployment: Production
+              script:
+                  - (umask  077 ; echo $MY_SSH_KEY | base64 --decode > ./my_ssh_key.pem)
+                  - chmod 400 ./my_ssh_key.pem
+                  - docker build -t analytics_api:latest .
+                  - docker save -o analytics_api.tar bmm_app:latest
+                  - scp -i ./my_ssh_key.pem analytics_api.tar ubuntu@$(echo $DEPLOY_SERVER_IP):/home/ubuntu
+                  - ssh -i ./my_ssh_key.pem ubuntu@$(echo $DEPLOY_SERVER_IP) 'bash -s' < ./build/docker-run.sh
+                  - echo 'Deploy success!!!'
+              services:
+                  - docker

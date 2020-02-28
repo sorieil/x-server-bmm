@@ -1,3 +1,5 @@
+import { UserTypeRole } from './../entity/mysql/entities/MysqlBase';
+import { UserTypeList } from './../entity/mysql/entities/MysqlUserStatus';
 import { BusinessVendorManager } from './../entity/mysql/entities/MysqlBusinessVendorManager';
 import { BusinessVendorField } from '../entity/mysql/entities/MysqlBusinessVendorField';
 import { BusinessVendor } from '../entity/mysql/entities/MysqlBusinessVendor';
@@ -17,7 +19,9 @@ export default class ServiceBusinessVendorManager extends BaseService {
             .getRepository(BusinessVendorField)
             .createQueryBuilder('field')
             .leftJoinAndSelect('field.fieldType', 'code')
-            .where('field.id = :id', { id: businessVendorField.id })
+            .where('field.id = :id', {
+                id: businessVendorField.id,
+            })
             .getOne();
         return query;
     }
@@ -182,9 +186,9 @@ export default class ServiceBusinessVendorManager extends BaseService {
         return query;
     }
 
-    public _changeUserTypeManager(user: User) {
-        user.type = 'manager';
-        const query = this.mysqlManager(User).save(user);
+    public _changeUserTypeManager(userTypeList: UserTypeList) {
+        userTypeList.role = "'manager'";
+        const query = this.mysqlManager(User).save(userTypeList);
         return query;
     }
 }
